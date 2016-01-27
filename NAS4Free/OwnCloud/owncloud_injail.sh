@@ -50,7 +50,7 @@ echo "################################################## "
 echo " "
 ## End sanity checks
 # Install packages
-pkg install -y lighttpd php5-openssl php5-ctype php5-curl php5-dom php5-fileinfo php5-filter php5-gd php5-hash php5-iconv php5-json php5-mbstring php5-mysql php5-pdo php5-pdo_mysql php5-pdo_sqlite php5-session php5-simplexml php5-sqlite3 php5-xml php5-xmlrpc php5-xmlwriter php5-gettext php5-mcrypt php5-zip php5-zlib php5-posix mp3info mysql56-server
+pkg install -y lighttpd php56-openssl php56-ctype php56-curl php56-dom php56-fileinfo php56-filter php56-gd php56-hash php56-iconv php56-json php56-mbstring php56-mysql php56-pdo php56-pdo_mysql php56-pdo_sqlite php56-session php56-simplexml php56-sqlite3 php56-xml php56-xmlrpc php56-xmlwriter php56-gettext php56-mcrypt php56-zip php56-zlib php56-posix mp3info mysql56-server pecl-apcu
 
 echo " " 
 echo "##################################################" 
@@ -143,6 +143,9 @@ echo '$HTTP["url"] =~ "^($|/)" {' >> /usr/local/etc/lighttpd/lighttpd.conf
 echo 'dir-listing.activate = "disable"' >> /usr/local/etc/lighttpd/lighttpd.conf
 echo '}' >> /usr/local/etc/lighttpd/lighttpd.conf
 echo 'cgi.assign = ( ".php" => "/usr/local/bin/php-cgi" )' >> /usr/local/etc/lighttpd/lighttpd.conf
+echo '$HTTP["scheme"] == "https" {' >> /usr/local/etc/lighttpd/lighttpd.conf
+echo '    setenv.add-response-header  = ( "Strict-Transport-Security" => "max-age=15768000")' >> /usr/local/etc/lighttpd/lighttpd.conf
+echo '}' >> /usr/local/etc/lighttpd/lighttpd.conf
 
 echo " " 
 echo "##################################################" 
@@ -163,7 +166,9 @@ echo 'fastcgi.server = ( ".php" =>' >> /usr/local/etc/lighttpd/conf.d/fastcgi.co
 echo '((' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
 echo '"socket" => "/tmp/php.socket",' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
 echo '"bin-path" => "/usr/local/bin/php-cgi",' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
+echo '"allow-x-send-file" => "enable",' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
 echo '"bin-environment" => (' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
+echo '"MOD_X_SENDFILE2_ENABLED" => "1",' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
 echo '"PHP_FCGI_CHILDREN" => "16",' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
 echo '"PHP_FCGI_MAX_REQUESTS" => "10000"' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
 echo '),' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf

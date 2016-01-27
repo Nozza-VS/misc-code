@@ -39,23 +39,23 @@ exerr () { echo -e "$*" >&2 ; exit 1; }
 ## Begin sanity checks
 # None, as this script is intended to be run from the command line
 
-echo "##################################################" 
+echo -e "\033[1;30m##################################################\033[0m" 
 echo "#   Welcome to the owncloud installer!"
-echo "################################################## " 
+echo -e "\033[1;30m################################################## \033[0m" 
 
 echo " " 
-echo "##################################################" 
+echo -e "\033[1;30m##################################################\033[0m" 
 echo "#   Let's start by installing some stuff!!"
-echo "################################################## "
+echo -e "\033[1;30m################################################## \033[0m"
 echo " "
 ## End sanity checks
 # Install packages
 pkg install -y lighttpd php56-openssl php56-ctype php56-curl php56-dom php56-fileinfo php56-filter php56-gd php56-hash php56-iconv php56-json php56-mbstring php56-mysql php56-pdo php56-pdo_mysql php56-pdo_sqlite php56-session php56-simplexml php56-sqlite3 php56-xml php56-xmlrpc php56-xmlwriter php56-gettext php56-mcrypt php56-zip php56-zlib php56-posix mp3info mysql56-server pecl-apcu
 
 echo " " 
-echo "##################################################" 
+echo -e "\033[1;30m##################################################\033[0m" 
 echo "Packages installed - now configuring mySQL"
-echo "################################################## "
+echo -e "\033[1;30m################################################## \033[0m"
 echo " "
 echo 'mysql_enable="YES"' >> /etc/rc.conf
 echo '[mysqld]' >> /var/db/mysql/my.cnf 
@@ -63,38 +63,38 @@ echo 'skip-networking' >> /var/db/mysql/my.cnf
 
 /usr/local/etc/rc.d/mysql-server start
 echo " " 
-echo "##################################################" 
+echo -e "\033[1;30m##################################################\033[0m" 
 echo "Getting ready to secure the install. The root password is blank, "
 echo "and you want to provide a strong root password, remove the anonymous accounts" 
 echo "disallow remote root access, remove the test database, and reload privilege tables"
-echo "################################################## "
+echo -e "\033[1;30m################################################## \033[0m"
 echo " "
 mysql_secure_installation
 
 echo " " 
-echo "##################################################" 
+echo -e "\033[1;30m##################################################\033[0m" 
 echo "Done hardening mySQL - performing key operations"
-echo "################################################## "
+echo -e "\033[1;30m################################################## \033[0m"
 echo " "
 cd ~
 openssl genrsa -des3 -out server.key 1024
 echo " " 
-echo "##################################################" 
+echo -e "\033[1;30m##################################################\033[0m" 
 echo "Removing password from key"
-echo "################################################## "
+echo -e "\033[1;30m################################################## \033[0m"
 echo " "
 openssl rsa -in server.key -out no.pwd.server.key
 echo " " 
-echo "##################################################" 
+echo -e "\033[1;30m##################################################\033[0m" 
 echo "Creating cert request. The Common Name should match the URL you want to use"
-echo "################################################## "
+echo -e "\033[1;30m################################################## \033[0m"
 echo " "
 openssl req -new -key no.pwd.server.key -out server.csr
 
 echo " " 
-echo "##################################################" 
+echo -e "\033[1;30m##################################################\033[0m" 
 echo "Creating cert & pem file & moving to proper location"
-echo "################################################## "
+echo -e "\033[1;30m################################################## \033[0m"
 echo " "
 openssl x509 -req -days 365 -in /root/server.csr -signkey /root/no.pwd.server.key -out /root/server.crt
 cat no.pwd.server.key server.crt > server.pem
@@ -104,16 +104,16 @@ chown -R www:www /usr/local/etc/lighttpd/ssl/
 chmod 0600 server.pem
 
 echo " " 
-echo "##################################################" 
+echo -e "\033[1;30m##################################################\033[0m" 
 echo "Creating backup of lighttpd config"
-echo "################################################## "
+echo -e "\033[1;30m################################################## \033[0m"
 echo " " 
 cp /usr/local/etc/lighttpd/lighttpd.conf /usr/local/etc/lighttpd/old_config.bak
 
 echo " " 
-echo "##################################################" 
+echo -e "\033[1;30m##################################################\033[0m" 
 echo "Modifying lighttpd.conf file"
-echo "################################################## "
+echo -e "\033[1;30m################################################## \033[0m"
 echo " "
 cat "/usr/local/etc/lighttpd/old_config.bak" | \
 	sed -r '/^var.server_root/s|"(.*)"|"/usr/local/www/owncloud"|' | \
@@ -125,9 +125,9 @@ cat "/usr/local/etc/lighttpd/old_config.bak" | \
 	"/usr/local/etc/lighttpd/lighttpd.conf"
 
 echo " " 
-echo "##################################################" 
+echo -e "\033[1;30m##################################################\033[0m" 
 echo "Adding stuff to lighttpd.conf file"
-echo "################################################## "
+echo -e "\033[1;30m################################################## \033[0m"
 echo " "
 
 echo 'ssl.engine = "enable"' >> /usr/local/etc/lighttpd/lighttpd.conf
@@ -149,9 +149,9 @@ echo '    setenv.add-response-header  = ( "Strict-Transport-Security" => "max-ag
 echo '}' >> /usr/local/etc/lighttpd/lighttpd.conf
 
 echo " " 
-echo "##################################################" 
+echo -e "\033[1;30m##################################################\033[0m" 
 echo "Enabling the fastcgi module"
-echo "################################################## "
+echo -e "\033[1;30m################################################## \033[0m"
 echo " "
 cp /usr/local/etc/lighttpd/modules.conf /usr/local/etc/lighttpd/old_modules.bak
 cat "/usr/local/etc/lighttpd/old_modules.bak" | \
@@ -159,9 +159,9 @@ cat "/usr/local/etc/lighttpd/old_modules.bak" | \
 	"/usr/local/etc/lighttpd/modules.conf"
 
 echo " " 
-echo "##################################################" 
+echo -e "\033[1;30m##################################################\033[0m" 
 echo "Adding stuff to fastcgi.conf file"
-echo "################################################## "
+echo -e "\033[1;30m################################################## \033[0m"
 echo " "
 echo 'fastcgi.server = ( ".php" =>' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
 echo '((' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
@@ -180,27 +180,27 @@ echo '))' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
 echo ' )' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
 
 echo " " 
-echo "##################################################" 
+echo -e "\033[1;30m##################################################\033[0m" 
 echo "Obtaining corrected MIME .conf file for lighttpd to use"
-echo "################################################## "
+echo -e "\033[1;30m################################################## \033[0m"
 echo " "
 
 mv /usr/local/etc/lighttpd/conf.d/mime.conf /usr/local/etc/lighttpd/conf.d/mime_conf.bak
 fetch -o /usr/local/etc/lighttpd/conf.d/mime.conf http://www.xenopsyche.com/mkempe/oc/mime.conf
 
 echo " " 
-echo "##################################################" 
+echo -e "\033[1;30m##################################################\033[0m" 
 echo "Packages installed - creating www folder"
-echo "################################################## "
+echo -e "\033[1;30m################################################## \033[0m"
 echo " "
 mkdir /usr/local/www
 
 echo " "
 # Get owncloud, extract it, copy it to the webserver, and have the jail 
 # assign proper permissions
-echo "##################################################" 
+echo -e "\033[1;30m##################################################\033[0m" 
 echo "www folder created - now downloading owncloud"
-echo "################################################## "
+echo -e "\033[1;30m################################################## \033[0m"
 echo " "
 cd "/tmp"
 fetch "https://download.owncloud.org/community/owncloud-${owncloud_version}.tar.bz2"
@@ -208,35 +208,42 @@ tar xf "owncloud-${owncloud_version}.tar.bz2" -C /usr/local/www
 chown -R www:www /usr/local/www/
 
 echo " " 
-echo "##################################################" 
+echo -e "\033[1;30m##################################################\033[0m" 
 echo "Adding lighttpd to rc.conf"
-echo "################################################## "
+echo -e "\033[1;30m################################################## \033[0m"
 echo " "
 echo 'lighttpd_enable="YES"' >> /etc/rc.conf
 
 echo " " 
-echo "##################################################" 
+echo -e "\033[1;30m##################################################\033[0m" 
 echo "  Done, lighttpd should start up automatically!"
-echo "################################################## "
+echo -e "\033[1;30m################################################## \033[0m"
 echo " "
 
 echo " "
-echo "##################################################" 
+echo -e "\033[1;30m##################################################\033[0m" 
 echo "Attempting to start webserver."
 echo "If it fails and says Cannot 'start' lighttpd, manually add"
 echo "    lighttpd_enable="YES" to /etc/rc.conf"
 echo "Command being run here is:"
-echo "    /usr/local/etc/rc.d/lighttpd start"
-echo "################################################## "
+echo -e "    \033[1;35m/usr/local/etc/rc.d/lighttpd start\033[0m"
+echo -e "\033[1;30m################################################## \033[0m"
 echo " "
 /usr/local/etc/rc.d/lighttpd start
 
 echo " " 
-echo "##################################################" 
-echo " It looks like we finished!!! NICE"
-echo " Now head to https://$server_ip:$server_port (as defined at the start of the script)"
+echo -e "\033[1;30m##################################################\033[0m" 
+echo "It looks like we finished here!!! NICE"
+echo -e "Now head to \033[1;32mhttps://$server_ip:$server_port\033[0m (as defined at the start of the script)"
 echo " via your browser and complete your OwnCloud setup! "
-echo " Thanks to fsbruva for creating the original script " 
-echo " Modifications made by Nostalgist92 " 
-echo "################################################## "
+echo " "
+echo -e "To get \033[1;37mMemory Caching\033[0m to work you'll have to enable this manually."
+echo -e "Head to this file \033[1;36m/usr/local/www/owncloud/config/config.php\033[0m and add:"
+echo -e "\033[1;33m  'memcache.local' => '\OC\Memcache\APCu',\033[0m right above the last line."
+echo -e "Once you've edited this file, restart the server with:" 
+echo -e "\033[1;35m  /usr/local/etc/rc.d/lighttpd restart\033[0m"
+echo " "
+echo -e "\033[1;37mThanks to fsbruva for creating the original script \033[0m" 
+echo -e "\033[1;37mModifications made by Nostalgist92 \033[0m" 
+echo -e "\033[1;30m################################################## \033[0m"
 echo " "

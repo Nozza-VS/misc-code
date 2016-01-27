@@ -143,6 +143,7 @@ echo '$HTTP["url"] =~ "^($|/)" {' >> /usr/local/etc/lighttpd/lighttpd.conf
 echo 'dir-listing.activate = "disable"' >> /usr/local/etc/lighttpd/lighttpd.conf
 echo '}' >> /usr/local/etc/lighttpd/lighttpd.conf
 echo 'cgi.assign = ( ".php" => "/usr/local/bin/php-cgi" )' >> /usr/local/etc/lighttpd/lighttpd.conf
+echo 'server.modules += ( "mod_setenv" )' >> /usr/local/etc/lighttpd/lighttpd.conf
 echo '$HTTP["scheme"] == "https" {' >> /usr/local/etc/lighttpd/lighttpd.conf
 echo '    setenv.add-response-header  = ( "Strict-Transport-Security" => "max-age=15768000")' >> /usr/local/etc/lighttpd/lighttpd.conf
 echo '}' >> /usr/local/etc/lighttpd/lighttpd.conf

@@ -78,42 +78,66 @@ echo " "
 confirm
 echo " "
 echo -e "${sep}" 
-echo -e "${msg}     Let's start with moving the current install.${nc}"
+echo -e "${msg}     Let's start with downloading the update.${nc}"
+echo -e "${sep}"
+echo " "
+
+cd "/tmp"
+fetch "https://download.owncloud.org/community/owncloud-${owncloud_version}.tar.bz2"
+
+echo " "
+echo -e "${sep}" 
+echo -e "${msg}     Stop the web server until the update is done.${nc}"
+echo -e "${sep}"
+echo " "
+
+/usr/local/etc/rc.d/lighttpd stop
+
+echo " "
+echo -e "${sep}" 
+echo -e "${msg}     Create backup.${nc}"
 echo -e "${sep}"
 echo " "
 
 # Create inital backup folder if it doesn't exist
 mkdir -p /usr/local/www/.owncloud-backup
 
-# Move current install to backup directory
-mv /usr/local/www/owncloud  /usr/local/www/.owncloud-backup/owncloud-${backupdate}/
-echo -e "${msg} Moved current install to:${nc}"
+# Copy current install to backup directory
+# mv /usr/local/www/owncloud  /usr/local/www/.owncloud-backup/owncloud-${backupdate} # NOTE: May not need this but leaving it in just in case
+cp -R /usr/local/www/owncloud  /usr/local/www/.owncloud-backup/owncloud-${backupdate}
+
+echo -e "${msg} Backup of current install made in:${nc}"
 echo -e "${qry}     /usr/local/www/.owncloud-backup/owncloud-${nc}\033[1;36m${backupdate}${nc}"
 echo -e "${msg} Keep note of this just in case something goes wrong with the update${nc}"
 
 echo " "
 echo -e "${sep}" 
-echo -e "${msg}     Now to Download & Extract OwnCloud.${nc}"
+echo -e "${msg}     Now to extract OwnCloud in place of the old install.${nc}"
 echo -e "${sep}"
 echo " "
 
-cd "/tmp"
-fetch "https://download.owncloud.org/community/owncloud-${owncloud_version}.tar.bz2"
 tar xf "owncloud-${owncloud_version}.tar.bz2" -C /usr/local/www
-echo " Done"
+echo " Done!"
 # Give permissions to www
 chown -R www:www /usr/local/www/
 
+#echo " " # NOTE: May not need the next few lines but leaving them in just in case
+#echo -e "${sep}" 
+#echo -e "${msg}     Restore owncloud config, /data & /themes${nc}"
+#echo -e "${sep}"
+#echo " "
+
+# cp -R /usr/local/www/.owncloud-backup/owncloud-${backupdate}/data /usr/local/www/owncloud/
+# cp -R /usr/local/www/.owncloud-backup/owncloud-${backupdate}/themes/* /usr/local/www/owncloud/
+# cp /usr/local/www/.owncloud-backup/owncloud-${backupdate}/config/config.php /usr/local/www/owncloud/config/
+
 echo " " 
 echo -e "${sep}" 
-echo -e "${msg}     Restore owncloud config, /data & /themes${nc}"
+echo -e "${msg}     Starting the web server back up${nc}"
 echo -e "${sep}"
 echo " "
 
-cp -R /usr/local/www/.owncloud-backup/owncloud-${backupdate}/data /usr/local/www/owncloud/
-cp -R /usr/local/www/.owncloud-backup/owncloud-${backupdate}/themes/* /usr/local/www/owncloud/
-cp /usr/local/www/.owncloud-backup/owncloud-${backupdate}/config/config.php /usr/local/www/owncloud/config/
-
+/usr/local/etc/rc.d/lighttpd start
 
 echo " " 
 echo -e "${sep}" 

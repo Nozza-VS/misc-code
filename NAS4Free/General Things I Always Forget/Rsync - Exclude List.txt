@@ -1,17 +1,2 @@
-
-
-*.part
-
-*.iso
-
-*.ogm
-*.avi
-*.mp4
-*.mkv
-
-*.mp3
-*.flac
-
-*.m4a
-*.wma
-
+Remove all files with the ".fileext" extension
+*.fileext

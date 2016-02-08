@@ -1,4 +1,5 @@
 #!/bin/sh
+# Script Version: 1.08 (February 8, 2016)
 ###########################################################################
 ##### START OF CONFIGURATION SECTION #####
 #

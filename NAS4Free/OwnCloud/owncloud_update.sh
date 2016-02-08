@@ -1,4 +1,5 @@
 #!/bin/sh
+# Script Version: 1.03 (February 8, 2016)
 ###########################################################################
 #     This is a simple script to automate the update of Owncloud within a 
 #     jailed environment. This is not garunteed to work on all systems and was

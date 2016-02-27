@@ -1,5 +1,5 @@
 #!/bin/sh
-# Script Version: 1.08 (February 8, 2016)
+# Script Version: 1.09 (February 27, 2016)
 ###########################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -313,8 +313,8 @@ echo " "
 echo " " 
 echo -e "${sep}"
 echo -e "${msg} It looks like we finished here!!! NICE${nc}"
-echo -e "{msg} Now you can head to ${url}https://$server_ip:$server_port${nc}"
-echo -e "{msg}    (as defined at the start of the script)${nc}"
+echo -e "${msg} Now you can head to ${url}https://$server_ip:$server_port${nc}"
+echo -e "${msg}    (as defined at the start of the script)${nc}"
 echo -e "${msg} via your browser and complete your ownCloud setup!${nc}"
 echo " "
 echo " "

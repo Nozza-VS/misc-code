@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Update script for Emby Media Server (AKA MediaBrowser)
-# Version 1.03 (March 10, 2016)
+# Version 1.04 (March 10, 2016)
 # As ports official freebsd ports tree takes ages to accept updates
 # here is a simple script to grab the latest version and upgrade manually.
 
@@ -131,7 +131,7 @@ echo -e "${msg} Now to extract the download and replace old version${nc}"
 echo -e "${sep}"
 echo " "
 
-unzip "/tmp/emby-${embyver}.zip" -d /usr/local/lib/emby-server
+unzip -o "/tmp/emby-${embyver}.zip" -d /usr/local/lib/emby-server
 
 service emby-server start
 

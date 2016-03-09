@@ -1,5 +1,5 @@
 #!/bin/sh
-# Script Version: 1.09 (February 27, 2016)
+# Script Version: 1.09b (March 10, 2016)
 ###########################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -329,7 +329,7 @@ echo -e "${cmd}   /usr/local/etc/rc.d/lighttpd restart${nc}"
 echo " "
 echo " "
 echo " "
-echo -e "${msg}If you need any help, visit the forums here:${nc}" 
-echo -e "${url}http://forums.nas4free.org/viewtopic.php?f=79&t=9383${nc}" 
+echo -e "${msg} If you need any help, visit the forums here:${nc}"
+echo -e "${url} http://forums.nas4free.org/viewtopic.php?f=79&t=9383${nc}"
 echo -e "${sep}"
 echo " "

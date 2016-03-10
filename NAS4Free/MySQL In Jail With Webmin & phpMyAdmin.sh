@@ -1,5 +1,5 @@
 #!/bin/sh
-# Script Version: 1.0-UNTESTED (March 10, 2016)
+# Script Version: 1.0 (March 10, 2016)
 ###########################################################################
 #     This is a script to help assist the installation of MySQL,
 #     phpMyAdmin and Webmin in a jailed environment.
@@ -26,7 +26,7 @@ inf='\033[0;33m'    # Information Text
 webmin () 
 {
 # Confirm with the user
-read -r -p "   Continue? [Y/n] " response
+read -r -p "   Install Webmin? [Y/n] " response
 case "$response" in
     [yY][eE][sS]|[yY]) 
               # If yes, then continue
@@ -64,27 +64,29 @@ echo -e "${msg} 4: Also remove ${cmd}'root'${msg} from the ${cmd}'User for confi
 echo -e "${msg} 5: Now click ${cmd}'Apply'${msg} and you'll return to the Overview page.${nc}"
 echo -e "${msg} 6: Finally, Click ${cmd}'Save'${msg} to save your configuration in${nc}"
 echo -e "${msg}      /usr/local/www/phpMyAdmin/config/config.inc.php.${nc}"
-#Now let’s move that file up one directory to /usr/local/www/phpMyAdmin where phpMyAdmin can make use of it.
-mv /usr/local/www/phpMyAdmin/config/config.inc.php /usr/local/www/phpMyAdmin	
-rm -r /usr/local/www/phpMyAdmin/config
-chmod o-r /usr/local/www/phpMyAdmin/config.inc.php
 echo " "
+echo " Only continue once you have done the above steps"
 read -r -p "   Continue? [Y/n] " response
 case "$response" in
     [yY][eE][sS]|[yY]) 
               # If yes, then continue
               echo -e "${url} Great! Moving on..${nc}"
+              #Now let’s move that file up one directory to /usr/local/www/phpMyAdmin where phpMyAdmin can make use of it.
+              mv /usr/local/www/phpMyAdmin/config/config.inc.php /usr/local/www/phpMyAdmin	
+              rm -r /usr/local/www/phpMyAdmin/config
+              chmod o-r /usr/local/www/phpMyAdmin/config.inc.php
               echo " "
                ;;
     *)
               # Otherwise exit...
               echo " "
               echo -e "${alt} phpMyAdmin wont work without setting it up.${nc}"
-              echo -e "${msg}    Finishing the rest of the script..${nc}"
+              echo -e "${msg} It's not required though so skipping..${nc}"
               echo " "
               ;;
 esac
 }
+
 
 
 echo " "
@@ -96,10 +98,15 @@ echo " "
 echo " " 
 echo -e "${sep}"
 echo -e "${msg}   Let's start with downloading some packages.${nc}"
+echo -e "${msg} If you get an error about '${qry}package management tool${nc}"
+echo -e "${qry} is not yet installed${msg}', just press y then enter.${nc}"
+echo -e " "
+echo -e "${msg} You may also get 2 errors later from Apache:${nc}"
+echo -e "${msg} AH00557 & AH00558, these can be safely ignored.${nc}"
 echo -e "${sep}"
 echo " "
 
-pkg install -y mysql56-server mod_php56 php56-mysql php56-mysqli phpmyadmin apache24
+pkg install -y nano mysql56-server mod_php56 php56-mysql php56-mysqli phpmyadmin apache24
 
 # -------------------------------------------------------
 # MySQL
@@ -142,7 +149,6 @@ echo " "
 echo 'apache24_enable="YES"' >> /etc/rc.conf
 service apache24 start
 cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
-rehash
 
 # Configure Apache to Use PHP Module
 
@@ -156,37 +162,21 @@ echo '        SetHandler application/x-httpd-php-source' >> /usr/local/etc/apach
 echo '    </FilesMatch>' >> /usr/local/etc/apache24/Includes/php.conf
 echo '</IfModule>' >> /usr/local/etc/apache24/Includes/php.conf
 
-service apache24 restart
+# Is this next step even needed anymore?
+# Disabling for now, I don't think we really need this.
+#echo -e "${sep}"
+#echo -e "${msg}   This part needs to be done by you${nc}"
+#echo -e "${sep}"
+#echo " "
+#echo -e "${msg} Find: ${qry}DirectoryIndex index.html${nc}"
+#echo -e "${msg} and add ${qry}index.php${msg} to the end of that line${nc}"
+#echo -e "${msg} It should then look like this:${nc}"
+#echo -e "${qry}    DirectoryIndex index.html index.php${nc}"
+#echo -e "${msg} Once you're done, press Ctrl+X then Y then Enter${nc}"
 
-# -------------------------------------------------------
-# Test PHP Processing
+# nano /usr/local/etc/apache24/httpd.conf 
 
-# touch /usr/local/www/apache24/data/info.php
-# echo '<?php phpinfo(); ?>' >> /usr/local/www/apache24/data/info.php
-# Add this to file
-# <?php phpinfo(); ?>
-
-# Remove test file
-#rm /usr/local/www/apache24/data/info.php
-
-# -------------------------------------------------------
-# Modify Apache
-
-echo " " 
-echo -e "${sep}"
-echo -e "${msg}   This part needs to be done by you${nc}"
-echo -e "${sep}"
-echo " "
-
-echo -e " Find: DirectoryIndex index.html${nc}"
-echo -e " and add index.php to the end of that line${nc}"
-echo -e " It should then look like this:"
-echo -e "    DirectoryIndex index.html index.php"
-echo -e " Once you're done, press Ctrl+X then Y then Enter"
-
-nano /usr/local/etc/apache24/httpd.conf
-
-# Add this to end of file
+# Adding stuff to above file to get phpmyadmin working.
 
 echo '<FilesMatch "\.php$">' >> /usr/local/etc/apache24/httpd.conf
 echo '    SetHandler application/x-httpd-php' >> /usr/local/etc/apache24/httpd.conf
@@ -202,6 +192,8 @@ echo 'Options None' >> /usr/local/etc/apache24/httpd.conf
 echo 'AllowOverride None' >> /usr/local/etc/apache24/httpd.conf
 echo 'Require all granted' >> /usr/local/etc/apache24/httpd.conf
 echo '</Directory>' >> /usr/local/etc/apache24/httpd.conf
+
+service apache24 restart
 
 # -------------------------------------------------------
 # phpMyAdmin
@@ -222,6 +214,7 @@ phpmyadmin
 echo " " 
 echo -e "${sep}"
 echo -e "${msg}   Last step! Restart apache and mysql.${nc}"
+echo -e "${msg}   Reminder: You can safely ignore the AH00557 & AH00558 errors.${nc}"
 echo -e "${sep}"
 echo " "
 
@@ -234,8 +227,12 @@ echo -e "${msg} It looks like we finished here!!! NICE${nc}"
 echo -e "${msg} Now when you have an app that requires a mysql${nc}"
 echo -e "${msg} you can use this jails ip in the host setting${nc}"
 echo " "
-echo " More information will be added to this script later"
-echo " And will also be added to a forum post somewhere."
+echo -e "${msg} You can also head to ${url}http://yourjailip/phpMyAdmin${nc}"
+echo -e "${msg} enter root for the username and use the password you set earlier${nc}"
+echo -e "${msg} to easily create/modify/etc. your new mysql database!${nc}"
+echo " "
+echo -e " More information will be added to this script later"
+echo -e " And will also be added to a forum post somewhere."
 echo " "
 echo -e "${msg} You can get in touch with me any of the ways listed here:${nc}"
 echo -e "${url} http://vengefulsyndicate.com/about-us${nc}"

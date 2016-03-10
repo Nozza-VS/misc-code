@@ -1,5 +1,5 @@
 #!/bin/sh
-# Script Version: 1.09b (March 10, 2016)
+# Script Version: 1.09c (March 11, 2016)
 ###########################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -331,5 +331,7 @@ echo " "
 echo " "
 echo -e "${msg} If you need any help, visit the forums here:${nc}"
 echo -e "${url} http://forums.nas4free.org/viewtopic.php?f=79&t=9383${nc}"
+echo -e "${msg} Or jump on my Discord server${nc}"
+echo -e "${url} https://discord.gg/0bXnhqvo189oM8Cr${nc}"
 echo -e "${sep}"
 echo " "

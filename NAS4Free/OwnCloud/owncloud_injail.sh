@@ -1,5 +1,5 @@
 #!/bin/sh
-# Script Version: 1.09c (March 11, 2016)
+# Script Version: 1.10 (March 11, 2016)
 ###########################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -23,7 +23,7 @@
 ###! IMPORTANT ! DO NOT IGNORE ! ###
 server_port="81"
 server_ip="192.168.1.200"
-owncloud_version="8.2.2"
+owncloud_version="9.0.0"
 ### No need to edit below here ###
 ##### END OF CONFIGURATION SECTION #####
 ###########################################################################
@@ -55,6 +55,32 @@ case "$response" in
               echo -e "${alt}Stopping script..${nc}"
               echo " "
               exit
+              ;;
+esac
+}
+
+trusteddomainerror ()
+{
+# Confirm with the user
+echo -e "${emp} Please finish the owncloud setup before continuing${nc}"
+echo -e "${msg} Head to ${url}https://$server_ip:$server_port ${msg}to do this.${nc}"
+echo -e "${msg} Fill out the page you are presented with and hit finish${nc}"
+read -r -p "   After a few moments, do you have a untrusted domain error? [Y/n] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              echo -e "${url} Doing some last second changes to fix that..${nc}"
+              echo " "
+              # Prevent "Trusted Domain" errors
+              echo "    '${server_ip}'," >> /usr/local/www/owncloud/config/trusted.txt
+              cat "/usr/local/www/owncloud/config/old_config.bak" | \
+                sed '8r /usr/local/www/owncloud/config/trusted.txt' > \
+                "/usr/local/www/owncloud/config/config.php"
+              echo -e " Done, continuing with the rest of the script"
+               ;;
+    *)
+              echo " "
+              echo -e "${qry}Alright then, continuing with script..${nc}"
+              echo " "
               ;;
 esac
 }
@@ -283,6 +309,8 @@ cd "/tmp"
 fetch "https://download.owncloud.org/community/owncloud-${owncloud_version}.tar.bz2"
 tar xf "owncloud-${owncloud_version}.tar.bz2" -C /usr/local/www
 chown -R www:www /usr/local/www/
+
+trusteddomainerror
 
 echo " " 
 echo -e "${sep}"

@@ -1,5 +1,5 @@
 #!/bin/sh
-# Script Version: 1.10 (March 11, 2016)
+# Script Version: 1.11 (March 11, 2016)
 ###########################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -17,7 +17,8 @@
 #   owncloud_version:   This is the version of ownCloud you would like to download.
 #                       You can replace this with "latest" but it isn't recommended
 #                       as updates to owncloud may require an updated script
-#                       This script has only been tested on up to version 8.2.2
+#                       This script has only been tested on most 8.x.x versions
+#                       up to version 9.0.0
 #
 #
 ###! IMPORTANT ! DO NOT IGNORE ! ###
@@ -33,9 +34,9 @@ owncloud_version="9.0.0"
 ###
 #	This is a simple script to automate the installation of OwnCloud within a 
 #	jailed environment.
-#   Copyrighted 2013 by Matthew Kempe under the Beerware License.
-#   Updated by Nostalgist92 as it hadn't been updated in a while I took it upon 
-#   myself to do so that it would work with the most recent N4F version.
+#   Maintainer: Nostalgist92 as it hadn't been updated in a while I took it
+#   upon myself to do so that it would work with the most recent N4F version.
+#   Credits to Matthew Kempe
 ###
 
 
@@ -143,7 +144,7 @@ echo -e "${sep}"
 echo " "
 
 # Install packages
-pkg install -y lighttpd php56-openssl php56-ctype php56-curl php56-dom php56-fileinfo php56-filter php56-gd php56-hash php56-iconv php56-json php56-mbstring php56-mysql php56-pdo php56-pdo_mysql php56-pdo_sqlite php56-session php56-simplexml php56-sqlite3 php56-xml php56-xmlrpc php56-xmlwriter php56-gettext php56-mcrypt php56-zip php56-zlib php56-posix mp3info mysql56-server pecl-apcu
+pkg install -y lighttpd php56-openssl php56-ctype php56-curl php56-dom php56-fileinfo php56-filter php56-gd php56-hash php56-iconv php56-json php56-mbstring php56-mysql php56-pdo php56-pdo_mysql php56-pdo_sqlite php56-session php56-simplexml php56-sqlite3 php56-xml php56-xmlrpc php56-xmlwriter php56-xmlreader php56-gettext php56-mcrypt php56-zip php56-zlib php56-posix mp3info mysql56-server pecl-apcu
 
 echo " " 
 echo -e "${sep}"

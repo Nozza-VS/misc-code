@@ -1,0 +1,10 @@
+External SMB Folder
+
+Add to fstab:
+//smbusername@smbaddress/MySharedFiles /mnt/SMB/MySharedFiles smbfs rw,-N,-I192.168.1.1 0 0
+
+
+For a share with a password, you have to add the username and password to /etc/nsmb.conf:
+
+[SMBADDRESS:SMBUSERNAME] # This must be in all capitals!! Both the hostname and the username need to be in uppercase.
+password=smbpassword

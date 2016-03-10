@@ -3,10 +3,10 @@
 ###########################################################################
 #     This is a script to help assist the installation of MySQL,
 #     phpMyAdmin and Webmin in a jailed environment.
-#     Made by Nostalgist92/Nozza. 
+#     Made by Nostalgist92/Nozza.
 #     Use carefully, I am not responsible for any loss of data.
 ###########################################################################
-# This is NOT a FULLY automated script, you WILL have to do some things 
+# This is NOT a FULLY automated script, you WILL have to do some things
 # to get everything set up successfully
 # Be sure to read carefully!
 ###########################################################################
@@ -23,12 +23,12 @@ cmd='\033[1;35m'    # Command to be entered
 fin='\033[0;32m'    # Green Text
 inf='\033[0;33m'    # Information Text
 
-webmin () 
+webmin ()
 {
 # Confirm with the user
 read -r -p "   Install Webmin? [Y/n] " response
 case "$response" in
-    [yY][eE][sS]|[yY]) 
+    [yY][eE][sS]|[yY])
               # If yes, then continue
               echo -e "${fin} Setting up Webmin..${nc}"
               pkg install -y webmin
@@ -48,7 +48,7 @@ case "$response" in
 esac
 }
 
-phpmyadmin () 
+phpmyadmin ()
 {
 echo " "
 mkdir /usr/local/www/phpMyAdmin/config && chmod o+w /usr/local/www/phpMyAdmin/config
@@ -68,11 +68,11 @@ echo " "
 echo " Only continue once you have done the above steps"
 read -r -p "   Continue? [Y/n] " response
 case "$response" in
-    [yY][eE][sS]|[yY]) 
+    [yY][eE][sS]|[yY])
               # If yes, then continue
               echo -e "${url} Great! Moving on..${nc}"
               #Now let’s move that file up one directory to /usr/local/www/phpMyAdmin where phpMyAdmin can make use of it.
-              mv /usr/local/www/phpMyAdmin/config/config.inc.php /usr/local/www/phpMyAdmin	
+              mv /usr/local/www/phpMyAdmin/config/config.inc.php /usr/local/www/phpMyAdmin
               rm -r /usr/local/www/phpMyAdmin/config
               chmod o-r /usr/local/www/phpMyAdmin/config.inc.php
               echo " "
@@ -95,7 +95,7 @@ echo -e "${msg}   Welcome to the MySQL guided setup script!${nc}"
 echo -e "${sep}"
 echo " "
 echo " "
-echo " " 
+echo " "
 echo -e "${sep}"
 echo -e "${msg}   Let's start with downloading some packages.${nc}"
 echo -e "${msg} If you get an error about '${qry}package management tool${nc}"
@@ -111,7 +111,7 @@ pkg install -y nano mysql56-server mod_php56 php56-mysql php56-mysqli phpmyadmin
 # -------------------------------------------------------
 # MySQL
 
-echo " " 
+echo " "
 echo -e "${sep}"
 echo -e "${msg}   Great, now let's get MySQL set up.${nc}"
 echo -e "${sep}"
@@ -129,7 +129,7 @@ mysql_secure_installation
 # -------------------------------------------------------
 # Webmin
 
-echo " " 
+echo " "
 echo -e "${sep}"
 echo -e "${msg}   Would you like Webmin also? (Not required)${nc}"
 echo -e "${sep}"
@@ -140,7 +140,7 @@ webmin
 # -------------------------------------------------------
 # Apache
 
-echo " " 
+echo " "
 echo -e "${sep}"
 echo -e "${msg}   Getting there! Time for Apache setup.${nc}"
 echo -e "${sep}"
@@ -174,7 +174,7 @@ echo '</IfModule>' >> /usr/local/etc/apache24/Includes/php.conf
 #echo -e "${qry}    DirectoryIndex index.html index.php${nc}"
 #echo -e "${msg} Once you're done, press Ctrl+X then Y then Enter${nc}"
 
-# nano /usr/local/etc/apache24/httpd.conf 
+# nano /usr/local/etc/apache24/httpd.conf
 
 # Adding stuff to above file to get phpmyadmin working.
 
@@ -198,7 +198,7 @@ service apache24 restart
 # -------------------------------------------------------
 # phpMyAdmin
 
-echo " " 
+echo " "
 echo -e "${sep}"
 echo -e "${msg}   Now for phpMyAdmin${nc}"
 echo -e "${msg}   This may seem confusing but follow the steps closely${nc}"
@@ -211,7 +211,7 @@ phpmyadmin
 # -------------------------------------------------------
 # Now restart Apache, MySQL too for good measure.
 
-echo " " 
+echo " "
 echo -e "${sep}"
 echo -e "${msg}   Last step! Restart apache and mysql.${nc}"
 echo -e "${msg}   Reminder: You can safely ignore the AH00557 & AH00558 errors.${nc}"
@@ -221,7 +221,7 @@ echo " "
 service apache24 restart
 service mysql-server restart
 
-echo " " 
+echo " "
 echo -e "${sep}"
 echo -e "${msg} It looks like we finished here!!! NICE${nc}"
 echo -e "${msg} Now when you have an app that requires a mysql${nc}"

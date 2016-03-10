@@ -1,4 +1,5 @@
 #!/bin/sh
+# Script Version: TESTING-1.0 (March 10, 2016)
 #	Install script for Deluge in a jailed environment
 #   See http://forums.nas4free.org/viewtopic.php?f=79&t=5418 or
 #   http://forums.nas4free.org/viewtopic.php?f=79&t=7157 for more info.
@@ -17,6 +18,16 @@ deluge_user="JonDoe"
 deluge_user_password="MyC0mpL3xPass"
 
 ##### END CONFIGURATION #####
+
+# Add some colour!
+nc='\033[0m'        # No Color
+alt='\033[0;31m'    # Alert Text
+emp='\033[1;31m'    # Emphasis Text
+msg='\033[1;37m'    # Message Text
+url='\033[1;32m'    # URL
+qry='\033[0;36m'    # Query Text
+sep='\033[1;30m-------------------------------------------------------\033[0m'    # Line Seperator
+cmd='\033[1;35m'    # Command to be entered
 
 confirm ()
 {
@@ -45,9 +56,9 @@ exerr () { echo -e "$*" >&2 ; exit 1; }
 
 
 
-echo -e "\033[1;30m##################################################\033[0m"
+echo -e "${sep}"
 echo -e "     \033[1;37mWelcome to the Deluge setup!\033[0m"
-echo -e "\033[1;30m################################################## \033[0m"
+echo -e "${sep}"
 echo " "
 echo " "
 echo -e "   \033[1;31mThis should be run in host NAS system\033[0m";
@@ -56,17 +67,17 @@ echo -e "   \033[1;31mExit your jail and start again\033[0m";
 echo " "
 continue
 echo " "
-echo -e "\033[1;30m##################################################\033[0m"
+echo -e "${sep}"
 echo -e " \033[1;37mLet's get started with adding a user\033[0m"
-echo -e "\033[1;30m################################################## \033[0m"
+echo -e "${sep}"
 echo " "
 
 pw useradd -n deluge -c "Deluge BitTorrent Client" -s /sbin/nologin -w no
 
 echo " "
-echo -e "\033[1;30m##################################################\033[0m"
+echo -e "${sep}"
 echo -e " \033[1;37mNow to enter the jail and set up some basic stuff\033[0m"
-echo -e "\033[1;30m################################################## \033[0m"
+echo -e "${sep}"
 echo " "
 
 jexec $jail csh
@@ -79,9 +90,9 @@ mkdir /.python-eggs
 chmod 777 /.python-eggs
 
 echo " "
-echo -e "\033[1;30m##################################################\033[0m"
+echo -e "${sep}"
 echo -e " \033[1;37mTime to install the packages\033[0m"
-echo -e "\033[1;30m################################################## \033[0m"
+echo -e "${sep}"
 echo " "
 
 pkg install -y deluge nano
@@ -129,8 +140,8 @@ echo " Now you should be able to head to http://jailsipaddress:8112 and login"
 echo " using the password 'deluge' without the quotes"
 
 echo " "
-echo -e "\033[1;30m##################################################\033[0m"
+echo -e "${sep}"
 echo " That should be it!"
 echo " Happy torrenting!!"
-echo -e "\033[1;30m################################################## \033[0m"
+echo -e "${sep}"
 echo " "

@@ -1,5 +1,5 @@
 #!/bin/sh
-# Script Version: 1.11 (March 11, 2016)
+# Script Version: 1.11b (March 11, 2016)
 ###########################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -311,8 +311,6 @@ fetch "https://download.owncloud.org/community/owncloud-${owncloud_version}.tar.
 tar xf "owncloud-${owncloud_version}.tar.bz2" -C /usr/local/www
 chown -R www:www /usr/local/www/
 
-trusteddomainerror
-
 echo " " 
 echo -e "${sep}"
 echo -e "${msg} Adding lighttpd to rc.conf${nc}"
@@ -338,6 +336,14 @@ echo -e "${sep}"
 echo " "
 
 /usr/local/etc/rc.d/lighttpd start
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Now to finish owncloud setup${nc}"
+echo -e "${sep}"
+echo " "
+
+trusteddomainerror
 
 echo " " 
 echo -e "${sep}"

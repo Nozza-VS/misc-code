@@ -1,0 +1,825 @@
+/* Emby version : 3.0.5882.0 and after */
+
+/* Head to Emby dashboard. Under "Server" click "Settings" */
+/* Click "Branding" then copy this entire file in to "Custom css" */
+/* Scroll to the bottom of the page and hit "Save" then refresh the page! */
+
+/* Colors */
+
+/* Red :         #990000 & (153, 0, 0)
+/* Dark Red :    #660000
+/* Gray :        #404040 (Buttons)
+/* Dark Gray 1 : #1E1E1E
+/* Dark Gray 2 : #282828
+/* Dark Gray 3 : #1A1A1A (Background)
+/* Dark Gray 4 : #303030 (Dark line divider & panels)
+/* Black 1 :     #080808 & (08,08,08)
+/* Black 2 :     #101010 (Pop-ups)
+/* White 1   :   #CCCCCC
+/* White 2   :   #AAAAAA (Field descriptions)
+/* White 3   :   #EDEDED (Button titles)
+/* White 4   :   #EEEEEE
+
+/* ------------ Dark Theme & Colored highlight ------------ */
+
+/* ------------ Table of Contents ------------ */
+/* ------ 1.0 : Red Highlights ------ */
+/* --- 1.1 : Buttons --- */
+/* Checkboxes */
+/* Circles */
+/* Dashboard */
+/* Rectangles & Others */
+/* Flow Buttons */
+/* --- 1.2 : Details --- */
+/* Links */
+/* Font colors */
+/* Home Page & Library */
+/* Icons & OSD */
+/* Pop-ups */
+/* Lines & Others */
+/* Metadata Editor Page */
+
+/* ------ 2.0 : Removed elements ------ */
+/* --- 2.1 : Home page & Library --- */
+/* --- 2.2 : Metadata Editor Page --- */
+
+/* ------ 3.0 : Black & Gray ------ */
+/* --- 3.1 : Details --- */
+/* Corrections */
+/* Home Page Left Side Panel */
+/* Scrollbars */
+
+/* ------ 4.0 : Dark Theme (Can be removed) ------ */
+/* --- 4.1 : Buttons --- */
+/* Dashboard */
+/* --- 4.2 : Details --- */
+/* Panels */
+/* Font colors */
+/* Pop-ups */
+/* Lines & Others */
+/* --- 4.3 : Dashboard Left Side Panel --- */
+
+/* ------ 5.0 : Remove the Emby Logo and text from Login Screen ------ */
+/* --- 5.1 : Add our own logo and modify sizes --- */
+
+
+/* ---------------------------------------------------- */
+
+/* ------ 1.0 : Red Highlights ------ */
+
+/* --- 1.1 : Buttons --- */
+/* Checkboxes */
+.ui-checkbox input, .ui-radio input {
+border-color: #990000;
+background: #990000 !important;
+}
+.ui-page-theme-a .ui-radio-on:after, html .ui-bar-a .ui-radio-on:after, html .ui-body-a .ui-radio-on:after, html body .ui-group-theme-a .ui-radio-on:after, .ui-btn.ui-radio-on.ui-btn-a:after {
+border-color: #990000;
+}
+div#checkbox.checked.style-scope.paper-checkbox {
+background-color: #990000 !important;
+border-color: #990000;
+}
+.ui-page-theme-a .ui-btn.ui-btn-active,
+html .ui-bar-a .ui-btn.ui-btn-active,
+html .ui-body-a .ui-btn.ui-btn-active,
+html body .ui-group-theme-a .ui-btn.ui-btn-active,
+html head + body .ui-btn.ui-btn-a.ui-btn-active,
+.ui-page-theme-a .ui-checkbox-on:after,
+html .ui-bar-a .ui-checkbox-on:after,
+html .ui-body-a .ui-checkbox-on:after,
+html body .ui-group-theme-a .ui-checkbox-on:after,
+.ui-btn.ui-checkbox-on.ui-btn-a:after,
+.ui-page-theme-a .ui-flipswitch-active,
+html .ui-bar-a .ui-flipswitch-active,
+html .ui-body-a .ui-flipswitch-active,
+html body .ui-group-theme-a .ui-flipswitch-active,
+html body .ui-flipswitch.ui-bar-a.ui-flipswitch-active,
+.ui-page-theme-a .ui-slider-track .ui-btn-active,
+html .ui-bar-a .ui-slider-track .ui-btn-active,
+html .ui-body-a .ui-slider-track .ui-btn-active,
+html body .ui-group-theme-a .ui-slider-track .ui-btn-active,
+html body div.ui-slider-track.ui-body-a .ui-btn-active {
+	background-color: #990000;
+	border-color: #282828;
+	color: #990000;
+	text-shadow: 0 1px 0 #282828;
+}
+/* Circles */
+paper-fab.btnUserItemRating.x-scope.paper-fab-0 {
+background: #404040 !important
+}
+.blue.x-scope.paper-fab-0 {
+background-color: #990000 !important;
+}
+.red.x-scope.paper-fab-0 {
+background-color: #990000 !important;
+}
+.green.x-scope.paper-fab-0 {
+background-color: #990000 !important;
+}
+.orange.x-scope.paper-fab-0 {
+background-color: #990000 !important;
+}
+paper-fab.btnPlay.detailFloatingButton.x-scope.paper-fab-0 {
+background-color: #990000 !important;
+}
+paper-fab.x-scope.paper-fab-0 {
+background-color: #990000 !important;
+}
+.btnUserItemRating {
+color: #fff;
+}
+.btnUserItemRatingOn {
+color: #990000 !important;
+}
+/* Dashboard */
+a.btn.btnActionAccent {
+background-color: #990000 !important;
+}
+paper-button.block.x-scope.paper-button-0 {
+background-color: #990000 !important;
+}
+paper-button.submit.mini.x-scope.paper-button-0 {
+background-color: #990000 !important;
+}
+div[data-role="controlgroup"] a.ui-btn-active {
+    background: #990000 !important;;
+}
+paper-button.btnRefresh.x-scope.paper-button-0 {
+    background-color: #990000 !important;
+    color: #FFFFFF !important;
+}
+paper-button.subdued.btnRestartContainer.x-scope.paper-button-0 {
+    background: #101010 !important;
+color: #990000;
+}
+paper-button#btnShutdown.subdued.x-scope.paper-button-0 {
+    background: #101010 !important;
+color: #990000;
+}
+/* Rectangles & Others */
+paper-button.more {
+    color: #990000;
+}
+paper-button[raised].more {
+    background: #990000;
+    color: #e8e8e8;
+}
+paper-button.sendMessageElement.accent.x-scope.paper-button-0 {
+    background: #990000 !important;;
+}
+paper-button.typeTextElement.accent.x-scope.paper-button-0 {
+    background: #990000 !important;;
+}
+button#btnInstall {
+    background: #990000 !important;
+}
+a[data-role='button'][data-theme='b'], button[data-theme='b']:not([data-role='none']):not(.clearButton) {
+    background: #990000 !important;
+    color: #fff !important;
+}
+paper-button[raised].secondary {
+    background: #990000;
+}
+/* Flow Buttons */
+a[data-role='button']:focus {
+	-webkit-box-shadow: 0 0 12px #990000;
+	-moz-box-shadow: 0 0 12px #990000;
+	box-shadow: 0 0 12px #990000;
+}
+button:not([data-role='none']):not(.clearButton):focus {
+	-webkit-box-shadow: 0 0 12px #990000;
+	-moz-box-shadow: 0 0 12px #990000;
+	box-shadow: 0 0 12px #990000;
+}
+/* --- 1.2 : Details --- */
+:focus {
+    outline: #990000 auto 5px;
+}
+/* Links */
+.ui-page-theme-a a,
+html .ui-bar-a a,
+html .ui-body-a a,
+html body .ui-group-theme-a a {
+	color: #990000;
+	font-weight: bold;
+}
+.ui-page-theme-a a:visited,
+html .ui-bar-a a:visited,
+html .ui-body-a a:visited,
+html body .ui-group-theme-a a:visited {
+    color: #990000;
+}
+.ui-page-theme-a a:hover,
+html .ui-bar-a a:hover,
+html .ui-body-a a:hover,
+html body .ui-group-theme-a a:hover {
+	color: #999999;
+}
+.ui-page-theme-b a,
+html .ui-bar-b a,
+html .ui-body-b a,
+html body .ui-group-theme-b a {
+	color: #990000;
+}
+.ui-page-theme-a a:active,
+html .ui-bar-a a:active,
+html .ui-body-a a:active,
+html body .ui-group-theme-a a:active {
+	color: #660000;
+}
+.ui-page-theme-b a:visited, html .ui-bar-b a:visited, html .ui-body-b a:visited, html body .ui-group-theme-b a:visited {
+  color: #990000;
+}
+.ui-page-theme-b a:hover, html .ui-bar-b a:hover, html .ui-body-b a:hover, html body .ui-group-theme-b a:hover {
+  color: #999999;
+}
+.ui-page-theme-b a:active,
+html .ui-bar-b a:active,
+html .ui-body-b a:active,
+html body .ui-group-theme-b a:active {
+	color: #660000;
+}
+.selectedCharacter {
+    color: #990000 !important;
+}
+/* Font colors */
+.type-interior h2 {
+    color: #990000;
+}
+.ui-page-theme-a .label-is-highlighted label {
+    color: #990000 !important;
+}
+.ui-page-theme-b .label-is-highlighted label {
+    color: #990000 !important;
+}
+p.disclaimer {
+    color: #990000 !important;
+    font-size: 20px;
+}
+select {
+    width: 100%;
+    margin: 0 0 .5em 0;
+    background: none;
+    border: 1px solid rgb(221,221,221);
+    border-width: 0 0 1px 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    font-size: inherit;
+    font-family: inherit;
+    font-weight: bold;
+    color: #990000;
+    padding: .6em .8em .3em 0;
+    cursor: pointer;
+}
+/* Home Page & Library */
+.libraryViewNav .ui-btn-active {
+  border-bottom-color: #990000;
+}
+.libraryViewNav a:not(.ui-btn-active):hover {
+color: #990000 !important;
+}
+div[data-itemtype="CollectionFolder"] .cardContent,
+div[data-itemtype="UserView"] .cardContent,
+div[data-itemtype="PlaylistsFolder"] .cardContent{
+  border: 1px solid rgba(153, 0, 0,.5);
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(153, 0, 0,.6);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(153, 0, 0,.6);
+}
+.galleryImageContainer:hover {
+	-moz-box-shadow: 0 0 0 5px #990000;
+	-webkit-box-shadow: 0 0 0 5px #990000;
+	box-shadow: 0 0 0 5px #990000;
+}
+.itemDetailGalleryLink img:hover {
+    -moz-box-shadow: 0 0 20px 3px #990000;
+    -webkit-box-shadow: 0 0 20px 3px #990000;
+    box-shadow: 0 0 20px 3px #990000;
+}
+/* Icons & OSD */
+paper-button.accent.block.x-scope.paper-button-0 {
+background-color: #990000 !important;
+}
+paper-button.cancel.block.btnForgotPassword.x-scope.paper-button-0 {
+background-color: #404040 !important;
+}
+.playedIndicator {
+background-color: #990000;
+}
+iron-icon#icon.style-scope.paper-icon-button.x-scope.iron-icon-0 {
+    color: #990000 !important;
+}
+.paper-slider-0 #sliderKnobInner.paper-slider {
+    background-color: #990000;
+    border-color: #990000;
+}
+.paper-slider-0 #sliderKnobInner.paper-slider::before {
+    background-color: #990000 !important;
+}
+div#sliderKnobInner.style-scope.paper-slider {
+    background: #990000 !important;
+}
+div#primaryProgress.style-scope.paper-progress {
+    background: #990000 !important;
+}
+div#selectionBar.align-bottom.style-scope.paper-tabs {
+    background: #990000 !important;
+}
+a.ui-collapsible-heading-toggle.ui-btn.ui-btn-icon-left.ui-btn-inherit.ui-icon-minus:focus {
+	-webkit-box-shadow: 0 0 12px #990000;
+	-moz-box-shadow: 0 0 12px #990000;
+	box-shadow: 0 0 12px #990000;
+}
+a.ui-collapsible-heading-toggle.ui-btn.ui-btn-icon-left.ui-btn-inherit.ui-icon-plus:focus {
+	-webkit-box-shadow: 0 0 12px #990000;
+	-moz-box-shadow: 0 0 12px #990000;
+	box-shadow: 0 0 12px #990000;
+}
+a.ui-collapsible-heading-toggle.ui-btn.ui-btn-icon-left.ui-btn-inherit.ui-icon-minus:focus {
+	-webkit-box-shadow: 0 0 12px #990000;
+	-moz-box-shadow: 0 0 12px #990000;
+	box-shadow: 0 0 12px #990000;
+}
+a.ui-collapsible-heading-toggle.ui-btn.ui-btn-icon-left.ui-btn-inherit.ui-icon-plus:focus {
+	-webkit-box-shadow: 0 0 12px #990000;
+	-moz-box-shadow: 0 0 12px #990000;
+	box-shadow: 0 0 12px #990000;
+}
+.levelNormal {
+    background-color: #990000;
+}
+/* Pop-ups */
+.paper-dialog-0 .buttons {
+    color: #990000;
+}
+paper-button.actionSheetMenuItem.x-scope.paper-button-0 {
+    color: #990000;
+}
+paper-button.actionSheetMenuItem.x-scope.paper-button-0:hover {
+    color: #101010;
+    background-color: #990000;
+}
+.promptDialogContent paper-button {
+    color: #990000;
+}
+/* Lines & Others */
+div.underline.style-scope.paper-input-container {
+    background-color: #990000 !important;
+}
+div.focused-line.style-scope.paper-input-container {
+    background-color: #990000 !important;
+}
+paper-tabs #selectionBar {
+    background-color: #990000 !important;
+}
+/* Metadata Editor Page */
+paper-button.submit {
+    color: #990000;
+}
+paper-button[raised].submit {
+    background: #990000;
+    color: #e8e8e8;
+}
+div.jstree-wholerow.jstree-wholerow-clicked {
+    background: #990000 !important;
+    color: #FFFFFF !important;
+}
+.libraryTree .jstree-wholerow-hovered {
+    background: #444444 !important;
+}
+.remoteImageContainer .remoteImage:hover, .remoteImageContainer .searchImageContainer:hover {
+    -moz-box-shadow: 0 0 0 5px #990000;
+    -webkit-box-shadow: 0 0 0 5px #990000;
+    box-shadow: 0 0 0 5px #990000;
+}
+.libraryTree .jstree-default .jstree-hovered {
+	color: #4B0082 !important;
+}
+a.jstree-anchor {
+color: #FFFFFF !important;
+}
+paper-button.btnHeaderSave.accent.x-scope.paper-button-0 {
+    color: #990000 !important;
+}
+
+/* ------ 2.0 : Removed elements ------ */
+/* --- 2.1 : Home page & Library --- */
+#similarCollapsible{ display: none !important;}
+#scenesCollapsible{ display: none !important;}
+/* --- 2.2 : Metadata Editor Page --- */
+img[src='css/images/editor/missingtrailer.png'] {
+  display:none;
+}
+
+/* ------ 3.0 : Black & Gray ------ */
+
+/* --- 3.1 : Details --- */
+/* Corrections */
+.viewMenuBar.semiTransparent {
+    background-color: rgba(08,08,08,.8);
+}
+.itemBackdropContent {
+    background-color: rgba(08,08,08,.8);
+}
+h1, h1 a {
+    font-size: 22px;
+}
+.directoryPickerHeadline {
+    color: #FFFFFF;
+    background: #444444;
+}
+p.directoryPickerHeadline {
+    color: #FFFFFF;
+    background: #303030;
+}
+/* Home Page Left Side Panel */
+a.lnkMediaFolder.sidebarLink.selectedMediaFolder:visited {
+    background: #990000 !important;
+}
+.darkDrawer .sidebarLink.selectedSidebarLink, .darkDrawer .selectedMediaFolder {
+    background: #990000 !important;
+}
+/* Scrollbars */
+::-webkit-scrollbar-corner {
+      background-color: #3B3B3B;
+}
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+    background-color: #3B3B3B;
+}
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    background: #888888;
+}
+
+/* ------ 4.0 : Dark Theme (Can be removed) ------ */
+
+/* --- 4.1 : Buttons --- */
+/* Dashboard */
+a[data-role='button'], button:not([data-role='none']):not(.clearButton) {
+    border: 1px solid #282828 !important;
+    color: #EDEDED !important;
+    background: #404040 !important
+}
+paper-button.cancel.block.btnCancel.x-scope.paper-button-0 {
+background-color: #404040 !important
+}
+paper-button.cancel.block.x-scope.paper-button-0 {
+background-color: #404040 !important
+}
+paper-button.btnSync.x-scope.paper-button-0 {
+background-color: #404040 !important
+}
+paper-button#expandButton.emby-collapsible-button.style-scope.emby-collapsible.x-scope.paper-button-0 {
+    border: 1px solid #303030;
+    background-color: #303030;
+}
+a.ui-collapsible-heading-toggle.ui-btn.ui-icon-plus.ui-btn-icon-left.ui-btn-inherit  {
+background-color: #303030 !important;
+border-color: #303030;
+color: #EDEDED;
+}
+a.ui-collapsible-heading-toggle.ui-btn.ui-btn-icon-left.ui-btn-inherit.ui-icon-minus {
+background-color: #303030 !important;
+border-color: #303030;
+color: #EDEDED;
+}
+
+/* --- 4.2 : Details --- */
+/* Panels */
+div.ui-page-theme-a.ui-body-a {
+    background: #1A1A1A !important;
+}
+div.paperList {
+  background-color: #303030;
+  color: #CCCCCC !important;
+}
+.paperList {
+  background-color: #303030;
+  color: #CCCCCC !important;
+}
+paper-icon-item.x-scope.paper-icon-item-0 {
+  background-color: #303030;
+  color: #CCCCCC !important;
+}
+div.paperList.activityItems.activityLogListWidget {
+  background-color: #303030;
+  color: #CCCCCC !important;
+}
+div#criticRatingSummary.paperList {
+  background-color: #303030;
+  color: #CCCCCC !important;
+}
+div.paperList.latestNewsItems {
+  background-color: #303030;
+  color: #CCCCCC !important;
+}
+.activeSession:not(.playingSession) .sessionNowPlayingInnerContent {
+    background-color: #303030;
+    color: #CCCCCC;
+}
+.ui-body-a .emby-collapsible-content {
+    border: 1px solid #101010;
+    background-color: #101010;
+}
+div.ui-collapsible-content.ui-body-inherit {
+    border: 1px solid #101010;
+    background-color: #101010;
+}
+
+label.ui-btn.ui-corner-all.ui-btn-inherit.ui-btn-icon-left.ui-radio-on {
+    background-color: #303030;
+    color: #FFFFFF;
+    border: 1px solid #282828;
+}
+label.ui-btn.ui-corner-all.ui-btn-inherit.ui-btn-icon-left.ui-radio-off {
+    background-color: #303030;
+    color: #EDEDED;
+    border: 1px solid #282828;
+}
+label.ui-btn.ui-corner-all.ui-btn-inherit.ui-btn-icon-left.ui-checkbox-off {
+    background-color: #303030;
+    color: #EDEDED;
+    border: 1px solid #101010;
+}
+label.ui-btn.ui-corner-all.ui-btn-inherit.ui-btn-icon-left.ui-checkbox-on {
+    background-color: #303030;
+    color: #FFFFFF;
+    border: 1px solid #101010;
+}
+div.cardBox.visualCardBox {
+background-color: #303030 !important;
+color: #CCCCCC !important;
+}
+div.editorTileFooter {
+background: #303030 !important;
+color: #CCCCCC !important;
+}
+a.btnLocalReaderUp.btnLocalReaderMove {
+background: #303030 !important;
+color: #CCCCCC !important;
+border-color: #282828;
+}
+a.btnLocalReaderDown.btnLocalReaderMove {
+background: #303030 !important;
+color: #CCCCCC !important;
+border-color: #282828;
+}
+ul[data-role="listview"], ul[data-role="listview"] > li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-color: #282828;
+}
+li.localReaderOption {
+background: #303030 !important;
+color: #CCCCCC !important;
+border-color: #282828;
+}
+div.downloadLanguages.paperList.paperCheckboxList {
+background: #101010 !important;
+color: #CCCCCC !important;
+}
+
+/* Font colors */
+h1.pageTitle {
+    color: #FFFFFF !important;
+    font-size: 30px;
+}
+h1 {
+    color: #CCCCCC !important;
+}
+select#selectLocalizationLanguage {
+    color: #990000;
+}
+p {
+	color: #CCCCCC !important;
+}
+input#input.style-scope.paper-input {
+	color: #FFFFFF !important;
+}
+.ui-body-a .emby-collapsible-title {
+    color: #EDEDED;
+}
+textarea#textarea.style-scope.iron-autogrow-textarea {
+    color: #FFFFFF;
+}
+.ui-body-a .fieldDescription {
+    color: #AAAAAA;
+}
+span.logoLibraryMenuButtonText {
+    color: #FFFFFF;
+}
+div#appVersionNumber {
+    color: #CCCCCC;
+}
+div.detailSectionHeader {
+    color: #CCCCCC;
+}
+table.tblApiKeys.stripedTable.ui-responsive.table-stroke.ui-table.ui-table-reflow {
+    color: #CCCCCC;
+}
+div#checkboxLabel.style-scope.paper-checkbox {
+    color: #AAAAAA;
+}
+.paper-dialog-0 h2 {
+    color: #FFFFFF;
+}
+h3 {
+    color: #CCCCCC;
+}
+label {
+    color: #AAAAAA;
+}
+fieldset {
+color: #AAAAAA;
+}
+span.storeReviewCount {
+color: #AAAAAA;
+}
+div#revisionHistory {
+color: #AAAAAA;
+}
+input:not(.paper-input):not(.likePaperText):not([type='checkbox']):not([type='radio']):not([type='file']):not([type='range']) {
+    -webkit-appearance: none;
+    -webkit-font-smoothing: antialiased;
+    -webkit-rtl-ordering: logical;
+    -webkit-user-select: text;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: inherit;
+    height: 28.5938px;
+    letter-spacing: normal;
+    line-height: 18.2px;
+    list-style-image: none;
+    list-style-position: outside;
+    list-style-type: none;
+    min-height: 28.6px;
+    padding-bottom: 5.2px;
+    padding-left: 5.2px;
+    padding-right: 5.2px;
+    padding-top: 5.2px;
+    text-align: left;
+    text-indent: 0;
+    text-rendering: auto;
+    text-shadow: none;
+    text-transform: none;
+    white-space: nowrap;
+    word-spacing: 0;
+    writing-mode: lr-tb;
+    -webkit-writing-mode: horizontal-tb;
+    background: #080808;
+    width: 100%;
+    border: 1px solid #282828;
+    color: #FFFFFF;
+    margin: 0 0 3px 0;
+    border-radius: 4px;
+    display: block;
+}
+table.tblOrganizationResults.stripedTable.ui-responsive.table-stroke.ui-table.ui-table-reflow {
+    color: #CCCCCC;
+}
+table#movie-table.ui-responsive.ui-table.ui-table-reflow {
+    color: #CCCCCC;
+}
+div.syncActivity {
+    color: #CCCCCC;
+}
+div.ui-controlgroup-label {
+    color: #CCCCCC;
+}
+.ui-body-a {
+  color: #CCCCCC !important;
+}
+/* Pop-ups */
+div.ui-bar-a {
+    background: #101010 !important;
+    border-color: #101010;
+    color: #FFFFFF;
+}
+div#popupAddTrigger.popup.ui-popup.ui-body-inherit.ui-overlay-shadow.ui-corner-all {
+    background: #101010 !important;
+    border-color: #080808;
+}
+paper-dialog.paper-dialog-0 {
+    background: #101010;
+    color: #FFFFFF;
+}
+div#identificationHeaderPopup.popup.ui-popup.ui-body-inherit.ui-overlay-shadow.ui-corner-all {
+    background: #101010 !important;
+    border-color: #080808;
+}
+div#subtitleProfilePopup.popup.ui-popup.ui-body-inherit.ui-overlay-shadow.ui-corner-all {
+    background: #101010 !important;
+    border-color: #080808;
+}
+div#xmlAttributePopup.popup.ui-popup.ui-body-inherit.ui-overlay-shadow.ui-corner-all {
+    background: #101010 !important;
+    border-color: #080808;
+}
+/* Lines & Others */
+div.sidebarDivider {
+    background: #303030 !important;
+}
+div.ui-bar-inherit {
+    background: #303030 !important;
+}
+.paper-checkbox-0 #checkboxContainer.paper-checkbox {
+    display: inline-block;
+    position: relative;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    vertical-align: middle;
+    background-color: #282828;
+}
+div#checkboxContainer.style-scope.paper-checkbox {
+    border-color: #282828;
+}
+div#checkbox.style-scope.paper-checkbox {
+    border-color: #282828;
+}
+.ui-body-a .detailSectionHeader {
+    border: 1px solid #303030;
+    border-width: 0 0 1px 0;
+}
+paper-item.lnkPath.lnkDirectory.x-scope.paper-item-0 {
+    border-bottom: 1px solid #404040;
+    background-color: #303030;
+}
+.directoryPicker paper-item {
+    min-height: 36px;
+    border-bottom: 1px solid #404040;
+    outline: none;
+    cursor: pointer;
+    background-color: #303030;
+}
+
+/* --- 4.3 : Dashboard Left Side Panel --- */
+div.sidebarHeader {
+color: #A5A5A5 !important;
+}
+.ui-page-theme-a .content-secondary {
+  background: #282828;
+}
+.sidebarLink:hover {
+  background-color: #444444;
+}
+.ui-page-theme-a .ui-bar-inherit {
+  border-color: #555;
+  background-color: #555;
+  color: #EEEEEE !important;
+}
+.ui-page-theme-a .sidebarLinkIcon {
+  color: #EEEEEE !important;
+}
+a.sidebarLink.selectedSidebarLink:visited {
+    background: #990000 !important;
+}
+.sidebarLinkText{
+color: #EEEEEE !important;
+}
+:focus {
+    outline: #990000 auto 5px;
+}
+
+/* ------ 5.0 : Remove the Emby Logo and text from Login Screen ------ */
+
+.logoLibraryMenuButtonText {
+	display: none;
+}
+img[src*="css/images/mblogoicon.png"] {
+	display: none;
+}
+
+/* --- 5.1 : Add our own logo and modify sizes --- */
+
+#loginPage {
+    padding-top: 90px;
+}
+#loginPage:before {
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    top: 15px;
+    content: " ";
+    background: url("/web/css/images/VSBanner.png");
+    background-size: 100% 100%;
+    width: 1080px;
+    height: 175px;
+}
+
+/* END */
+
+
+
+/* --- To Do List --- */
+/* Dashboard Active Device Blocks */
+/* Dashboard Progress Bar Playback */
+/* Pop-up's Blue Labels */

@@ -1,5 +1,5 @@
 #!/bin/sh
-# Script Version: 1.11b (March 11, 2016)
+# Script Version: 1.12 (March 11, 2016)
 ###########################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -63,12 +63,25 @@ esac
 trusteddomainerror ()
 {
 # Confirm with the user
+echo " "
 echo -e "${emp} Please finish the owncloud setup before continuing${nc}"
 echo -e "${msg} Head to ${url}https://$server_ip:$server_port ${msg}to do this.${nc}"
 echo -e "${msg} Fill out the page you are presented with and hit finish${nc}"
-read -r -p "   After a few moments, do you have a untrusted domain error? [Y/n] " response
+echo " "
+echo -e "${msg} Admin username & password = whatever you choose${nc}"
+echo " "
+echo -e "${emp} Make sure you click 'Storage & database'${nc}"
+echo " "
+echo -e "${msg} Database user = ${qry}root${nc} | Database password = ${nc}"
+echo -e "${msg} the ${qry}mysql password${msg} you chose earlier during the script.${nc}"
+echo -e "${msg} Database name = your choice (just ${qry}owncloud${msg} is fine)${nc}"
+echo " "
+echo " Once the page reloads,"
+read -r -p "   do you have a 'untrusted domain' error? [Y/n] " response
 case "$response" in
     [yY][eE][sS]|[yY])
+              # If yes, let's fix that.
+              echo " "
               echo -e "${url} Doing some last second changes to fix that..${nc}"
               echo " "
               # Prevent "Trusted Domain" errors
@@ -79,8 +92,9 @@ case "$response" in
               echo -e " Done, continuing with the rest of the script"
                ;;
     *)
+              # If no, just continue like normal.
               echo " "
-              echo -e "${qry}Alright then, continuing with script..${nc}"
+              echo -e "${qry} Great!, no need to do anything, continuing with script..${nc}"
               echo " "
               ;;
 esac
@@ -349,14 +363,13 @@ echo " "
 echo -e "${sep}"
 echo -e "${msg} It looks like we finished here!!! NICE${nc}"
 echo -e "${msg} Now you can head to ${url}https://$server_ip:$server_port${nc}"
-echo -e "${msg}    (as defined at the start of the script)${nc}"
-echo -e "${msg} via your browser and complete your ownCloud setup!${nc}"
+echo -e "${msg} to use your owncloud whenever you wish!${nc}"
 echo " "
 echo " "
 echo " "
-echo -e "${emp}Memory Caching ${msg}will have to be enabled manually.${nc}"
+echo -e "${emp} Memory Caching ${msg}will have to be enabled manually.${nc}"
 echo -e "${msg} This is entirely optional. Head to this file:${nc}"
-echo -e "\033[1;36m    /usr/local/www/owncloud/config/config.php${nc} and add:"
+echo -e "\033[1;36m    /usr/local/www/owncloud/config/config.php${nc} ${msg}and add:${nc}"
 echo -e "\033[1;33m    'memcache.local' => '\OC\Memcache\APCu',${nc}"
 echo -e "${msg} right above the last line.${nc}"
 echo -e "${msg} Once you've edited this file, restart the server with:${nc}" 

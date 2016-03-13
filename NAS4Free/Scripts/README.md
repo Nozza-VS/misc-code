@@ -1,6 +1,3 @@
-# Misc Code
-Mostly scripts and such for NAS4Free
-
 # Monitoring Scripts
 
 ##### check_firmware_update.sh & check_firmware_update.php:

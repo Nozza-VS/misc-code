@@ -34,9 +34,9 @@ owncloud_version="9.0.0"
 ###
 #	This is a simple script to automate the installation of OwnCloud within a 
 #	jailed environment.
-#   Maintainer: Nostalgist92 as it hadn't been updated in a while I took it
-#   upon myself to do so that it would work with the most recent N4F version.
-#   Credits to Matthew Kempe
+#   Maintainer: Nostalgist92 as Matthew Kempe's old script hadn't been updated
+#   for NAS4Free 10.x (This should work fine for 9.x versions if you have the
+#   new package management tool installed)
 ###
 
 
@@ -44,7 +44,7 @@ owncloud_version="9.0.0"
 confirm () 
 {
 # Confirm with the user
-read -r -p "   Continue? [Y/n] " response
+read -r -p "   Continue? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY]) 
               # If yes, then continue
@@ -77,15 +77,16 @@ echo -e "${msg} the ${qry}mysql password${msg} you chose earlier during the scri
 echo -e "${msg} Database name = your choice (just ${qry}owncloud${msg} is fine)${nc}"
 echo " "
 echo " Once the page reloads,"
-read -r -p "   do you have a 'untrusted domain' error? [Y/n] " response
+read -r -p "   do you have a 'untrusted domain' error? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, let's fix that.
               echo " "
               echo -e "${url} Doing some last second changes to fix that..${nc}"
               echo " "
-              # Prevent "Trusted Domain" errors
+              # Prevent "Trusted Domain" error
               echo "    '${server_ip}'," >> /usr/local/www/owncloud/config/trusted.txt
+              cp /usr/local/www/owncloud/config/config.php /usr/local/www/owncloud/config/old_config.bak
               cat "/usr/local/www/owncloud/config/old_config.bak" | \
                 sed '8r /usr/local/www/owncloud/config/trusted.txt' > \
                 "/usr/local/www/owncloud/config/config.php"

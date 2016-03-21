@@ -1,5 +1,5 @@
 #!/bin/sh
-# Script Version: 1.12 (March 11, 2016)
+# Script Version: 1.13 (March 21, 2016)
 ###########################################################################
 ##### START OF CONFIGURATION SECTION #####
 #

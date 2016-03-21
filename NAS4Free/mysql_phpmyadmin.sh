@@ -163,7 +163,7 @@ echo '    </FilesMatch>' >> /usr/local/etc/apache24/Includes/php.conf
 echo '</IfModule>' >> /usr/local/etc/apache24/Includes/php.conf
 
 # Is this next step even needed anymore?
-# Disabling for now, I don't think we really need this.
+# Note: Disabling for now, I don't think we really need this.
 #echo -e "${sep}"
 #echo -e "${msg}   This part needs to be done by you${nc}"
 #echo -e "${sep}"

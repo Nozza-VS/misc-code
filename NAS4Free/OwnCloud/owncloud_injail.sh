@@ -1,5 +1,5 @@
 #!/bin/sh
-# Script Version: 1.13 (March 21, 2016)
+# Script Version: 1.14 (March 22, 2016)
 ###########################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -314,6 +314,14 @@ fetch -o /usr/local/etc/lighttpd/conf.d/mime.conf http://www.xenopsyche.com/mkem
 
 echo " "
 echo -e "${sep}"
+echo -e "${msg} Modifying php.ini${nc}"
+echo -e "${sep}"
+echo " "
+
+echo always_populate_raw_post_data = -1 > /usr/local/etc/php.ini
+
+echo " "
+echo -e "${sep}"
 echo -e "${msg} Creating www folder and downloading ownCloud${nc}"
 echo -e "${sep}"
 echo " "
@@ -351,6 +359,14 @@ echo -e "${sep}"
 echo " "
 
 /usr/local/etc/rc.d/lighttpd start
+
+#echo " "
+#echo -e "${sep}"
+#echo -e "${msg} Enable Memory Caching${nc}"
+#echo -e "${sep}"
+#echo " "
+
+#TODO: Enable Memory Caching by default
 
 echo " "
 echo -e "${sep}"

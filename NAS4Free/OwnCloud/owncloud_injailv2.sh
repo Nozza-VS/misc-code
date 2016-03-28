@@ -1,5 +1,5 @@
 #!/bin/sh
-# Script Version: 2.0.0 (March 28, 2016)
+# Script Version: 2.0.1 (March 28, 2016)
 ################################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -24,15 +24,16 @@ server_port="81"
 server_ip="192.168.1.200"
 owncloud_version="9.0.0"
 ### No need to edit below here ###
+### Any modifications made below here are done at your own risk ###
 ##### END OF CONFIGURATION SECTION #####
-###########################################################################
+################################################################################
 
 
 #####
 ###
-#	This is a simple script to automate the installation of OwnCloud within a
-#	jailed environment. Also included is a backup, update and fix options for
-#   any known issues/features.
+#  This is a simple script to automate the installation of OwnCloud within a
+#  jailed environment. Also included is a backup, update and fix options for
+#  any known issues/features.
 ###
 #####
 
@@ -48,6 +49,7 @@ msg='\033[1;37m'    # Message Text
 url='\033[1;32m'    # URL
 qry='\033[0;36m'    # Query Text
 sep='\033[1;30m-------------------------------------------------------\033[0m'    # Line Seperator
+ssep='\033[1;30m#----------------------#\033[0m'    # Small Line Seperator
 cmd='\033[1;35m'    # Command to be entered
 fin='\033[0;32m'    # Green Text
 inf='\033[0;33m'    # Information Text
@@ -72,24 +74,6 @@ exerr () { echo -e "$*" >&2 ; exit 1; }
 
 installcloud ()
 {
-confirm ()
-{
-# Confirm with the user
-read -r -p "   Continue? [y/N] " response
-case "$response" in
-    [yY][eE][sS]|[yY])
-              # If yes, then continue
-              echo -e "${url} Great! Moving on..${nc}"
-               ;;
-    *)
-              # Otherwise exit...
-              echo " "
-              echo -e "${alt}Stopping script..${nc}"
-              echo " "
-              exit
-              ;;
-esac
-}
 
 echo " "
 echo -e "${sep}"
@@ -97,31 +81,6 @@ echo -e "${msg}   Welcome to the ownCloud installer!${nc}"
 echo -e "${sep}"
 echo " "
 echo " "
-echo " "
-echo -e "${sep}"
-echo -e "${msg}   Let's start with double checking some things${nc}"
-echo -e "${sep}"
-echo " "
-
-echo -e "${msg} Is this script running ${alt}INSIDE${msg} of a jail?${nc}"
-
-confirm
-
-echo " "
-echo -e "${msg} Checking to see if you need to modify the script${nc}"
-echo -e "${msg} If ${emp}ANY${msg} of these ${emp}DON'T${msg} match YOUR setup, answer with ${emp}no${nc}."
-echo -e " "
-echo -e "      ${alt}#1: ${msg}Is this your jails IP? ${qry}$server_ip${nc}"
-echo -e "      ${alt}#2: ${msg}Is this the port you want to use? ${qry}$server_port${nc}"
-echo -e "      ${alt}#3: ${msg}Is this the ownCloud version you want to install? ${qry}$owncloud_version${nc}"
-echo -e " "
-echo -e "${emp} If #1 or #2 are incorrect you will encounter issues!${nc}"
-
-confirm
-
-echo " "
-echo -e "${url} Awesome, now we are ready to get on with it!${nc}"
-
 echo " "
 echo -e "${sep}"
 echo -e "${msg}   Let's get to installing some stuff!!${nc}"
@@ -326,27 +285,21 @@ echo " "
 echo -e "${sep}"
 echo -e "${msg} Now to finish owncloud setup${nc}"
 echo -e "${sep}"
-echo " "
 
-echo " "
+echo -e "${msg} Head to ${url}https://$server_ip:$server_port ${msg}and fill out the${nc}"
+echo -e "${msg} appropriate information. If you are unsure what to do,${nc}"
+echo -e "${msg} go back to the main menu and select 'More Info'${nc}"
+
 echo -e "${sep}"
-echo -e "${msg} It looks like we finished here!!! NICE${nc}"
-echo -e "${msg} Now you can head to ${url}https://$server_ip:$server_port${nc}"
-echo -e "${msg} to use your owncloud whenever you wish!${nc}"
-echo " "
-echo " "
+echo -e "${msg} Looks like we are done here!!! Now you can head to${nc}"
+echo -e "${url}    https://$server_ip:$server_port ${msg}to use your owncloud!${nc}"
 echo " "
 echo -e "${emp} Memory Caching ${msg}is currently disabled by default.${nc}"
-echo -e "${msg} Head back to the main menu to enable it.${nc}"
-echo " "
-echo " "
+echo -e "${msg}    Head back to the main menu to enable it.${nc}"
 echo " "
 echo -e "${msg} If you need any help, visit the forums here:${nc}"
 echo -e "${url} http://forums.nas4free.org/viewtopic.php?f=79&t=9383${nc}"
-echo -e "${msg} Or jump on my Discord server${nc}"
-echo -e "${url} https://discord.gg/0bXnhqvo189oM8Cr${nc}"
 echo -e "${sep}"
-echo " "
 }
 
 ################################################################################
@@ -393,6 +346,30 @@ echo -e "${msg} This part of the script is unfinished currently :("
 #echo -e "${msg} Once you've edited this file, restart the server with:${nc}"
 #/usr/local/etc/rc.d/lighttpd restart
 }
+
+howtofinishsetup ()
+{
+echo " "
+echo -e "${emp} Follow these instructions carefully"
+echo " "
+echo -e "${msg} In a web browser, head to: ${url}https://$server_ip:$server_port${nc}"
+echo " "
+echo -e "${msg} Admin Username: Enter your choice of username${nc}"
+echo -e "${msg} Admin Password: Enter your choice of password${nc}"
+echo " "
+echo -e "${alt}    Click Database options and choose MySQL${nc}"
+echo -e "${msg} Database username: root${nc}"
+echo -e "${msg} Database password: THE PASSWORD YOU ENTERED EARLIER FOR MYSQL${nc}"
+echo -e "${msg} Database host: Leave as is (Should be localhost)${nc}"
+echo -e "${msg} Database name: Your choice (owncloud is fine)${nc}"
+echo " "
+echo -e "${emp} Click Finish Setup, the page will take a moment to refresh${nc}"
+echo -e "${msg} After it refreshes, if you are seeing a 'Trusted Domain' error,${nc}"
+echo -e "${msg} Head back to the scripts main menu and select option 4.${nc}"
+echo " "
+}
+
+
 
 ################################################################################
 ##### FIXES
@@ -488,17 +465,20 @@ echo -e "${emp} This part of the script is unfinished currently :("
 ### ERROR FIXES SUBMENU
 #------------------------------------------------------------------------------#
 
-errorfix ()
+errorfixsubmenu ()
 {
 while [ "$choice" != "q,m" ]
 do
         echo -e "${qry} Choose one:"
+        echo " "
         echo -e "${fin}   1)${msg} Trusted Domain Error"
         echo -e "${fin}   2)${msg} Populating Raw Post Data Error"
+        echo " "
         echo -e "${emp}   m) Main Menu${nc}"
-        echo
 
-        read choice
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
 
         case $choice in
             '1') echo -e "${inf} ${nc}"
@@ -516,6 +496,8 @@ do
 done
 }
 
+
+
 #------------------------------------------------------------------------------#
 ### FOR OTHER OPTIONS SUCH AS ENABLING MEMORY CACHING
 #------------------------------------------------------------------------------#
@@ -525,15 +507,48 @@ otheroptions ()
 while [ "$choice" != "q,m" ]
 do
         echo -e "${qry} Choose one:"
+        echo " "
         echo -e "${fin}   1)${msg} Enable Memory Caching"
+        echo " "
         echo -e "${emp}   m) Main Menu${nc}"
-        echo
 
-        read choice
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
 
         case $choice in
             '1') echo -e "${inf} Enabling Memory Caching..${nc}"
                 enablememcache
+                ;;
+            'm') return
+                ;;
+        esac
+done
+}
+
+
+
+#------------------------------------------------------------------------------#
+### MORE INFORMATION / HOW-TO / FURTHER INSCTRUCTIONS
+#------------------------------------------------------------------------------#
+
+moreinfo ()
+{
+while [ "$choice" != "q,m" ]
+do
+        echo -e "${qry} Choose one:"
+        echo " "
+        echo -e "${msg} How to..."
+        echo -e "${fin}   1)${msg} Finish the owncloud setup"
+        echo " "
+        echo -e "${emp}   m) Main Menu${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+
+        case $choice in
+            '1') howtofinishsetup
                 ;;
             'm') return
                 ;;
@@ -552,7 +567,49 @@ done
 
 confirminstallcloud ()
 {
+confirm ()
+{
 # Confirm with the user
+read -r -p "   Continue? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              echo -e "${url} Great! Moving on..${nc}"
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              echo -e "${alt}Stopping script..${nc}"
+              echo " "
+              exit
+              ;;
+esac
+}
+echo -e "${sep}"
+echo -e "${msg}   Let's start with double checking some things${nc}"
+echo -e "${sep}"
+echo " "
+
+echo -e "${msg} Is this script running ${alt}INSIDE${msg} of a jail?${nc}"
+
+confirm
+
+echo " "
+echo -e "${msg} Checking to see if you need to modify the script${nc}"
+echo -e "${msg} If ${emp}ANY${msg} of these ${emp}DON'T${msg} match YOUR setup, answer with ${emp}no${nc}."
+echo -e " "
+echo -e "      ${alt}#1: ${msg}Is this your jails IP? ${qry}$server_ip${nc}"
+echo -e "      ${alt}#2: ${msg}Is this the port you want to use? ${qry}$server_port${nc}"
+echo -e "      ${alt}#3: ${msg}Is this the ownCloud version you want to install? ${qry}$owncloud_version${nc}"
+echo -e " "
+echo -e "${emp} If #1 or #2 are incorrect you will encounter issues!${nc}"
+
+confirm
+
+echo " "
+echo -e "${url} Awesome, now we are ready to get on with it!${nc}"
+# Confirm with the user
+echo -e "${inf} Final confirmation before installing owncloud.${nc}"
 read -r -p "   Confirm Installation of OwnCloud? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
@@ -619,12 +676,12 @@ esac
 
 mainmenu=""
 
-while [ "$choice" != "q,i" ]
+while [ "$choice" != "q,i,h" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} Script Version: 2.0.0 (March 28, 2016)"
-        echo " "
-        echo -e "${msg} Main Menu"
+        echo -e "${inf} OwnCloud Script - Version: 2.0.1 (March 28, 2016)"
+        echo -e "${sep}"
+        echo -e "${emp} Main Menu"
         echo " "
         echo -e "${qry} Please make a selection!"
         echo " "
@@ -635,11 +692,13 @@ do
         echo -e "${fin}   4)${msg} Fix Known Errors${nc}"
         echo -e "${fin}   5)${msg} Other${nc}"
         echo " "
-        echo -e "${inf}  i) Get Help${nc}"
+        echo -e "${inf}  i) More Info / How-To's${nc}"
+        echo -e "${inf}  h) Get Help${nc}"
         echo -e "${alt}  q) Quit${nc}"
-        echo -e "${sep}"
 
-        read choice
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
 
         case $choice in
             '1')
@@ -652,12 +711,15 @@ do
                 confirmbackupcloud
                 ;;
             '4')
-                errorsubmenu
+                errorfixsubmenu
                 ;;
             '5')
                 otheroptions
                 ;;
             'i')
+                moreinfo
+                ;;
+            'h')
                 help
                 ;;
             'q') echo -e "${alt}        Exiting script!${nc}"

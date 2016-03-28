@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script - Version: 1.0.2 (March 28, 2016)
+# AIO Script - Version: 1.0.3 (March 28, 2016)
 ################################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -62,7 +62,9 @@ gethelp ()
 {
 while [ "$choice" ]
 do
+        echo -e "${sep}"
         echo -e "${inf} Ways of contacting me / getting help from others:${nc}"
+        echo -e "${sep}"
         echo " "
         echo -e "${fin}   My Discord Support (Usually faster responses):${nc}"
         echo -e "${msg}      https://discord.gg/0bXnhqvo189oM8Cr${nc}"
@@ -74,7 +76,7 @@ do
         echo -e "${msg}      VS Forums:${nc}"
         echo -e "${url}      forums.vengefulsyndicate.com${nc}"
         echo " "
-        echo -e "${emp}   Press Enter To Go Back To The Main Menu${nc}"
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
 
         read choice
 
@@ -92,9 +94,14 @@ done
 ##### OTHER OPTIONS
 ################################################################################
 
-cloudenablememcache ()
+#------------------------------------------------------------------------------#
+### OWNCLOUD - ENABLE MEMORY CACHING
+#------------------------------------------------------------------------------#
+
+cloud.enablememcache ()
 {
 echo -e "${msg} This part of the script is unfinished currently :("
+echo " "
 #echo -e "${msg} This is entirely optional. Head to this file:${nc}"
 #echo -e "\033[1;36m    /usr/local/www/owncloud/config/config.php${nc} ${msg}and add:${nc}"
 #echo -e "\033[1;33m    'memcache.local' => '\OC\Memcache\APCu',${nc}"
@@ -103,25 +110,81 @@ echo -e "${msg} This part of the script is unfinished currently :("
 #/usr/local/etc/rc.d/lighttpd restart
 }
 
-cloudhowtofinishsetup ()
+################################################################################
+##### INFORMATION / HOW-TO'S / OTHER INSCTRUCTIONS
+################################################################################
+
+#------------------------------------------------------------------------------#
+### OWNCLOUD - HOW-TO FINISH SETUP
+#------------------------------------------------------------------------------#
+
+cloud.howtofinishsetup ()
 {
+while [ "$choice" ]
+do
 echo " "
 echo -e "${emp} Follow these instructions carefully"
 echo " "
 echo -e "${msg} In a web browser, head to: ${url}https://$cloud_server_ip:$cloud_server_port${nc}"
 echo " "
-echo -e "${msg} Admin Username: Enter your choice of username${nc}"
-echo -e "${msg} Admin Password: Enter your choice of password${nc}"
+echo -e "${msg} Admin Username: ${inf}Enter your choice of username${nc}"
+echo -e "${msg} Admin Password: ${inf}Enter your choice of password${nc}"
 echo " "
 echo -e "${alt}    Click Database options and choose MySQL${nc}"
-echo -e "${msg} Database username: root${nc}"
-echo -e "${msg} Database password: THE PASSWORD YOU ENTERED EARLIER FOR MYSQL${nc}"
-echo -e "${msg} Database host: Leave as is (Should be localhost)${nc}"
-echo -e "${msg} Database name: Your choice (owncloud is fine)${nc}"
+echo -e "${msg} Database username: ${inf}root${nc}"
+echo -e "${msg} Database password: ${inf}THE PASSWORD YOU ENTERED EARLIER FOR MYSQL${nc}"
+echo -e "${msg} Database host: ${inf}Leave as is (Should be localhost)${nc}"
+echo -e "${msg} Database name: ${inf}Your choice (owncloud is fine)${nc}"
 echo " "
 echo -e "${emp} Click Finish Setup, the page will take a moment to refresh${nc}"
 echo -e "${msg} After it refreshes, if you are seeing a 'Trusted Domain' error,${nc}"
-echo -e "${msg} Head back to the scripts main menu and select option 4.${nc}"
+echo -e "${msg} head back to the owncloud menu and select option 4.${nc}"
+echo " "
+echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+}
+
+
+
+#------------------------------------------------------------------------------#
+### THEBRIG - CREATING A JAIL
+#------------------------------------------------------------------------------#
+
+thebrig.createajail ()
+{
+echo -e "${emp} This part of the script is unfinished currently :("
+echo " "
+}
+
+
+
+#------------------------------------------------------------------------------#
+### THEBRIG - ENABLING PORT TREES
+#------------------------------------------------------------------------------#
+
+thebrig.enableportree ()
+{
+echo -e "${emp} This part of the script is unfinished currently :("
+echo " "
+}
+
+
+
+#------------------------------------------------------------------------------#
+### EMBY SERVER - UPDATE FFMPEG (FOR TRANSCODING)
+#------------------------------------------------------------------------------#
+
+thebrig.updateffmpeg ()
+{
+echo -e "${emp} This part of the script is unfinished currently :("
 echo " "
 }
 
@@ -131,7 +194,11 @@ echo " "
 ##### FIXES
 ################################################################################
 
-cloudtrusteddomainfix ()
+#------------------------------------------------------------------------------#
+### TRUSTED DOMAIN WARNING FIX
+#------------------------------------------------------------------------------#
+
+cloud.trusteddomain.fix ()
 {
 # Confirm with the user
 echo " "
@@ -177,7 +244,7 @@ esac
 ### Populating Raw Post Data Fix
 #------------------------------------------------------------------------------#
 
-cloudphpini ()
+cloud.phpini ()
 {
 echo " "
 echo -e "${sep}"
@@ -196,7 +263,10 @@ echo always_populate_raw_post_data = -1 > /usr/local/etc/php.ini
 # TODO: Finish the rest of the installers
 ################################################################################
 
-installmysql ()
+#------------------------------------------------------------------------------#
+### MYSQL INSTALL
+
+install.mysql ()
 {
 webmin ()
 {
@@ -416,7 +486,10 @@ echo " "
 
 }
 
-installcloud ()
+#------------------------------------------------------------------------------#
+### OWNCLOUD INSTALL
+
+install.cloud ()
 {
 
 confirm ()
@@ -438,7 +511,7 @@ case "$response" in
 esac
 }
 
-trusteddomainerror ()
+trusteddomain.error ()
 {
 # Confirm with the user
 echo " "
@@ -690,7 +763,7 @@ echo -e "${msg} Now to finish owncloud setup${nc}"
 echo -e "${sep}"
 echo " "
 
-trusteddomainerror
+trusteddomain.error
 
 echo " "
 echo -e "${sep}"
@@ -719,20 +792,29 @@ echo " "
 
 }
 
-installemby ()
-{
+#------------------------------------------------------------------------------#
+### EMBY SERVER INSTALL
 
+install.emby ()
+{
+# Install via packages
+pkg install -y emby-server
+# Enable automatic startup of Emby Server
+sysrc emby_server_enable="YES"
+# Start the Emby Server
+service emby-server start
 }
 
-installsonarr ()
+#------------------------------------------------------------------------------#
+### SONARR INSTALL
+
+install.sonarr ()
 {
 # Taken from Sonarr install script (In jail + root user version)
 # Version 1.00 (March 15, 2016)
 # This is for installations that followed the documented FreeBSD installation
 # You can find this information here: https://github.com/Sonarr/Sonarr/wiki/FreeBSD-installation
 # This can be used temporarily for when Built-In update mechanism fails or in place of it enitrely.
-
-sep='\033[1;30m-------------------------------------------------------\033[0m'    # Line Seperator
 
 echo " "
 echo -e "${sep}"
@@ -760,7 +842,10 @@ service sonarr start
 # TODO: Direct user to sonarr
 }
 
-installcouchpotato ()
+#------------------------------------------------------------------------------#
+### COUCHPOTATO INSTALL
+
+install.couchpotato ()
 {
 #Install required tools
 pkg install python py27-sqlite3 fpc-libcurl docbook-xml git-lite
@@ -791,7 +876,10 @@ service couchpotato start
 #Open your browser and go to: http://server:5050/
 }
 
-installheadphones ()
+#------------------------------------------------------------------------------#
+### HEADPHONES INSTALL
+
+install.headphones ()
 {
 # Headphones Installation (Covers Music)
 git clone https://github.com/rembo10/headphones.git
@@ -819,17 +907,126 @@ service headphones start
 # TODO: Start working on all applicable updaters
 ################################################################################
 
-updatemysql ()
+#------------------------------------------------------------------------------#
+### MYSQL UPDATE
+
+update.mysql ()
 {
 echo -e "${emp} This part of the script is unfinished currently :("
+echo " "
 }
 
-updatecloud ()
+#------------------------------------------------------------------------------#
+### OWNCLOUD UPDATE
+
+update.cloud ()
 {
 echo -e "${emp} This part of the script is unfinished currently :("
+echo " "
 }
 
-updateemby ()
+#------------------------------------------------------------------------------#
+### EMBY SERVER UPDATE
+
+update.emby ()
+{
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Let's start with a backup.${nc}"
+echo -e "${msg}   First, make sure we have rsync and then${nc}"
+echo -e "${msg}   we will use it to create a backup${nc}"
+echo -e "${sep}"
+echo " "
+
+# Using rsync rather than cp so we can see progress actually happen on the backup for large servers.
+pkg install -y rsync
+
+echo " "
+echo -e "${sep}"
+echo " "
+
+echo -e "${emp} Application backup${nc}"
+mkdir -p /usr/local/lib/emby-server-backups/${date} # Using -p in case you've never run the script before or you have deleted this folder
+rsync -a --info=progress2 /usr/local/lib/emby-server/ /usr/local/lib/emby-server-backups/${date}
+echo -e "${fin}    Application backup done..${nc}"
+
+echo " "
+
+echo -e "${emp} Server data backup ${inf}(May take a while)${nc}"
+mkdir -p /var/db/emby-server-backups/${date}
+rsync -a --info=progress2 /var/db/emby-server/ /var/db/emby-server-backups/${date}
+echo -e "${fin}    Server backup done.${nc}"
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Grab the update${nc}"
+echo -e "${sep}"
+echo " "
+
+fetch --no-verify-peer -o /tmp/emby-${embyver}.zip https://github.com/MediaBrowser/Emby/releases/download/${embyver}/Emby.Mono.zip
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Download done, let's stop the server${nc}"
+echo -e "${sep}"
+echo " "
+
+service emby-server stop
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Now to extract the download and replace old version${nc}"
+echo -e "${sep}"
+echo " "
+
+unzip -o "/tmp/emby-${embyver}.zip" -d /usr/local/lib/emby-server
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} And finally, start the server back up.${nc}"
+echo -e "${sep}"
+echo " "
+
+service emby-server start
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} That should be it!${nc}"
+echo -e "${msg} Now head to your Emby dashboard to ensure it's up to date.${nc}"
+echo -e "${msg} (Refresh the page if you already have Emby open)${nc}"
+echo " "
+echo " "
+echo " "
+echo -e "${msg} If something went wrong you can do the following to restore the old version:${nc}"
+echo -e "${cmd}   rm -r /usr/local/lib/emby-server${nc}"
+echo -e "${cmd}   mv /usr/local/lib/emby-server-backups/${date} /usr/local/lib/emby-server${nc}"
+echo " "
+echo -e "${msg} And use this to restore your server database/settings:${nc}"
+echo -e "${cmd}   rm -r /var/db/emby-server${nc}"
+echo -e "${cmd}   mv /var/db/emby-server-backups/${date} /var/db/emby-server${nc}"
+echo -e "${sep}"
+echo " "
+echo -e "${msg} You can get in touch with me any of the ways listed here:${nc}"
+echo -e "${url} http://vengefulsyndicate.com/about-us${nc}"
+echo -e "${msg}      Happy Streaming!${nc}"
+echo " "
+echo -e "${sep}"
+echo " "
+}
+
+#------------------------------------------------------------------------------#
+### EMBY SERVER UPDATE (SAFE METHOD)
+
+update.emby.safe ()
+{
+pkg update
+pkg upgrade emby-server
+}
+
+#------------------------------------------------------------------------------#
+### SONARR UPDATE
+
+update.sonarr ()
 {
 # Would user like automatic script?
 # If yes, fetch from github or [VS] website.
@@ -913,17 +1110,15 @@ echo -e "${sep}"
 echo " "
 
 service sonarr restart
-
 }
 
-updatesonarr ()
-{
-echo -e "${emp} This part of the script is unfinished currently :("
-}
+#------------------------------------------------------------------------------#
+### COUCHPOTATO UPDATE
 
-updatecouchpotato ()
+update.couchpotato ()
 {
 echo -e "${emp} This part of the script is unfinished currently :("
+echo " "
 }
 
 
@@ -933,34 +1128,97 @@ echo -e "${emp} This part of the script is unfinished currently :("
 # TODO: Start working on all applicable backups
 ################################################################################
 
-backupmysql ()
+#------------------------------------------------------------------------------#
+### MYSQL BACKUP
+
+backup.mysql ()
 {
 echo -e "${emp} This part of the script is unfinished currently :("
+echo " "
 }
 
-backupcloud ()
+#------------------------------------------------------------------------------#
+### OWNCLOUD BACKUP
+
+backup.cloud ()
 {
 echo -e "${emp} This part of the script is unfinished currently :("
+echo " "
 }
 
-backupemby ()
+#------------------------------------------------------------------------------#
+### EMBY SERVER BACKUP
+
+backup.emby ()
 {
-echo -e "${emp} This part of the script is unfinished currently :("
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   First, make sure we have rsync and then${nc}"
+echo -e "${msg}   we will use it to create a backup${nc}"
+echo -e "${sep}"
+echo " "
+
+# Using rsync rather than cp so we can see progress actually happen on the backup for large servers.
+pkg install -y rsync
+
+echo " "
+echo -e "${sep}"
+echo " "
+
+echo -e "${emp} Application backup${nc}"
+mkdir -p /usr/local/lib/emby-server-backups/${date} # Using -p in case you've never run the script before or you have deleted this folder
+rsync -a --info=progress2 /usr/local/lib/emby-server/ /usr/local/lib/emby-server-backups/${date}
+echo -e "${fin}    Application backup done..${nc}"
+
+echo " "
+
+echo -e "${emp} Server data backup ${inf}(May take a while)${nc}"
+mkdir -p /var/db/emby-server-backups/${date}
+rsync -a --info=progress2 /var/db/emby-server/ /var/db/emby-server-backups/${date}
+echo -e "${fin}    Server backup done.${nc}"
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} That should be it!${nc}"
+echo " "
+echo " "
+echo " "
+echo -e "${msg} If something goes wrong you can do the following to restore an old version:${nc}"
+echo -e "${cmd}   rm -r /usr/local/lib/emby-server${nc}"
+echo -e "${cmd}   mv /usr/local/lib/emby-server-backups/${date} /usr/local/lib/emby-server${nc}"
+echo " "
+echo -e "${msg} And use this to restore your server database/settings:${nc}"
+echo -e "${cmd}   rm -r /var/db/emby-server${nc}"
+echo -e "${cmd}   mv /var/db/emby-server-backups/${date} /var/db/emby-server${nc}"
+echo -e "${sep}"
+echo " "
 }
 
-backupsonarr ()
+#------------------------------------------------------------------------------#
+### SONARR BACKUP
+
+backup.sonarr ()
 {
 echo -e "${emp} This part of the script is unfinished currently :("
+echo " "
 }
 
-backupcouchpotato ()
+#------------------------------------------------------------------------------#
+### COUCHPOTATO BACKUP
+
+backup.couchpotato ()
 {
 echo -e "${emp} This part of the script is unfinished currently :("
+echo " "
 }
 
-backupheadphones ()
+#------------------------------------------------------------------------------#
+### HEADPHONES BACKUP
+
+backup.headphones ()
 {
 echo -e "${emp} This part of the script is unfinished currently :("
+echo " "
 }
 
 
@@ -976,14 +1234,14 @@ echo -e "${emp} This part of the script is unfinished currently :("
 #------------------------------------------------------------------------------#
 ### MYSQL CONFIRM INSTALL
 
-confirmmysqlinstall ()
+confirm.mysql.install ()
 {
 # Confirm with the user
 read -r -p "   Confirm Installation of MySQL? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              installmysql
+              install.mysql
                ;;
     *)
               # Otherwise exit...
@@ -996,7 +1254,7 @@ esac
 #------------------------------------------------------------------------------#
 ### OWNCLOUD CONFIRM INSTALL
 
-confirmcloudinstall ()
+confirm.cloud.install ()
 {
 confirm ()
 {
@@ -1010,8 +1268,9 @@ case "$response" in
     *)
               # Otherwise exit...
               echo " "
-              echo -e "${alt}Stopping script..${nc}"
+              echo -e "${alt} Stopping script..${nc}"
               echo " "
+              echo -e "${sep}"
               exit
               ;;
 esac
@@ -1038,18 +1297,19 @@ echo -e "${emp} If #1 or #2 are incorrect you will encounter issues!${nc}"
 confirm
 
 echo " "
-echo -e "${url} Awesome, now we are ready to get on with it!${nc}"
+echo -e "${fin} Awesome, now we are ready to get on with it!${nc}"
 # Confirm with the user
 echo -e "${inf} Final confirmation before installing owncloud.${nc}"
 read -r -p "   Confirm Installation of OwnCloud? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              installcloud
+              install.cloud
                ;;
     *)
               # Otherwise exit...
               echo " "
+              echo -e "${sep}"
               return
               ;;
 esac
@@ -1058,14 +1318,14 @@ esac
 #------------------------------------------------------------------------------#
 ### EMBY SERVER CONFIRM INSTALL
 
-confirmembyinstall ()
+confirm.emby.install ()
 {
 # Confirm with the user
 read -r -p "   Confirm Installation of Emby Media Server? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              installemby
+              install.emby
                ;;
     *)
               # Otherwise exit...
@@ -1078,14 +1338,14 @@ esac
 #------------------------------------------------------------------------------#
 ### SONARR CONFIRM INSTALL
 
-confirmsonarrinstall ()
+confirm.sonarr.install ()
 {
 # Confirm with the user
 read -r -p "   Confirm Installation of Sonarr? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              installsonarr
+              install.sonarr
                ;;
     *)
               # Otherwise exit...
@@ -1098,14 +1358,14 @@ esac
 #------------------------------------------------------------------------------#
 ### COUCHPOTATO CONFIRM INSTALL
 
-confirmcouchpotatoinstall ()
+confirm.couchpotato.install ()
 {
 # Confirm with the user
 read -r -p "   Confirm Installation of CouchPotato? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              installcouchpotato
+              install.couchpotato
                ;;
     *)
               # Otherwise exit...
@@ -1118,14 +1378,14 @@ esac
 #------------------------------------------------------------------------------#
 ### HEADPHONES CONFIRM INSTALL
 
-confirmheadphonesinstall ()
+confirm.headphones.install ()
 {
 # Confirm with the user
 read -r -p "   Confirm Installation of Headphones? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              installheadphones
+              install.headphones
                ;;
     *)
               # Otherwise exit...
@@ -1143,14 +1403,14 @@ esac
 ### MYSQL CONFIRM UPDATE
 #------------------------------------------------------------------------------#
 
-confirmmysqlupdate ()
+confirm.mysql.update ()
 {
 # Confirm with the user
 read -r -p "   Confirm Update of MySQL? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              updatemysql
+              update.mysql
                ;;
     *)
               # Otherwise exit...
@@ -1163,14 +1423,14 @@ esac
 #------------------------------------------------------------------------------#
 ### OWNCLOUD CONFIRM UPDATE
 
-confirmcloudupdate ()
+confirm.cloud.update ()
 {
 # Confirm with the user
 read -r -p "   Confirm Update of OwnCloud? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              updatecloud
+              update.cloud
                ;;
     *)
               # Otherwise exit...
@@ -1181,16 +1441,27 @@ esac
 }
 
 #------------------------------------------------------------------------------#
-### EMBY SERVER CONFIRM UPDATE
+### EMBY SERVER CONFIRM UPDATE (SAFE METHOD)
 
-confirmembyupdate ()
+confirm.emby.update.safe ()
 {
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Emby Server updater (Safe method)${nc}"
+echo -e "${sep}"
+echo " "
+echo -e "${emp} NOTE: This update method will not always be the very${nc}"
+echo -e "${emp} latest version as BSD packages are updated slower${nc}"
+echo -e "${emp} but this method won't break anything.${nc}"
+echo " "
+echo -e "${msg} Only continue if you are 100% sure${nc}"
+echo -e "${inf} (Will also do a backup)${nc}"
 # Confirm with the user
 read -r -p "   Confirm Update of Emby Media Server? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              updateemby
+              update.emby.safe
                ;;
     *)
               # Otherwise exit...
@@ -1198,19 +1469,59 @@ case "$response" in
               return
               ;;
 esac
+echo " "
+echo " "
+}
+
+#------------------------------------------------------------------------------#
+### EMBY SERVER CONFIRM UPDATE (SAFE METHOD)
+
+confirm.emby.update.safe ()
+{
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Emby Server updater (Latest method)${nc}"
+echo -e "${sep}"
+echo " "
+echo -e "${emp} CAUTION: This will remove the ability to restart your${nc}"
+echo -e "${emp}          Emby Server via the web dashboard!${nc}"
+echo " "
+echo -e "${msg} If you need to restart the server, you can with:${nc}"
+echo -e "${cmd}    service emby-server restart${nc}"
+echo " "
+echo -e "${qry} Reminder${msg}: make sure you have modified the 'embyver'${nc}"
+echo -e "${msg} line at the top of this script to the latest version.${nc}"
+echo " "
+echo -e "${msg} Only continue if you are 100% sure${nc}"
+echo -e "${inf} (Will also do a backup)${nc}"
+# Confirm with the user
+read -r -p "   Confirm Update of Emby Media Server? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              update.emby
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              return
+              ;;
+esac
+echo " "
+echo " "
 }
 
 #------------------------------------------------------------------------------#
 ### SONARR CONFIRM UPDATE
 
-confirmsonarrupdate ()
+confirm.sonarr.update ()
 {
 # Confirm with the user
 read -r -p "   Confirm Update of Sonarr? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              updatesonarr
+              update.sonarr
                ;;
     *)
               # Otherwise exit...
@@ -1223,14 +1534,14 @@ esac
 #------------------------------------------------------------------------------#
 ### COUCHPOTATO CONFIRM UPDATE
 
-confirmcouchpotatoupdate ()
+confirm.couchpotato.update ()
 {
 # Confirm with the user
 read -r -p "   Confirm Update of CouchPotato? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              updatecouchpotato
+              update.couchpotato
                ;;
     *)
               # Otherwise exit...
@@ -1243,14 +1554,14 @@ esac
 #------------------------------------------------------------------------------#
 ### HEADPHONES CONFIRM UPDATE
 
-confirmheadphonesupdate ()
+confirm.headphones.update ()
 {
 # Confirm with the user
 read -r -p "   Confirm Update of Headphones? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              updateheadphones
+              update.headphones
                ;;
     *)
               # Otherwise exit...
@@ -1270,13 +1581,14 @@ esac
 ### MYSQL SUBMENU
 #------------------------------------------------------------------------------#
 
-mysqlsubmenu ()
+mysql.submenu ()
 {
 while [ "$choice" != "m" ]
 do
         echo -e "${fin} MySQL + phpMyAdmin${nc}"
         echo
         echo -e "${qry} Choose one:"
+        echo " "
         echo -e "${fin}   1)${msg} Install"
         echo -e "${fin}   2)${msg} Update"
         echo -e "${fin}   3)${msg} Backup"
@@ -1288,13 +1600,13 @@ do
 
         case $choice in
             '1') echo -e "${inf} Installing..${nc}"
-                confirmmysqlinstall
+                confirm.mysql.install
                 ;;
             '2') echo -e "${inf} Running Update..${nc}"
-                confirmmysqlupdate
+                confirm.mysql.update
                 ;;
             '3') echo -e "${inf} Backup..${nc}"
-                backupmysql
+                backup.mysql
                 ;;
             'm') return
                 ;;
@@ -1305,13 +1617,15 @@ done
 #------------------------------------------------------------------------------#
 ### OWNCLOUD SUBMENU
 
-cloudsubmenu ()
+cloud.submenu ()
 {
 while [ "$choice" != "h,i,m" ]
 do
+        echo -e "${sep}"
         echo -e "${fin} OwnCloud Options${nc}"
-        echo
+        echo -e "${sep}"
         echo -e "${qry} Choose one:"
+        echo " "
         echo -e "${fin}   1)${msg} Install"
         echo -e "${fin}   2)${msg} Update"
         echo -e "${fin}   3)${msg} Backup"
@@ -1321,7 +1635,7 @@ do
         echo " "
         echo -e "${inf}  i) More Info / How-To's${nc}"
         echo -e "${inf}  h) Get Help${nc}"
-        echo -e "${alt}  q) Quit${nc}"
+        echo -e "${emp}  m) Main Menu${nc}"
 
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
@@ -1329,25 +1643,25 @@ do
 
         case $choice in
             '1') echo -e "${inf} Installing..${nc}"
-                confirmcloudinstall
+                confirm.cloud.install
                 ;;
             '2') echo -e "${inf} Running Update..${nc}"
-                confirmcloudupdate
+                confirm.cloud.update
                 ;;
             '3') echo -e "${inf} Backup..${nc}"
-                backupcloud
+                backup.cloud
                 ;;
             '4')
-                clouderrorfixsubmenu
+                cloud.errorfix.submenu
                 ;;
             '5')
-                cloudotheroptions
+                cloud.otheroptions.menu
                 ;;
             'i')
-                moreinfosubmenu
+                moreinfo.submenu
                 ;;
             'h')
-                help
+                gethelp
                 ;;
             'm') return
                 ;;
@@ -1360,16 +1674,19 @@ done
 ### ERROR FIXES SUBMENU
 #------------------------------------------------------------------------------#
 
-clouderrorfixsubmenu ()
+cloud.errorfix.submenu ()
 {
-while [ "$choice" != "m" ]
+while [ "$choice" != "b" ]
 do
+        echo -e "${sep}"
+        echo -e "${inf} OwnCloud - Fixes For Known Errors${nc}"
+        echo -e "${sep}"
         echo -e "${qry} Choose one:"
         echo " "
         echo -e "${fin}   1)${msg} Trusted Domain Error"
         echo -e "${fin}   2)${msg} Populating Raw Post Data Error"
         echo " "
-        echo -e "${emp}   m) Main Menu${nc}"
+        echo -e "${emp}   b) Back${nc}"
 
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
@@ -1377,12 +1694,12 @@ do
 
         case $choice in
             '1') echo -e "${inf} ${nc}"
-                trusteddomainfix
+                cloud.trusteddomain.fix
                 ;;
             '2') echo -e "${inf} ${nc}"
-                phpini
+                cloud.phpini
                 ;;
-            'm') return
+            'b') return
                 ;;
         esac
 done
@@ -1391,17 +1708,20 @@ done
 #------------------------------------------------------------------------------#
 ### EMBY SERVER SUBMENU
 
-embysubmenu ()
+emby.submenu ()
 {
 while [ "$choice" != "m" ]
 do
         echo -e "${fin} Emby Options${nc}"
         echo
         echo -e "${qry} Choose one:"
-        echo -e "${fin}   1)${msg} Install"
-        echo -e "${fin}   2)${msg} Update"
-        echo -e "${fin}   3)${msg} Backup"
-        echo -e "${emp}   m) Main Menu${nc}"
+        echo " "
+        echo -e "${fin}   1)${msg} Install${nc}"
+        echo -e "${fin}   2)${msg} Update via Packages ${inf}(Safe)${nc}"
+        echo -e "${fin}   3)${msg} Update via GitHub ${inf}(More Up To Date)${nc}"
+        echo -e "${fin}   4)${msg} Backup${nc}"
+        echo " "
+        echo -e "${alt}  m) Main Menu${nc}"
 
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
@@ -1409,13 +1729,16 @@ do
 
         case $choice in
             '1') echo -e "${inf} Installing..${nc}"
-                confirmembyinstall
+                confirm.emby.install
                 ;;
             '2') echo -e "${inf} Running Update..${nc}"
-                confirmembyupdate
+                confirm.emby.update.safe
                 ;;
-            '3') echo -e "${inf} Backup..${nc}"
-                backupemby
+            '3') echo -e "${inf} Running Update..${nc}"
+                confirm.emby.update.git
+                ;;
+            '4') echo -e "${inf} Backup..${nc}"
+                backup.emby
                 ;;
             'm') return
                 ;;
@@ -1426,13 +1749,14 @@ done
 #------------------------------------------------------------------------------#
 ### SONARR SUBMENU
 
-sonarrsubmenu ()
+sonarr.submenu ()
 {
 while [ "$choice" != "m" ]
 do
         echo -e "${fin} Sonarr Options${nc}"
         echo
         echo -e "${qry} Choose one:"
+        echo " "
         echo -e "${fin}   1)${msg} Install"
         echo -e "${fin}   2)${msg} Update"
         echo -e "${fin}   3)${msg} Backup"
@@ -1444,13 +1768,13 @@ do
 
         case $choice in
             '1') echo -e "${inf} Installing..${nc}"
-                confirmsonarrinstall
+                confirm.sonarr.install
                 ;;
             '2') echo -e "${inf} Running Update..${nc}"
-                confirmsonarrupdate
+                confirm.sonarr.update
                 ;;
             '3') echo -e "${inf} Backup..${nc}"
-                backupsonarr
+                backup.sonarr
                 ;;
             'm') return
                 ;;
@@ -1461,13 +1785,14 @@ done
 #------------------------------------------------------------------------------#
 ### COUCHPOTATO SUBMENU
 
-couchpotatosubmenu ()
+couchpotato.submenu ()
 {
 while [ "$choice" != "m" ]
 do
         echo -e "${fin} CouchPotato Options${nc}"
         echo
         echo -e "${qry} Choose one:"
+        echo " "
         echo -e "${fin}   1)${msg} Install"
         echo -e "${fin}   2)${msg} Update"
         echo -e "${fin}   3)${msg} Backup"
@@ -1479,13 +1804,13 @@ do
 
         case $choice in
             '1') echo -e "${inf} Installing..${nc}"
-                confirmcouchpotatoinstall
+                confirm.couchpotato.install
                 ;;
             '2') echo -e "${inf} Running Update..${nc}"
-                confirmcouchpotatoupdate
+                confirm.couchpotato.update
                 ;;
             '3') echo -e "${inf} Backup..${nc}"
-                backupcouchpotato
+                backup.couchpotato
                 ;;
             'm') return
                 ;;
@@ -1496,13 +1821,14 @@ done
 #------------------------------------------------------------------------------#
 ### HEADPHONES SUBMENU
 
-headphonessubmenu ()
+headphones.submenu ()
 {
 while [ "$choice" != "m" ]
 do
         echo -e "${fin} HeadPhones Options${nc}"
         echo
         echo -e "${qry} Choose one:"
+        echo " "
         echo -e "${fin}   1)${msg} Install"
         echo -e "${fin}   2)${msg} Update"
         echo -e "${fin}   3)${msg} Backup"
@@ -1514,13 +1840,13 @@ do
 
         case $choice in
             '1') echo -e "${inf} Installing..${nc}"
-                confirmheadphonesinstall
+                confirm.headphones.install
                 ;;
             '2') echo -e "${inf} Running Update..${nc}"
-                confirmheadphonesupdate
+                confirm.headphones.update
                 ;;
             '3') echo -e "${inf} Backup..${nc}"
-                backupheadphones
+                backup.headphones
                 ;;
             'm') return
                 ;;
@@ -1531,27 +1857,76 @@ done
 
 
 #------------------------------------------------------------------------------#
-### MORE INFORMATION / HOW-TO / FURTHER INSCTRUCTIONS
+### MORE INFORMATION / HOW-TO / FURTHER INSCTRUCTIONS SUBMENU (COMBINED)
 
-moreinfosubmenu ()
+moreinfo.submenu ()
 {
-while [ "$choice" != "m" ]
+while [ "$choice" != "b" ]
 do
+        echo -e "${sep}"
+        echo -e "${inf} More Info / How-To's Menu"
+        echo -e "${sep}"
         echo -e "${qry} Choose one:"
         echo " "
         echo -e "${msg} How to..."
-        echo -e "${fin}   1)${msg} OwnCloud - Finish the owncloud setup"
+        echo -e "${fin}   1)${msg} TheBrig - Create a jail"
+        echo -e "${fin}   2)${msg} OwnCloud - Finish the owncloud setup"
         echo " "
-        echo -e "${emp}   m) Main Menu${nc}"
+        echo -e "${emp}   b) Back${nc}"
 
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
         echo -e "${ssep}"
 
         case $choice in
-            '1') cloudhowtofinishsetup
+            '1') thebrig.createajail
                 ;;
-            'm') return
+            '2') cloud.howtofinishsetup
+                ;;
+            'b') return
+                ;;
+        esac
+done
+}
+
+
+
+#------------------------------------------------------------------------------#
+### MORE INFORMATION / HOW-TO / FURTHER INSCTRUCTIONS SUBMENU (SPECIFIC)
+# YAY OR NAY?
+
+moreinfo.submenu.cloud ()
+{
+
+}
+
+
+
+#------------------------------------------------------------------------------#
+### OWNCLOUD OTHER OPTIONS SUBMENU
+
+cloud.otheroptions.menu ()
+{
+while [ "$choice" != "b" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} OwnCloud - Other Options"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:"
+        echo " "
+        echo -e "${fin}   1)${msg} Enable Memory Caching"
+        echo " "
+        echo -e "${emp}   b) Back${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+
+        case $choice in
+            '1') echo -e "${inf} Enabling Memory Caching..${nc}"
+                cloud.enablememcache
+                ;;
+            'b') return
                 ;;
         esac
 done
@@ -1568,10 +1943,9 @@ mainmenu=""
 while [ "$choice" != "q,h,i" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.2 (March 28, 2016)"
-        echo -e "${inf} By Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.3 (March 28, 2016) by Nozza"
         echo -e "${sep}"
-        echo -e "${msg} Main Menu"
+        echo -e "${emp} Main Menu"
         echo " "
         echo -e "${qry} Please make a selection!"
         echo " "
@@ -1582,7 +1956,8 @@ do
         echo -e "${fin}   5)${msg} CouchPotato${nc}"
         echo -e "${fin}   6)${msg} HeadPhones${nc}"
         echo " "
-        echo -e "${inf}  h) Contact Me / Get Help${nc}"
+        echo -e "${inf}  h) Contact / Get Help${nc}"
+        echo -e "${inf}  i) More Info / How-To's${nc}"
         echo -e "${alt}  q) Quit${nc}"
 
         echo -e "${ssep}"
@@ -1591,25 +1966,25 @@ do
 
         case $choice in
             '1')
-                mysqlsubmenu
+                mysql.submenu
                 ;;
             '2')
-                cloudsubmenu
+                cloud.submenu
                 ;;
             '3')
-                embysubmenu
+                emby.submenu
                 ;;
             '4')
-                sonarrsubmenu
+                sonarr.submenu
                 ;;
             '5')
-                couchpotatosubmenu
+                couchpotato.submenu
                 ;;
             '6')
-                headphonessubmenu
+                headphones.submenu
                 ;;
             'i')
-                moreinfosubmenu
+                moreinfo.submenu
                 ;;
             'h')
                 gethelp

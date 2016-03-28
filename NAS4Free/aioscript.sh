@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script - Version: 1.0.3 (March 28, 2016)
+# AIO Script - Version: 1.0.4 (March 28, 2016)
 ################################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -25,6 +25,7 @@ cloud_server_ip="192.168.1.200"
 owncloud_version="9.0.0"
 
 ### OTHER APP CONFIG ###
+thebriginstalldir="/mnt/Storage/System/Jails"
 jail_ip="192.168.1.200" # Note: No need to change this for OwnCloud installs
                         # Only change this for OTHER jails/apps
                         # MUST be different to cloud_server_ip if you have
@@ -118,29 +119,32 @@ echo " "
 ### OWNCLOUD - HOW-TO FINISH SETUP
 #------------------------------------------------------------------------------#
 
-cloud.howtofinishsetup ()
+cloud.howto.finishsetup ()
 {
 while [ "$choice" ]
 do
-echo " "
-echo -e "${emp} Follow these instructions carefully"
-echo " "
-echo -e "${msg} In a web browser, head to: ${url}https://$cloud_server_ip:$cloud_server_port${nc}"
-echo " "
-echo -e "${msg} Admin Username: ${inf}Enter your choice of username${nc}"
-echo -e "${msg} Admin Password: ${inf}Enter your choice of password${nc}"
-echo " "
-echo -e "${alt}    Click Database options and choose MySQL${nc}"
-echo -e "${msg} Database username: ${inf}root${nc}"
-echo -e "${msg} Database password: ${inf}THE PASSWORD YOU ENTERED EARLIER FOR MYSQL${nc}"
-echo -e "${msg} Database host: ${inf}Leave as is (Should be localhost)${nc}"
-echo -e "${msg} Database name: ${inf}Your choice (owncloud is fine)${nc}"
-echo " "
-echo -e "${emp} Click Finish Setup, the page will take a moment to refresh${nc}"
-echo -e "${msg} After it refreshes, if you are seeing a 'Trusted Domain' error,${nc}"
-echo -e "${msg} head back to the owncloud menu and select option 4.${nc}"
-echo " "
-echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${sep}"
+        echo -e "${inf} OwnCloud - How to finalize setup"
+        echo -e "${sep}"
+        echo " "
+        echo -e "${emp} Follow these instructions carefully"
+        echo " "
+        echo -e "${msg} In a web browser, head to: ${url}https://$cloud_server_ip:$cloud_server_port${nc}"
+        echo " "
+        echo -e "${msg} Admin Username: ${inf}Enter your choice of username${nc}"
+        echo -e "${msg} Admin Password: ${inf}Enter your choice of password${nc}"
+        echo " "
+        echo -e "${alt}    Click Database options and choose MySQL${nc}"
+        echo -e "${msg} Database username: ${inf}root${nc}"
+        echo -e "${msg} Database password: ${inf}THE PASSWORD YOU ENTERED EARLIER FOR MYSQL${nc}"
+        echo -e "${msg} Database host: ${inf}Leave as is (Should be localhost)${nc}"
+        echo -e "${msg} Database name: ${inf}Your choice (owncloud is fine)${nc}"
+        echo " "
+        echo -e "${emp} Click Finish Setup, the page will take a moment to refresh${nc}"
+        echo -e "${msg} After it refreshes, if you are seeing a 'Trusted Domain' error,${nc}"
+        echo -e "${msg} head back to the owncloud menu and select option 4.${nc}"
+        echo " "
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
 
         read choice
 
@@ -158,10 +162,48 @@ done
 ### THEBRIG - CREATING A JAIL
 #------------------------------------------------------------------------------#
 
-thebrig.createajail ()
+thebrig.howto.createajail ()
 {
-echo -e "${emp} This part of the script is unfinished currently :("
-echo " "
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} TheBrig - How to create a jail"
+        echo -e "${sep}"
+        echo " "
+        echo -e "${emp} This assumes you have installed TheBrig already and${nc}"
+        echo -e "${emp} have done the inital configuration.${nc}"
+        echo " "
+        echo -e "${msg} Head to your nas webgui, you should see a menu${nc}"
+        echo -e "${msg} named '${inf}Extensions${msg}'. Hover over it and click '${inf}TheBrig${msg}'${nc}"
+        echo -e "${msg} From here, click the '${inf}+${msg}' icon${nc}"
+        echo -e "${msg} On the new page, there are some things to change${nc}"
+        echo " "
+        echo -e "${fin} OPTIONAL ${msg}things are: '${inf}Jail name${msg}', '${inf}Path to jail${msg}'${nc}"
+        echo -e "${msg}    & '${inf}Description${msg}'${nc}"
+        echo " "
+        echo -e "${emp} MUST ${msg}change items are: '${inf}Jail Network settings${msg}'"
+        echo -e "${msg}    & '${inf}Official FreeBSD Flavor${msg}'${nc}"
+        echo " "
+        echo -e "${msg} For Jail IP enter an address that is NOT your NAS IP${nc}"
+        echo -e "${msg} or conflicts with any other IP on your network${nc}"
+        echo -e "${msg} It must be filled out like so: ${inf}192.168.1.200/24${nc}"
+        echo -e "${msg} Once you have entered your desired IP, click '${inf}<<${msg}'.${nc}"
+        echo " "
+        echo -e "${msg} For FreeBSD Flavor, select at least 1 of each type:${nc}"
+        echo -e "${msg} '${inf}base${msg}' & '${inf}lib32${msg}'${nc}"
+        echo " "
+        echo -e "${msg} Now press '${inf}Add${msg}' at the bottom and that should be it!${nc}"
+        echo " "
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
 }
 
 
@@ -170,10 +212,26 @@ echo " "
 ### THEBRIG - ENABLING PORT TREES
 #------------------------------------------------------------------------------#
 
-thebrig.enableportree ()
+thebrig.howto.enableportstree ()
 {
-echo -e "${emp} This part of the script is unfinished currently :("
-echo " "
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} TheBrig - How to enable the ports tree in jails:"
+        echo -e "${sep}"
+        echo " "
+        echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+        echo " "
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
 }
 
 
@@ -182,10 +240,37 @@ echo " "
 ### EMBY SERVER - UPDATE FFMPEG (FOR TRANSCODING)
 #------------------------------------------------------------------------------#
 
-thebrig.updateffmpeg ()
+emby.howto.updateffmpeg ()
 {
-echo -e "${emp} This part of the script is unfinished currently :("
-echo " "
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} Emby - How to update FFMpeg from ports tree:"
+        echo -e "${sep}"
+        echo " "
+        echo -e "${msg} Remove default FFMpeg package:${nc}"
+        echo -e "${cmd}    pkg delete -f ffmpeg${nc}"
+        echo -e "${msg} Reinstall FFMpeg from ports with 'lame' & 'ass' options${nc}"
+        echo -e "${msg} enabled. To enable an option, higlight it using the arrow${nc}"
+        echo -e "${msg} keys and press space (I also enable 'OPUS' option)${nc}"
+        echo -e "${cmd}    cd /usr/ports/multimedia/ffmpeg${nc}"
+        echo -e "${cmd}    make config${nc}"
+        echo -e "${msg} This final step will take some time and you will also${nc}"
+        echo -e "${msg} get a few prompts, just press enter each time.${nc}"
+        echo -e "${cmd}    make install clean${nc}"
+        echo -e "${msg} Once it is done, restart the emby server${nc}"
+        echo -e "${cmd}    service emby-server restart${nc}"
+        echo " "
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
 }
 
 
@@ -900,6 +985,31 @@ service headphones start
 #Open your browser and go to: http://server:headphonesport?/
 }
 
+#------------------------------------------------------------------------------#
+### THEBRIG INSTALL
+
+install.thebrig ()
+{
+# Create directory
+mkdir -p ${thebriginstalldir}
+# change to directory
+cd ${thebriginstalldir}
+# Fetch TheBrig installer
+fetch https://raw.githubusercontent.com/fsbruva/thebrig/alcatraz/thebrig_install.sh
+# Execute the script
+/bin/sh thebrig_install.sh ${thebriginstalldir} &
+
+echo " 1: Go to Extensions page in WebGUI > TheBrig > Maintenance > Rudimentary Config (Should take you to this config by default)"
+echo " 2: Click 'Save' (Make sure 'Installation folder' is correct first,"
+echo "    we want it outside of the NAS4Free operating system drive"
+echo " 3: Head to Tarball Management (Underneath 'Maintenance') > Clicked Query!"
+echo " 4: Chose 'Release: 10.2-RELEASE' from dropdown menu (Should be selected by default after clicking query)"
+echo " 5: Tick all boxes below (Only 'base.txz' and 'lib32.txz' are really needed but grab all anyway)"
+echo " 6: Click Fetch, wait a while for the downloads to finish"
+echo " Once all the download bars are gone you can proceed to making your jail"
+echo " Instructions on creating a jail can be found in the 'more info' menu"
+}
+
 
 
 ################################################################################
@@ -912,7 +1022,7 @@ service headphones start
 
 update.mysql ()
 {
-echo -e "${emp} This part of the script is unfinished currently :("
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
 }
 
@@ -921,7 +1031,7 @@ echo " "
 
 update.cloud ()
 {
-echo -e "${emp} This part of the script is unfinished currently :("
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
 }
 
@@ -1117,7 +1227,18 @@ service sonarr restart
 
 update.couchpotato ()
 {
-echo -e "${emp} This part of the script is unfinished currently :("
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+echo " "
+}
+
+
+
+#------------------------------------------------------------------------------#
+### THEBRIG UPDATE
+
+update.thebrig ()
+{
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
 }
 
@@ -1133,7 +1254,7 @@ echo " "
 
 backup.mysql ()
 {
-echo -e "${emp} This part of the script is unfinished currently :("
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
 }
 
@@ -1142,7 +1263,7 @@ echo " "
 
 backup.cloud ()
 {
-echo -e "${emp} This part of the script is unfinished currently :("
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
 }
 
@@ -1199,7 +1320,7 @@ echo " "
 
 backup.sonarr ()
 {
-echo -e "${emp} This part of the script is unfinished currently :("
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
 }
 
@@ -1208,7 +1329,7 @@ echo " "
 
 backup.couchpotato ()
 {
-echo -e "${emp} This part of the script is unfinished currently :("
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
 }
 
@@ -1217,7 +1338,18 @@ echo " "
 
 backup.headphones ()
 {
-echo -e "${emp} This part of the script is unfinished currently :("
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+echo " "
+}
+
+
+
+#------------------------------------------------------------------------------#
+### THEBRIG BACKUP
+
+backup.thebrig ()
+{
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
 }
 
@@ -1396,6 +1528,28 @@ esac
 }
 
 #------------------------------------------------------------------------------#
+### THEBRIG CONFIRM INSTALL
+
+confirm.thebrig.install ()
+{
+# Confirm with the user
+read -r -p "   Confirm Installation of TheBrig? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              install.thebrig
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              return
+              ;;
+esac
+}
+
+
+
+#------------------------------------------------------------------------------#
 ### UPDATE CONFIRMATIONS
 # TODO: Add run backup before update commands + inform the user of backup
 #------------------------------------------------------------------------------#
@@ -1571,6 +1725,15 @@ case "$response" in
 esac
 }
 
+#------------------------------------------------------------------------------#
+### THEBRIG CONFIRM UPDATE
+
+confirm.thebrig.update ()
+{
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+echo " "
+}
+
 
 
 ################################################################################
@@ -1585,8 +1748,9 @@ mysql.submenu ()
 {
 while [ "$choice" != "m" ]
 do
+        echo -e "${sep}"
         echo -e "${fin} MySQL + phpMyAdmin${nc}"
-        echo
+        echo -e "${sep}"
         echo -e "${qry} Choose one:"
         echo " "
         echo -e "${fin}   1)${msg} Install"
@@ -1712,8 +1876,9 @@ emby.submenu ()
 {
 while [ "$choice" != "m" ]
 do
+        echo -e "${sep}"
         echo -e "${fin} Emby Options${nc}"
-        echo
+        echo -e "${sep}"
         echo -e "${qry} Choose one:"
         echo " "
         echo -e "${fin}   1)${msg} Install${nc}"
@@ -1753,8 +1918,9 @@ sonarr.submenu ()
 {
 while [ "$choice" != "m" ]
 do
+        echo -e "${sep}"
         echo -e "${fin} Sonarr Options${nc}"
-        echo
+        echo -e "${sep}"
         echo -e "${qry} Choose one:"
         echo " "
         echo -e "${fin}   1)${msg} Install"
@@ -1789,8 +1955,9 @@ couchpotato.submenu ()
 {
 while [ "$choice" != "m" ]
 do
+        echo -e "${sep}"
         echo -e "${fin} CouchPotato Options${nc}"
-        echo
+        echo -e "${sep}"
         echo -e "${qry} Choose one:"
         echo " "
         echo -e "${fin}   1)${msg} Install"
@@ -1825,8 +1992,9 @@ headphones.submenu ()
 {
 while [ "$choice" != "m" ]
 do
+        echo -e "${sep}"
         echo -e "${fin} HeadPhones Options${nc}"
-        echo
+        echo -e "${sep}"
         echo -e "${qry} Choose one:"
         echo " "
         echo -e "${fin}   1)${msg} Install"
@@ -1857,33 +2025,75 @@ done
 
 
 #------------------------------------------------------------------------------#
-### MORE INFORMATION / HOW-TO / FURTHER INSCTRUCTIONS SUBMENU (COMBINED)
+### THEBRIG SUBMENU
 
-moreinfo.submenu ()
+thebrig.submenu ()
 {
-while [ "$choice" != "b" ]
+while [ "$choice" != "m" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} More Info / How-To's Menu"
+        echo -e "${fin} TheBrig Options${nc}"
         echo -e "${sep}"
         echo -e "${qry} Choose one:"
         echo " "
-        echo -e "${msg} How to..."
-        echo -e "${fin}   1)${msg} TheBrig - Create a jail"
-        echo -e "${fin}   2)${msg} OwnCloud - Finish the owncloud setup"
-        echo " "
-        echo -e "${emp}   b) Back${nc}"
+        echo -e "${fin}   1)${msg} Install"
+        echo -e "${fin}   2)${msg} Update"
+        echo -e "${fin}   3)${msg} Backup"
+        echo -e "${emp}   m) Main Menu${nc}"
 
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
         echo -e "${ssep}"
 
         case $choice in
-            '1') thebrig.createajail
+            '1') echo -e "${inf} Installing..${nc}"
+                confirm.thebrig.install
                 ;;
-            '2') cloud.howtofinishsetup
+            '2') echo -e "${inf} Running Update..${nc}"
+                confirm.thebrig.update
                 ;;
-            'b') return
+            '3') echo -e "${inf} Backup..${nc}"
+                backup.thebrig
+                ;;
+            'm') return
+                ;;
+        esac
+done
+}
+
+
+
+#------------------------------------------------------------------------------#
+### MORE INFORMATION / HOW-TO / FURTHER INSCTRUCTIONS SUBMENU (COMBINED)
+
+moreinfo.submenu ()
+{
+while [ "$choice" != "m" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} More Info / How-To's Top Menu"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:"
+        echo " "
+        echo -e "${msg} More info & how-to's about..."
+        echo -e "${fin}   1)${msg} OwnCloud"
+        echo -e "${fin}   2)${msg} TheBrig (Jails)"
+        echo -e "${fin}   3)${msg} Emby"
+        echo " "
+        echo -e "${emp}   m) Main Menu${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+
+        case $choice in
+            '1') moreinfo.submenu.cloud
+                ;;
+            '2') moreinfo.submenu.thebrig
+                ;;
+            '3') moreinfo.submenu.emby
+                ;;
+            'm') return
                 ;;
         esac
 done
@@ -1897,7 +2107,86 @@ done
 
 moreinfo.submenu.cloud ()
 {
+while [ "$choice" != "m" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} OwnCloud - Info / How-To's Menu${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:${nc}"
+        echo " "
+        echo -e "${msg} How to...${nc}"
+        echo -e "${fin}   1)${msg} Finish the owncloud setup${nc}"
+        echo " "
+        echo -e "${emp}   m) Main Menu${nc}"
 
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+
+        case $choice in
+            '1') cloud.howto.finishsetup
+                ;;
+            'm') return
+                ;;
+        esac
+done
+}
+
+moreinfo.submenu.thebrig ()
+{
+while [ "$choice" != "m" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} TheBrig - Info / How-To's Menu${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:${nc}"
+        echo " "
+        echo -e "${msg} How to...${nc}"
+        echo -e "${fin}   1)${msg} Create a jail${nc}"
+        echo -e "${fin}   2)${msg} Enable the 'Ports Tree'${nc}"
+        echo " "
+        echo -e "${emp}   m) Main Menu${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+
+        case $choice in
+            '1') thebrig.howto.createajail
+                ;;
+            '2') thebrig.howto.enableportstree
+                ;;
+            'm') return
+                ;;
+        esac
+done
+}
+
+moreinfo.submenu.emby ()
+{
+while [ "$choice" != "m" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} Emby - Info / How-To's Menu${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:${nc}"
+        echo " "
+        echo -e "${msg} How to...${nc}"
+        echo -e "${fin}   1)${msg} Update FFMPEG (To enable better transcoding)"
+        echo " "
+        echo -e "${emp}   m) Main Menu${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+
+        case $choice in
+            '1') emby.howto.updateffmpeg
+                ;;
+            'm') return
+                ;;
+        esac
+done
 }
 
 
@@ -1940,14 +2229,15 @@ done
 
 mainmenu=""
 
-while [ "$choice" != "q,h,i" ]
+while [ "$choice" != "q,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.3 (March 28, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.4 (March 28, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
-        echo -e "${qry} Please make a selection!"
+        echo -e "${qry} Please make a selection!${nc}"
+        echo "    (It's best to run 1-6 INSIDE of a jail)"
         echo " "
         echo -e "${fin}   1)${msg} MySQL + phpMyAdmin${nc}"
         echo -e "${fin}   2)${msg} OwnCloud${nc}"
@@ -1955,6 +2245,8 @@ do
         echo -e "${fin}   4)${msg} Sonarr${nc}"
         echo -e "${fin}   5)${msg} CouchPotato${nc}"
         echo -e "${fin}   6)${msg} HeadPhones${nc}"
+        echo " "
+        echo -e "${cmd}   j)${msg} TheBrig${nc}"
         echo " "
         echo -e "${inf}  h) Contact / Get Help${nc}"
         echo -e "${inf}  i) More Info / How-To's${nc}"
@@ -1983,14 +2275,19 @@ do
             '6')
                 headphones.submenu
                 ;;
+            'j')
+                thebrig.submenu
+                ;;
             'i')
                 moreinfo.submenu
                 ;;
             'h')
                 gethelp
                 ;;
-            'q') echo -e "${alt}        Exiting script!${nc}"
-                echo " "
+            'q') echo " "
+                echo -e "${alt}        Quitting, Bye!${nc}"
+                echo  " "
+                exit
                 ;;
             *)   echo -e "${emp}        Invalid choice, please try again${nc}"
                 ;;

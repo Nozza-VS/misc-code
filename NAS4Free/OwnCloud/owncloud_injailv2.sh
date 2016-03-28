@@ -1,5 +1,5 @@
 #!/bin/sh
-# OwnCloud Script - Version: 2.0.2 (March 28, 2016)
+# OwnCloud Script - Version: 2.0.3 (March 28, 2016)
 ################################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -310,11 +310,11 @@ help ()
 {
 while [ "$choice" ]
 do
-        echo -e "${inf} Ways of contacting me:${nc}"
+        echo -e "${inf} Ways of contacting me / getting help from others:${nc}"
         echo " "
-        echo -e "${fin}   Discord:${nc}"
+        echo -e "${fin}   My Discord Support (Usually faster responses):${nc}"
         echo -e "${msg}      https://discord.gg/0bXnhqvo189oM8Cr${nc}"
-        echo -e "${fin}   Email:${nc}"
+        echo -e "${fin}   My Email (Might add this later, Discord is easier though):${nc}"
         echo -e "${msg}      myemail@domain.com${nc}"
         echo -e "${fin}   Forums:${nc}"
         echo -e "${msg}      NAS4Free Forums:${nc}"
@@ -488,9 +488,6 @@ do
                 ;;
             '2') echo -e "${inf} ${nc}"
                 phpini
-                ;;
-            '3') echo -e "${inf} ${nc}"
-
                 ;;
             'm') return
                 ;;
@@ -681,7 +678,7 @@ mainmenu=""
 while [ "$choice" != "q,i,h" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} OwnCloud Script - Version: 2.0.2 (March 28, 2016)"
+        echo -e "${inf} OwnCloud Script - Version: 2.0.3 (March 28, 2016)"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "

@@ -1,5 +1,5 @@
 #!/bin/sh
-# Script Version: 2.0.1 (March 28, 2016)
+# OwnCloud Script - Version: 2.0.2 (March 28, 2016)
 ################################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -317,8 +317,10 @@ do
         echo -e "${fin}   Email:${nc}"
         echo -e "${msg}      myemail@domain.com${nc}"
         echo -e "${fin}   Forums:${nc}"
-        echo -e "${msg}      forums.nas4free.org${nc}"
-        echo -e "${msg}      forums.vengefulsyndicate.com${nc}"
+        echo -e "${msg}      NAS4Free Forums:${nc}"
+        echo -e "${url}      http://forums.nas4free.org/viewtopic.php?f=79&t=9383${nc}"
+        echo -e "${msg}      VS Forums:${nc}"
+        echo -e "${url}      forums.vengefulsyndicate.com${nc}"
         echo " "
         echo -e "${emp}   Press Enter To Go Back To The Main Menu${nc}"
 
@@ -679,7 +681,7 @@ mainmenu=""
 while [ "$choice" != "q,i,h" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} OwnCloud Script - Version: 2.0.1 (March 28, 2016)"
+        echo -e "${inf} OwnCloud Script - Version: 2.0.2 (March 28, 2016)"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "

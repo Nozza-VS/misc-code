@@ -1,5 +1,5 @@
 #!/bin/sh
-# Script Version: 1.0.1 (March 17, 2016)
+# AIO Script - Version: 1.0.2 (March 28, 2016)
 ################################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -47,6 +47,7 @@ msg='\033[1;37m'    # Message Text
 url='\033[1;32m'    # URL
 qry='\033[0;36m'    # Query Text
 sep='\033[1;30m-------------------------------------------------------\033[0m'    # Line Seperator
+ssep='\033[1;30m#----------------------#\033[0m'    # Small Line Seperator
 cmd='\033[1;35m'    # Command to be entered
 fin='\033[0;32m'    # Green Text
 inf='\033[0;33m'    # Information Text
@@ -57,19 +58,21 @@ inf='\033[0;33m'    # Information Text
 ##### CONTACT
 ################################################################################
 
-contactme ()
+gethelp ()
 {
 while [ "$choice" ]
 do
-        echo -e "${inf} Ways of contacting me:${nc}"
+        echo -e "${inf} Ways of contacting me / getting help from others:${nc}"
         echo " "
-        echo -e "${fin}   Discord:${nc}"
+        echo -e "${fin}   My Discord Support (Usually faster responses):${nc}"
         echo -e "${msg}      https://discord.gg/0bXnhqvo189oM8Cr${nc}"
-        echo -e "${fin}   Email:${nc}"
+        echo -e "${fin}   My Email (Might add this later, Discord is easier though):${nc}"
         echo -e "${msg}      myemail@domain.com${nc}"
         echo -e "${fin}   Forums:${nc}"
-        echo -e "${msg}      forums.nas4free.org${nc}"
-        echo -e "${msg}      forums.vengefulsyndicate.com${nc}"
+        echo -e "${msg}      NAS4Free Forums - OwnCloud:${nc}"
+        echo -e "${url}      http://forums.nas4free.org/viewtopic.php?f=79&t=9383${nc}"
+        echo -e "${msg}      VS Forums:${nc}"
+        echo -e "${url}      forums.vengefulsyndicate.com${nc}"
         echo " "
         echo -e "${emp}   Press Enter To Go Back To The Main Menu${nc}"
 
@@ -81,6 +84,109 @@ do
                  ;;
         esac
 done
+}
+
+
+
+################################################################################
+##### OTHER OPTIONS
+################################################################################
+
+cloudenablememcache ()
+{
+echo -e "${msg} This part of the script is unfinished currently :("
+#echo -e "${msg} This is entirely optional. Head to this file:${nc}"
+#echo -e "\033[1;36m    /usr/local/www/owncloud/config/config.php${nc} ${msg}and add:${nc}"
+#echo -e "\033[1;33m    'memcache.local' => '\OC\Memcache\APCu',${nc}"
+#echo -e "${msg} right above the last line.${nc}"
+#echo -e "${msg} Once you've edited this file, restart the server with:${nc}"
+#/usr/local/etc/rc.d/lighttpd restart
+}
+
+cloudhowtofinishsetup ()
+{
+echo " "
+echo -e "${emp} Follow these instructions carefully"
+echo " "
+echo -e "${msg} In a web browser, head to: ${url}https://$cloud_server_ip:$cloud_server_port${nc}"
+echo " "
+echo -e "${msg} Admin Username: Enter your choice of username${nc}"
+echo -e "${msg} Admin Password: Enter your choice of password${nc}"
+echo " "
+echo -e "${alt}    Click Database options and choose MySQL${nc}"
+echo -e "${msg} Database username: root${nc}"
+echo -e "${msg} Database password: THE PASSWORD YOU ENTERED EARLIER FOR MYSQL${nc}"
+echo -e "${msg} Database host: Leave as is (Should be localhost)${nc}"
+echo -e "${msg} Database name: Your choice (owncloud is fine)${nc}"
+echo " "
+echo -e "${emp} Click Finish Setup, the page will take a moment to refresh${nc}"
+echo -e "${msg} After it refreshes, if you are seeing a 'Trusted Domain' error,${nc}"
+echo -e "${msg} Head back to the scripts main menu and select option 4.${nc}"
+echo " "
+}
+
+
+
+################################################################################
+##### FIXES
+################################################################################
+
+cloudtrusteddomainfix ()
+{
+# Confirm with the user
+echo " "
+echo -e "${emp} Please finish the owncloud setup before continuing${nc}"
+echo -e "${emp} Can ignore the next few steps if you've already done it.${nc}"
+echo -e "${msg} Head to ${url}https://$cloud_server_ip:$cloud_server_port ${msg}to do this.${nc}"
+echo -e "${msg} Fill out the page you are presented with and hit finish${nc}"
+echo " "
+echo -e "${msg} Admin username & password = whatever you choose${nc}"
+echo " "
+echo -e "${emp} Make sure you click 'Storage & database'${nc}"
+echo " "
+echo -e "${msg} Database user = ${qry}root${nc} | Database password = ${nc}"
+echo -e "${msg} the ${qry}mysql password${msg} you chose earlier during the script.${nc}"
+echo -e "${msg} Database name = your choice (just ${qry}owncloud${msg} is fine)${nc}"
+echo " "
+echo " When trying to access owncloud"
+read -r -p "   do you have a 'untrusted domain' error? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, let's fix that.
+              echo " "
+              echo -e "${url} Doing some last second changes to fix that..${nc}"
+              echo " "
+              # Prevent "Trusted Domain" error
+              echo "    '${server_ip}'," >> /usr/local/www/owncloud/config/trusted.txt
+              cp /usr/local/www/owncloud/config/config.php /usr/local/www/owncloud/config/old_config.bak
+              cat "/usr/local/www/owncloud/config/old_config.bak" | \
+                sed '8r /usr/local/www/owncloud/config/trusted.txt' > \
+                "/usr/local/www/owncloud/config/config.php"
+              echo -e " Done, continuing with the rest of the script"
+               ;;
+    *)
+              # If no, just continue like normal.
+              echo " "
+              echo -e "${qry} Great!, no need to do anything, continuing with script..${nc}"
+              echo " "
+              ;;
+esac
+}
+
+#------------------------------------------------------------------------------#
+### Populating Raw Post Data Fix
+#------------------------------------------------------------------------------#
+
+cloudphpini ()
+{
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Modifying php.ini${nc}"
+echo -e "${msg}    (/usr/local/etc/php.ini)${nc}"
+echo -e "${sep}"
+echo " "
+
+echo always_populate_raw_post_data = -1 > /usr/local/etc/php.ini
 }
 
 
@@ -337,7 +443,7 @@ trusteddomainerror ()
 # Confirm with the user
 echo " "
 echo -e "${emp} Please finish the owncloud setup before continuing${nc}"
-echo -e "${msg} Head to ${url}https://$server_ip:$server_port ${msg}to do this.${nc}"
+echo -e "${msg} Head to ${url}https://$cloud_server_ip:$cloud_server_port ${msg}to do this.${nc}"
 echo -e "${msg} Fill out the page you are presented with and hit finish${nc}"
 echo " "
 echo -e "${msg} Admin username & password = whatever you choose${nc}"
@@ -378,27 +484,6 @@ echo -e "${msg}   Welcome to the ownCloud installer!${nc}"
 echo -e "${sep}"
 echo " "
 echo " "
-echo " "
-echo -e "${sep}"
-echo -e "${msg}   Let's start with double checking some things${nc}"
-echo -e "${sep}"
-echo " "
-
-echo -e "${msg} Is this script running ${alt}INSIDE${msg} of a jail?${nc}"
-confirm
-echo " "
-echo -e "${msg} Checking to see if you need to modify the script${nc}"
-echo -e "${msg} If ${emp}ANY${msg} of these ${emp}DON'T${msg} match YOUR setup, answer with ${emp}no${nc}."
-echo -e " "
-echo -e "      #1: ${msg}Is this your jails IP? ${qry}$server_ip${nc}"
-echo -e "      #2: ${msg}Is this the port you want to use? ${qry}$server_port${nc}"
-echo -e "      #3: ${msg}Is this the ownCloud version you want to install? ${qry}$owncloud_version${nc}"
-echo -e " "
-echo -e "${emp} If #1 or #2 are incorrect you will encounter issues!${nc}"
-confirm
-echo " "
-echo -e "${url} Awesome, now we are ready to get on with it!${nc}"
-
 echo " "
 echo -e "${sep}"
 echo -e "${msg}   Let's get to installing some stuff!!${nc}"
@@ -610,7 +695,7 @@ trusteddomainerror
 echo " "
 echo -e "${sep}"
 echo -e "${msg} It looks like we finished here!!! NICE${nc}"
-echo -e "${msg} Now you can head to ${url}https://$server_ip:$server_port${nc}"
+echo -e "${msg} Now you can head to ${url}https://$cloud_server_ip:$cloud_server_port${nc}"
 echo -e "${msg} to use your owncloud whenever you wish!${nc}"
 echo " "
 echo " "
@@ -736,12 +821,12 @@ service headphones start
 
 updatemysql ()
 {
-
+echo -e "${emp} This part of the script is unfinished currently :("
 }
 
 updatecloud ()
 {
-
+echo -e "${emp} This part of the script is unfinished currently :("
 }
 
 updateemby ()
@@ -833,12 +918,12 @@ service sonarr restart
 
 updatesonarr ()
 {
-
+echo -e "${emp} This part of the script is unfinished currently :("
 }
 
 updatecouchpotato ()
 {
-
+echo -e "${emp} This part of the script is unfinished currently :("
 }
 
 
@@ -850,225 +935,32 @@ updatecouchpotato ()
 
 backupmysql ()
 {
-
+echo -e "${emp} This part of the script is unfinished currently :("
 }
 
 backupcloud ()
 {
-
+echo -e "${emp} This part of the script is unfinished currently :("
 }
 
 backupemby ()
 {
-
+echo -e "${emp} This part of the script is unfinished currently :("
 }
 
 backupsonarr ()
 {
-
+echo -e "${emp} This part of the script is unfinished currently :("
 }
 
 backupcouchpotato ()
 {
-
+echo -e "${emp} This part of the script is unfinished currently :("
 }
 
 backupheadphones ()
 {
-
-}
-
-
-
-################################################################################
-##### SUBMENUS
-# TODO: Add appropriate commands to backups option once finished
-################################################################################
-
-mysqlsubmenu ()
-{
-while [ "$choice" != "q" ]
-do
-        echo -e "${fin} MySQL + phpMyAdmin${nc}"
-        echo
-        echo -e "${qry} Choose one:"
-        echo -e "${fin}   1)${msg} Install"
-        echo -e "${fin}   2)${msg} Update"
-        echo -e "${fin}   3)${msg} Backup"
-        echo -e "${emp}   4) Main Menu${nc}"
-        echo
-
-        read choice
-
-        case $choice in
-            '1') echo -e "${inf} Installing..${nc}"
-                confirmmysqlinstall
-                ;;
-            '2') echo -e "${inf} Running Update..${nc}"
-                confirmmysqlupdate
-                ;;
-            '3') echo -e "${inf} Backup..${nc}"
-                backupmysql
-                ;;
-            '4') return
-                ;;
-        esac
-done
-}
-
-cloudsubmenu ()
-{
-while [ "$choice" != "q" ]
-do
-        echo -e "${fin} OwnCloud Options${nc}"
-        echo
-        echo -e "${qry} Choose one:"
-        echo -e "${fin}   1)${msg} Install"
-        echo -e "${fin}   2)${msg} Update"
-        echo -e "${fin}   3)${msg} Backup"
-        echo -e "${emp}   4) Main Menu${nc}"
-        echo
-
-        read choice
-
-        case $choice in
-            '1') echo -e "${inf} Installing..${nc}"
-                confirmcloudinstall
-                ;;
-            '2') echo -e "${inf} Running Update..${nc}"
-                confirmcloudupdate
-                ;;
-            '3') echo -e "${inf} Backup..${nc}"
-                backupcloud
-                ;;
-            '4') return
-                ;;
-        esac
-done
-}
-
-embysubmenu ()
-{
-while [ "$choice" != "q" ]
-do
-        echo -e "${fin} Emby Options${nc}"
-        echo
-        echo -e "${qry} Choose one:"
-        echo -e "${fin}   1)${msg} Install"
-        echo -e "${fin}   2)${msg} Update"
-        echo -e "${fin}   3)${msg} Backup"
-        echo -e "${emp}   4) Main Menu${nc}"
-        echo
-
-        read choice
-
-        case $choice in
-            '1') echo -e "${inf} Installing..${nc}"
-                confirmembyinstall
-                ;;
-            '2') echo -e "${inf} Running Update..${nc}"
-                confirmembyupdate
-                ;;
-            '3') echo -e "${inf} Backup..${nc}"
-                backupemby
-                ;;
-            '4') return
-                ;;
-        esac
-done
-}
-
-sonarrsubmenu ()
-{
-while [ "$choice" != "q" ]
-do
-        echo -e "${fin} Sonarr Options${nc}"
-        echo
-        echo -e "${qry} Choose one:"
-        echo -e "${fin}   1)${msg} Install"
-        echo -e "${fin}   2)${msg} Update"
-        echo -e "${fin}   3)${msg} Backup"
-        echo -e "${emp}   4) Main Menu${nc}"
-        echo
-
-        read choice
-
-        case $choice in
-            '1') echo -e "${inf} Installing..${nc}"
-                confirmsonarrinstall
-                ;;
-            '2') echo -e "${inf} Running Update..${nc}"
-                confirmsonarrupdate
-                ;;
-            '3') echo -e "${inf} Backup..${nc}"
-                backupsonarr
-                ;;
-            '4') return
-                ;;
-        esac
-done
-}
-
-couchpotatosubmenu ()
-{
-while [ "$choice" != "q" ]
-do
-        echo -e "${fin} CouchPotato Options${nc}"
-        echo
-        echo -e "${qry} Choose one:"
-        echo -e "${fin}   1)${msg} Install"
-        echo -e "${fin}   2)${msg} Update"
-        echo -e "${fin}   3)${msg} Backup"
-        echo -e "${emp}   4) Main Menu${nc}"
-        echo
-
-        read choice
-
-        case $choice in
-            '1') echo -e "${inf} Installing..${nc}"
-                confirmcouchpotatoinstall
-                ;;
-            '2') echo -e "${inf} Running Update..${nc}"
-                confirmcouchpotatoupdate
-                ;;
-            '3') echo -e "${inf} Backup..${nc}"
-                backupcouchpotato
-                ;;
-            '4') return
-                ;;
-        esac
-done
-}
-
-headphonessubmenu ()
-{
-while [ "$choice" != "q" ]
-do
-        echo -e "${fin} HeadPhones Options${nc}"
-        echo
-        echo -e "${qry} Choose one:"
-        echo -e "${fin}   1)${msg} Install"
-        echo -e "${fin}   2)${msg} Update"
-        echo -e "${fin}   3)${msg} Backup"
-        echo -e "${emp}   4) Main Menu${nc}"
-        echo
-
-        read choice
-
-        case $choice in
-            '1') echo -e "${inf} Installing..${nc}"
-                confirmheadphonesinstall
-                ;;
-            '2') echo -e "${inf} Running Update..${nc}"
-                confirmheadphonesupdate
-                ;;
-            '3') echo -e "${inf} Backup..${nc}"
-                backupheadphones
-                ;;
-            '4') return
-                ;;
-        esac
-done
+echo -e "${emp} This part of the script is unfinished currently :("
 }
 
 
@@ -1077,7 +969,12 @@ done
 ##### CONFIRMATIONS
 # TODO: Add confirms for all installs as a safety thing
 ################################################################################
+
 ### INSTALL CONFIRMATIONS
+#------------------------------------------------------------------------------#
+
+#------------------------------------------------------------------------------#
+### MYSQL CONFIRM INSTALL
 
 confirmmysqlinstall ()
 {
@@ -1096,15 +993,60 @@ case "$response" in
 esac
 }
 
+#------------------------------------------------------------------------------#
+### OWNCLOUD CONFIRM INSTALL
+
 confirmcloudinstall ()
 {
+confirm ()
+{
 # Confirm with the user
+read -r -p "   Continue? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              echo -e "${url} Great! Moving on..${nc}"
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              echo -e "${alt}Stopping script..${nc}"
+              echo " "
+              exit
+              ;;
+esac
+}
+echo -e "${sep}"
+echo -e "${msg}   Let's start with double checking some things${nc}"
+echo -e "${sep}"
+echo " "
+
+echo -e "${msg} Is this script running ${alt}INSIDE${msg} of a jail?${nc}"
+
+confirm
+
+echo " "
+echo -e "${msg} Checking to see if you need to modify the script${nc}"
+echo -e "${msg} If ${emp}ANY${msg} of these ${emp}DON'T${msg} match YOUR setup, answer with ${emp}no${nc}."
+echo -e " "
+echo -e "      ${alt}#1: ${msg}Is this your jails IP? ${qry}$cloud_server_ip${nc}"
+echo -e "      ${alt}#2: ${msg}Is this the port you want to use? ${qry}$cloud_server_port${nc}"
+echo -e "      ${alt}#3: ${msg}Is this the ownCloud version you want to install? ${qry}$owncloud_version${nc}"
+echo -e " "
+echo -e "${emp} If #1 or #2 are incorrect you will encounter issues!${nc}"
+
+confirm
+
+echo " "
+echo -e "${url} Awesome, now we are ready to get on with it!${nc}"
+# Confirm with the user
+echo -e "${inf} Final confirmation before installing owncloud.${nc}"
 read -r -p "   Confirm Installation of OwnCloud? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
               installcloud
-              ;;
+               ;;
     *)
               # Otherwise exit...
               echo " "
@@ -1112,6 +1054,9 @@ case "$response" in
               ;;
 esac
 }
+
+#------------------------------------------------------------------------------#
+### EMBY SERVER CONFIRM INSTALL
 
 confirmembyinstall ()
 {
@@ -1130,6 +1075,9 @@ case "$response" in
 esac
 }
 
+#------------------------------------------------------------------------------#
+### SONARR CONFIRM INSTALL
+
 confirmsonarrinstall ()
 {
 # Confirm with the user
@@ -1146,6 +1094,9 @@ case "$response" in
               ;;
 esac
 }
+
+#------------------------------------------------------------------------------#
+### COUCHPOTATO CONFIRM INSTALL
 
 confirmcouchpotatoinstall ()
 {
@@ -1164,6 +1115,9 @@ case "$response" in
 esac
 }
 
+#------------------------------------------------------------------------------#
+### HEADPHONES CONFIRM INSTALL
+
 confirmheadphonesinstall ()
 {
 # Confirm with the user
@@ -1181,8 +1135,13 @@ case "$response" in
 esac
 }
 
+#------------------------------------------------------------------------------#
 ### UPDATE CONFIRMATIONS
 # TODO: Add run backup before update commands + inform the user of backup
+#------------------------------------------------------------------------------#
+
+### MYSQL CONFIRM UPDATE
+#------------------------------------------------------------------------------#
 
 confirmmysqlupdate ()
 {
@@ -1201,6 +1160,9 @@ case "$response" in
 esac
 }
 
+#------------------------------------------------------------------------------#
+### OWNCLOUD CONFIRM UPDATE
+
 confirmcloudupdate ()
 {
 # Confirm with the user
@@ -1217,6 +1179,9 @@ case "$response" in
               ;;
 esac
 }
+
+#------------------------------------------------------------------------------#
+### EMBY SERVER CONFIRM UPDATE
 
 confirmembyupdate ()
 {
@@ -1235,6 +1200,9 @@ case "$response" in
 esac
 }
 
+#------------------------------------------------------------------------------#
+### SONARR CONFIRM UPDATE
+
 confirmsonarrupdate ()
 {
 # Confirm with the user
@@ -1252,6 +1220,9 @@ case "$response" in
 esac
 }
 
+#------------------------------------------------------------------------------#
+### COUCHPOTATO CONFIRM UPDATE
+
 confirmcouchpotatoupdate ()
 {
 # Confirm with the user
@@ -1268,6 +1239,9 @@ case "$response" in
               ;;
 esac
 }
+
+#------------------------------------------------------------------------------#
+### HEADPHONES CONFIRM UPDATE
 
 confirmheadphonesupdate ()
 {
@@ -1287,17 +1261,316 @@ esac
 }
 
 
+
+################################################################################
+##### SUBMENUS
+# TODO: Add appropriate commands to backups option once finished
+################################################################################
+
+### MYSQL SUBMENU
+#------------------------------------------------------------------------------#
+
+mysqlsubmenu ()
+{
+while [ "$choice" != "m" ]
+do
+        echo -e "${fin} MySQL + phpMyAdmin${nc}"
+        echo
+        echo -e "${qry} Choose one:"
+        echo -e "${fin}   1)${msg} Install"
+        echo -e "${fin}   2)${msg} Update"
+        echo -e "${fin}   3)${msg} Backup"
+        echo -e "${emp}   m) Main Menu${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+
+        case $choice in
+            '1') echo -e "${inf} Installing..${nc}"
+                confirmmysqlinstall
+                ;;
+            '2') echo -e "${inf} Running Update..${nc}"
+                confirmmysqlupdate
+                ;;
+            '3') echo -e "${inf} Backup..${nc}"
+                backupmysql
+                ;;
+            'm') return
+                ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### OWNCLOUD SUBMENU
+
+cloudsubmenu ()
+{
+while [ "$choice" != "h,i,m" ]
+do
+        echo -e "${fin} OwnCloud Options${nc}"
+        echo
+        echo -e "${qry} Choose one:"
+        echo -e "${fin}   1)${msg} Install"
+        echo -e "${fin}   2)${msg} Update"
+        echo -e "${fin}   3)${msg} Backup"
+        echo " "
+        echo -e "${fin}   4)${msg} Fix Known Errors${nc}"
+        echo -e "${fin}   5)${msg} Other${nc}"
+        echo " "
+        echo -e "${inf}  i) More Info / How-To's${nc}"
+        echo -e "${inf}  h) Get Help${nc}"
+        echo -e "${alt}  q) Quit${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+
+        case $choice in
+            '1') echo -e "${inf} Installing..${nc}"
+                confirmcloudinstall
+                ;;
+            '2') echo -e "${inf} Running Update..${nc}"
+                confirmcloudupdate
+                ;;
+            '3') echo -e "${inf} Backup..${nc}"
+                backupcloud
+                ;;
+            '4')
+                clouderrorfixsubmenu
+                ;;
+            '5')
+                cloudotheroptions
+                ;;
+            'i')
+                moreinfosubmenu
+                ;;
+            'h')
+                help
+                ;;
+            'm') return
+                ;;
+            *)   echo -e "${emp}        Invalid choice, please try again${nc}"
+                ;;
+        esac
+done
+}
+
+### ERROR FIXES SUBMENU
+#------------------------------------------------------------------------------#
+
+clouderrorfixsubmenu ()
+{
+while [ "$choice" != "m" ]
+do
+        echo -e "${qry} Choose one:"
+        echo " "
+        echo -e "${fin}   1)${msg} Trusted Domain Error"
+        echo -e "${fin}   2)${msg} Populating Raw Post Data Error"
+        echo " "
+        echo -e "${emp}   m) Main Menu${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+
+        case $choice in
+            '1') echo -e "${inf} ${nc}"
+                trusteddomainfix
+                ;;
+            '2') echo -e "${inf} ${nc}"
+                phpini
+                ;;
+            'm') return
+                ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### EMBY SERVER SUBMENU
+
+embysubmenu ()
+{
+while [ "$choice" != "m" ]
+do
+        echo -e "${fin} Emby Options${nc}"
+        echo
+        echo -e "${qry} Choose one:"
+        echo -e "${fin}   1)${msg} Install"
+        echo -e "${fin}   2)${msg} Update"
+        echo -e "${fin}   3)${msg} Backup"
+        echo -e "${emp}   m) Main Menu${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+
+        case $choice in
+            '1') echo -e "${inf} Installing..${nc}"
+                confirmembyinstall
+                ;;
+            '2') echo -e "${inf} Running Update..${nc}"
+                confirmembyupdate
+                ;;
+            '3') echo -e "${inf} Backup..${nc}"
+                backupemby
+                ;;
+            'm') return
+                ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### SONARR SUBMENU
+
+sonarrsubmenu ()
+{
+while [ "$choice" != "m" ]
+do
+        echo -e "${fin} Sonarr Options${nc}"
+        echo
+        echo -e "${qry} Choose one:"
+        echo -e "${fin}   1)${msg} Install"
+        echo -e "${fin}   2)${msg} Update"
+        echo -e "${fin}   3)${msg} Backup"
+        echo -e "${emp}   m) Main Menu${nc}"
+
+        echo -e "${ssep}"
+        read choice
+        echo -e "${ssep}"
+
+        case $choice in
+            '1') echo -e "${inf} Installing..${nc}"
+                confirmsonarrinstall
+                ;;
+            '2') echo -e "${inf} Running Update..${nc}"
+                confirmsonarrupdate
+                ;;
+            '3') echo -e "${inf} Backup..${nc}"
+                backupsonarr
+                ;;
+            'm') return
+                ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### COUCHPOTATO SUBMENU
+
+couchpotatosubmenu ()
+{
+while [ "$choice" != "m" ]
+do
+        echo -e "${fin} CouchPotato Options${nc}"
+        echo
+        echo -e "${qry} Choose one:"
+        echo -e "${fin}   1)${msg} Install"
+        echo -e "${fin}   2)${msg} Update"
+        echo -e "${fin}   3)${msg} Backup"
+        echo -e "${emp}   m) Main Menu${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+
+        case $choice in
+            '1') echo -e "${inf} Installing..${nc}"
+                confirmcouchpotatoinstall
+                ;;
+            '2') echo -e "${inf} Running Update..${nc}"
+                confirmcouchpotatoupdate
+                ;;
+            '3') echo -e "${inf} Backup..${nc}"
+                backupcouchpotato
+                ;;
+            'm') return
+                ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### HEADPHONES SUBMENU
+
+headphonessubmenu ()
+{
+while [ "$choice" != "m" ]
+do
+        echo -e "${fin} HeadPhones Options${nc}"
+        echo
+        echo -e "${qry} Choose one:"
+        echo -e "${fin}   1)${msg} Install"
+        echo -e "${fin}   2)${msg} Update"
+        echo -e "${fin}   3)${msg} Backup"
+        echo -e "${emp}   m) Main Menu${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+
+        case $choice in
+            '1') echo -e "${inf} Installing..${nc}"
+                confirmheadphonesinstall
+                ;;
+            '2') echo -e "${inf} Running Update..${nc}"
+                confirmheadphonesupdate
+                ;;
+            '3') echo -e "${inf} Backup..${nc}"
+                backupheadphones
+                ;;
+            'm') return
+                ;;
+        esac
+done
+}
+
+
+
+#------------------------------------------------------------------------------#
+### MORE INFORMATION / HOW-TO / FURTHER INSCTRUCTIONS
+
+moreinfosubmenu ()
+{
+while [ "$choice" != "m" ]
+do
+        echo -e "${qry} Choose one:"
+        echo " "
+        echo -e "${msg} How to..."
+        echo -e "${fin}   1)${msg} OwnCloud - Finish the owncloud setup"
+        echo " "
+        echo -e "${emp}   m) Main Menu${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+
+        case $choice in
+            '1') cloudhowtofinishsetup
+                ;;
+            'm') return
+                ;;
+        esac
+done
+}
+
+
+
 ################################################################################
 ##### MAIN MENU
 ################################################################################
 
 mainmenu=""
 
-while [ "$choice" != "q,i" ]
+while [ "$choice" != "q,h,i" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} Script Version: 1.0.1 (March 17, 2016)"
-        echo " "
+        echo -e "${inf} AIO Script - Version: 1.0.2 (March 28, 2016)"
+        echo -e "${inf} By Nozza"
+        echo -e "${sep}"
         echo -e "${msg} Main Menu"
         echo " "
         echo -e "${qry} Please make a selection!"
@@ -1309,11 +1582,12 @@ do
         echo -e "${fin}   5)${msg} CouchPotato${nc}"
         echo -e "${fin}   6)${msg} HeadPhones${nc}"
         echo " "
-        echo -e "${inf}  i) Contact Me${nc}"
+        echo -e "${inf}  h) Contact Me / Get Help${nc}"
         echo -e "${alt}  q) Quit${nc}"
-        echo -e "${sep}"
 
-        read choice
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
 
         case $choice in
             '1')
@@ -1335,7 +1609,10 @@ do
                 headphonessubmenu
                 ;;
             'i')
-                contactme
+                moreinfosubmenu
+                ;;
+            'h')
+                gethelp
                 ;;
             'q') echo -e "${alt}        Exiting script!${nc}"
                 echo " "

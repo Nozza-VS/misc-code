@@ -1,13 +1,13 @@
 #!/bin/sh
 
 # Update script for Emby Media Server (AKA MediaBrowser)
-# Version 1.04 (March 10, 2016)
+# Version 1.05 (March 28, 2016)
 # As ports official freebsd ports tree takes ages to accept updates
 # here is a simple script to grab the latest version and upgrade manually.
 
 # Emby version to download
 #embyver="latest" # Uncomment to get the latest
-embyver="3.0.5882"  # Current latest version as of March 10, 2016.
+embyver="3.0.5911"  # Current latest version as of March 10, 2016.
                     # The current latest BSD package is version 3.0.5781.2_1
 
 # Grab the date & time to be used later
@@ -81,17 +81,18 @@ echo " "
 pkg install -y rsync
 
 echo " "
+echo -e "${sep}"
+echo " "
 
-echo -e "${msg} Application backup${nc}"
+echo -e "${emp} Application backup${nc}"
 mkdir -p /usr/local/lib/emby-server-backups/${date} # Using -p in case you've never run the script before or you have deleted this folder
 rsync -a --info=progress2 /usr/local/lib/emby-server/ /usr/local/lib/emby-server-backups/${date}
 #cp -r /usr/local/lib/emby-server/ /usr/local/lib/emby-server-backups/${date}
 echo -e "${fin}    Application backup done..${nc}"
 
 echo " "
-echo " "
 
-echo -e "${msg} Server data backup ${inf}(May take a while)${nc}"
+echo -e "${emp} Server data backup ${inf}(May take a while)${nc}"
 mkdir -p /var/db/emby-server-backups/${date}
 rsync -a --info=progress2 /var/db/emby-server/ /var/db/emby-server-backups/${date}
 #cp -r /var/db/emby-server/ /var/db/emby-server-backups/${date}

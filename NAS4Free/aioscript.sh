@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script - Version: 1.0.7 (March 30, 2016)
+# AIO Script - Version: 1.0.7.1 (March 31, 2016)
 ################################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -2660,7 +2660,7 @@ mainmenu=""
 while [ "$choice" != "q,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.7 (March 30, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.7.1 (March 31, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "

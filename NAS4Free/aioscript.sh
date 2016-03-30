@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script - Version: 1.0.4 (March 28, 2016)
+# AIO Script - Version: 1.0.5 (March 30, 2016)
 ################################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -97,19 +97,39 @@ done
 
 #------------------------------------------------------------------------------#
 ### OWNCLOUD - ENABLE MEMORY CACHING
+#TODO: Add option for automatic or manual (Will also need to ask if user is
+#      using default installation folder otherwise the auto version won't work)
 #------------------------------------------------------------------------------#
 
 cloud.enablememcache ()
 {
-echo -e "${msg} This part of the script is unfinished currently :("
+echo "  'memcache.local' => '\OC\Memcache\APCu'," >> /usr/local/www/owncloud/config/memcache.txt
+cp /usr/local/www/owncloud/config/config.php /usr/local/www/owncloud/config/old_config.bak
+cat "/usr/local/www/owncloud/config/old_config.bak" | \
+	sed '21r /usr/local/www/owncloud/config/memcache.txt' > \
+    "/usr/local/www/owncloud/config/config.php"
+
+/usr/local/etc/rc.d/lighttpd restart
+
 echo " "
-#echo -e "${msg} This is entirely optional. Head to this file:${nc}"
-#echo -e "\033[1;36m    /usr/local/www/owncloud/config/config.php${nc} ${msg}and add:${nc}"
-#echo -e "\033[1;33m    'memcache.local' => '\OC\Memcache\APCu',${nc}"
-#echo -e "${msg} right above the last line.${nc}"
-#echo -e "${msg} Once you've edited this file, restart the server with:${nc}"
-#/usr/local/etc/rc.d/lighttpd restart
+echo "${sep}"
+echo " "
+
+echo -e " Head to your owncloud admin page/refresh it"
+echo -e " There should no longer be a message at the top about memory caching"
+echo -e " If it didn't work follow these steps:"
+echo -e " "
+echo -e "${msg} This is entirely optional. Edit config.php:${nc}"
+echo -e "${msg} Default location is:${nc}"
+echo -e "\033[1;36m    /usr/local/www/owncloud/config/config.php${nc}"
+echo -e "${msg} Add the following right above the last line:${nc}"
+echo -e "\033[1;33m    'memcache.local' => '\OC\Memcache\APCu',${nc}"
+echo " "
+echo -e "${msg} Once you've saved the file, restart the server with:${nc}"
+echo -e "${cmd}    /usr/local/etc/rc.d/lighttpd restart"
 }
+
+
 
 ################################################################################
 ##### INFORMATION / HOW-TO'S / OTHER INSCTRUCTIONS
@@ -2232,7 +2252,7 @@ mainmenu=""
 while [ "$choice" != "q,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.4 (March 28, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.5 (March 30, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
@@ -2307,3 +2327,4 @@ done
 # FUTURE: Add "Subsonic"
 # FUTURE: Add "UMS"
 # FUTURE: Add "Web Server"
+# FUTURE: If this script has no issues then i may remove standalone scripts from github

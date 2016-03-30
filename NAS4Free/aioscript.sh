@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script - Version: 1.0.6.1 (March 30, 2016)
+# AIO Script - Version: 1.0.7 (March 30, 2016)
 ################################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -1051,7 +1051,7 @@ echo -e "${msg}   Let's start with installing Sonarr from packages${nc}"
 echo -e "${sep}"
 echo " "
 
-pkg install -y sonarr ffmpeg mediainfo
+pkg install -y sonarr mediainfo
 
 echo " "
 echo -e "${sep}"
@@ -1061,7 +1061,12 @@ echo " "
 
 service sonarr start
 
-# TODO: Direct user to sonarr
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Open your browser and go to: ${url}yourjailip:8989${nc}"
+echo -e "${msg} to finish setting up Sonarr${nc}"
+echo -e "${sep}"
+echo " "
 }
 
 #------------------------------------------------------------------------------#
@@ -1085,23 +1090,15 @@ pkg install python py27-sqlite3 fpc-libcurl docbook-xml git-lite
 
 echo " "
 echo -e "${sep}"
-echo -e "${msg} cd to installation directory${nc}"
-echo -e "${msg}    (/usr/local/CouchPotato)${nc}"
+echo -e "${msg} Grab CouchPotato from github${nc}"
+echo -e "${msg} CouchPotato will be installed to:${nc}"
+echo -e "${inf}    /usr/local/CouchPotato${nc}"
 echo -e "${sep}"
 echo " "
 
-#For default install location and running as root
-cd /usr/local
 #If running as root, expects python here
 ln -s /usr/local/bin/python /usr/bin/python
-
-echo " "
-echo -e "${sep}"
-echo -e "${msg} Grab CouchPotato from github${nc}"
-echo -e "${sep}"
-echo " "
-
-git clone https://github.com/CouchPotato/CouchPotatoServer.git
+git clone https://github.com/CouchPotato/CouchPotatoServer.git /usr/local/CouchPotato
 
 echo " "
 echo -e "${sep}"
@@ -1135,7 +1132,7 @@ service couchpotato start
 echo " "
 echo -e "${sep}"
 echo -e "${msg} Open your browser and go to: ${url}yourjailip:5050${nc}"
-echo -e "${msg} to finish setting up your Emby server${nc}"
+echo -e "${msg} to finish setting up your CouchPotato server${nc}"
 echo -e "${sep}"
 echo " "
 
@@ -1144,6 +1141,7 @@ echo -e "${sep}"
 echo -e "${msg} Done here!${nc}"
 echo -e "${msg} Feel free to visit the project homepage at:${nc}"
 echo -e "${url}    https://github.com/CouchPotato/CouchPotatoServer${nc}"
+echo -e "${url}    https://couchpota.to${nc}"
 echo -e "${sep}"
 echo " "
 }
@@ -1170,10 +1168,12 @@ pkg install python py27-sqlite3 fpc-libcurl docbook-xml git-lite ffmpeg flac lam
 echo " "
 echo -e "${sep}"
 echo -e "${msg} Grab Headphones from github${nc}"
+echo -e "${msg} Headphones will be installed to:${nc}"
+echo -e "${inf}    /usr/local/Headphones${nc}"
 echo -e "${sep}"
 echo " "
 
-git clone https://github.com/rembo10/headphones.git
+git clone https://github.com/rembo10/headphones.git /usr/local/Headphones
 
 echo " "
 echo -e "${sep}"
@@ -1350,6 +1350,12 @@ update.emby ()
 {
 echo " "
 echo -e "${sep}"
+echo -e "${msg}   Emby Updater (Faster Updates)${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
 echo -e "${msg}   Let's start with a backup.${nc}"
 echo -e "${msg}   First, make sure we have rsync and then${nc}"
 echo -e "${msg}   we will use it to create a backup${nc}"
@@ -1360,6 +1366,8 @@ echo " "
 pkg install -y rsync
 
 echo " "
+echo -e "${sep}"
+echo -e "${msg} Create backups${nc}" # TODO: Give user option to backup or not
 echo -e "${sep}"
 echo " "
 
@@ -1437,8 +1445,72 @@ echo " "
 
 update.emby.safe ()
 {
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Emby Updater (Safe but slow updates)${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Let's start with a backup.${nc}"
+echo -e "${msg}   First, make sure we have rsync and then${nc}"
+echo -e "${msg}   we will use it to create a backup${nc}"
+echo -e "${sep}"
+echo " "
+
+# Using rsync rather than cp so we can see progress actually happen on the backup for large servers.
+pkg install -y rsync
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Create backups${nc}" # TODO: Give user option to backup or not
+echo -e "${sep}"
+echo " "
+
+echo -e "${emp} Application backup${nc}"
+mkdir -p /usr/local/lib/emby-server-backups/${date} # Using -p in case you've never run the script before or you have deleted this folder
+rsync -a --info=progress2 /usr/local/lib/emby-server/ /usr/local/lib/emby-server-backups/${date}
+echo -e "${fin}    Application backup done..${nc}"
+
+echo " "
+
+echo -e "${emp} Server data backup ${inf}(May take a while)${nc}"
+mkdir -p /var/db/emby-server-backups/${date}
+rsync -a --info=progress2 /var/db/emby-server/ /var/db/emby-server-backups/${date}
+echo -e "${fin}    Server backup done.${nc}"
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Check for & grab updates (if any)${nc}"
+echo -e "${sep}"
+echo " "
+
 pkg update
 pkg upgrade emby-server
+
+service emby-server restart
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} That should be it!${nc}"
+echo -e "${msg} NOTE: When viewing your Emby dashboard,${nc}"
+echo -e "${msg}    it may still say there is an update.${nc}"
+echo " "
+echo -e "${msg} This should be ignored unless you wish to use${nc}"
+echo -e "${msg} the other update method.${nc}"
+echo " "
+echo " "
+echo " "
+echo -e "${msg} If something went wrong you can do the following to restore the old version:${nc}"
+echo -e "${cmd}   rm -r /usr/local/lib/emby-server${nc}"
+echo -e "${cmd}   mv /usr/local/lib/emby-server-backups/${date} /usr/local/lib/emby-server${nc}"
+echo " "
+echo -e "${msg} And use this to restore your server database/settings:${nc}"
+echo -e "${cmd}   rm -r /var/db/emby-server${nc}"
+echo -e "${cmd}   mv /var/db/emby-server-backups/${date} /var/db/emby-server${nc}"
+echo -e "${sep}"
+echo " "
 }
 
 #------------------------------------------------------------------------------#
@@ -1456,7 +1528,7 @@ update.sonarr ()
 
 echo " "
 echo -e "${sep}"
-echo "   Sonarr Update Script"
+echo "   Sonarr Updater"
 echo -e "${sep}"
 echo " "
 
@@ -1536,9 +1608,25 @@ service sonarr restart
 update.couchpotato ()
 {
 echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+# CouchPotato can be updated automatically
+# TODO: Add instructions on how to enable auto updates
+# TODO: Add manual update here just in case (via github)
 echo " "
 }
 
+
+
+#------------------------------------------------------------------------------#
+### HEADPHONES UPDATE
+
+update.headphones ()
+{
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+# Headphones can be updated automatically
+# TODO: Add instructions on how to enable auto updates
+# TODO: Add manual update here just in case (via github)
+echo " "
+}
 
 
 #------------------------------------------------------------------------------#
@@ -1547,6 +1635,7 @@ echo " "
 update.thebrig ()
 {
 echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+# TODO: Add instructions on how to update via nas webgui
 echo " "
 }
 
@@ -1937,9 +2026,9 @@ echo " "
 }
 
 #------------------------------------------------------------------------------#
-### EMBY SERVER CONFIRM UPDATE (SAFE METHOD)
+### EMBY SERVER CONFIRM UPDATE (LATEST GIT METHOD)
 
-confirm.emby.update.safe ()
+confirm.emby.update.git ()
 {
 echo " "
 echo -e "${sep}"
@@ -2235,6 +2324,7 @@ do
         echo -e "${fin}   1)${msg} Install"
         echo -e "${fin}   2)${msg} Update"
         echo -e "${fin}   3)${msg} Backup"
+        echo " "
         echo -e "${emp}   m) Main Menu${nc}"
 
         echo -e "${ssep}"
@@ -2272,6 +2362,7 @@ do
         echo -e "${fin}   1)${msg} Install"
         echo -e "${fin}   2)${msg} Update"
         echo -e "${fin}   3)${msg} Backup"
+        echo " "
         echo -e "${emp}   m) Main Menu${nc}"
 
         echo -e "${ssep}"
@@ -2299,7 +2390,7 @@ done
 
 headphones.submenu ()
 {
-while [ "$choice" != "m" ]
+while [ "$choice" != "e,h,i,m" ]
 do
         echo -e "${sep}"
         echo -e "${fin} HeadPhones Options${nc}"
@@ -2309,7 +2400,10 @@ do
         echo -e "${fin}   1)${msg} Install"
         echo -e "${fin}   2)${msg} Update"
         echo -e "${fin}   3)${msg} Backup"
-        echo -e "${emp}   m) Main Menu${nc}"
+        echo " "
+        echo -e "${inf}  i) More Info / How-To's${nc}"
+        echo -e "${inf}  h) Get Help${nc}"
+        echo -e "${emp}  m) Main Menu${nc}"
 
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
@@ -2325,6 +2419,12 @@ do
             '3') echo -e "${inf} Backup..${nc}"
                 backup.headphones
                 ;;
+            'h')
+                gethelp
+                ;;
+            'i')
+                moreinfo.submenu.headphones
+                ;;
             'm') return
                 ;;
         esac
@@ -2338,7 +2438,7 @@ done
 
 thebrig.submenu ()
 {
-while [ "$choice" != "m" ]
+while [ "$choice" != "e,h,i,m" ]
 do
         echo -e "${sep}"
         echo -e "${fin} TheBrig Options${nc}"
@@ -2348,8 +2448,12 @@ do
         echo -e "${fin}   1)${msg} Install (Guide Only)"
         echo -e "${fin}   2)${msg} Update"
         echo -e "${fin}   3)${msg} Backup"
-        echo -e "${fin}   i)${msg} Install (EXPERIMENTAL)"
-        echo -e "${emp}   m) Main Menu${nc}"
+        echo " "
+        echo -e "${fin}   e)${msg} Install (EXPERIMENTAL)"
+        echo " "
+        echo -e "${inf}  i) More Info / How-To's${nc}"
+        echo -e "${inf}  h) Get Help${nc}"
+        echo -e "${emp}  m) Main Menu${nc}"
 
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
@@ -2365,8 +2469,14 @@ do
             '3') echo -e "${inf} Backup..${nc}"
                 backup.thebrig
                 ;;
-            'i') echo -e "${inf} Installing..${nc}"
+            'e') echo -e "${inf} Installing..${nc}"
                 confirm.thebrig.EXPEREIMENTAL.install
+                ;;
+            'h')
+                gethelp
+                ;;
+            'i')
+                moreinfo.submenu.thebrig
                 ;;
             'm') return
                 ;;
@@ -2550,7 +2660,7 @@ mainmenu=""
 while [ "$choice" != "q,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.6.1 (March 30, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.7 (March 30, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "

@@ -1,12 +1,12 @@
 #!/bin/sh
-# AIO Script - Version: 1.0.6 (March 30, 2016)
+# AIO Script - Version: 1.0.6.1 (March 30, 2016)
 ################################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
 #   In some instances of this script, the following variables must be defined
 #   by the user:
 #
-#   cloud_server_port:  Used to specify the port Owncloud will be listening to.
+#   cloud_server_port:  Used to specify the port OwnCloud will be listening to.
 #                       Needed due to some installs of N4F having trouble with
 #            the admin webgui showing up, even when browsing to the jail's IP.
 #
@@ -64,8 +64,8 @@ emp='\033[1;31m'    # Emphasis Text
 msg='\033[1;37m'    # Message Text
 url='\033[1;32m'    # URL
 qry='\033[0;36m'    # Query Text
-sep='\033[1;30m-------------------------------------------------------\033[0m'    # Line Seperator
-ssep='\033[1;30m#----------------------#\033[0m'    # Small Line Seperator
+sep='\033[1;30m-------------------------------------------------------\033[0m'    # Line Separator
+ssep='\033[1;30m#----------------------#\033[0m'    # Small Line Separator
 cmd='\033[1;35m'    # Command to be entered
 fin='\033[0;32m'    # Green Text
 inf='\033[0;33m'    # Information Text
@@ -149,7 +149,7 @@ echo -e "${cmd}    /usr/local/etc/rc.d/lighttpd restart"
 
 
 ################################################################################
-##### INFORMATION / HOW-TO'S / OTHER INSCTRUCTIONS
+##### INFORMATION / HOW-TO'S / OTHER INSTRUCTIONS
 ################################################################################
 
 #------------------------------------------------------------------------------#
@@ -254,9 +254,9 @@ do
         echo -e "${sep}"
         echo " "
         echo -e "${emp} This assumes you have installed TheBrig already and${nc}"
-        echo -e "${emp} have done the inital configuration.${nc}"
+        echo -e "${emp} have done the initial configuration.${nc}"
         echo " "
-        echo -e "${msg} Head to your nas webgui, you should see a menu${nc}"
+        echo -e "${msg} Head to your NAS webgui, you should see a menu${nc}"
         echo -e "${msg} named '${inf}Extensions${msg}'. Hover over it and click '${inf}TheBrig${msg}'${nc}"
         echo -e "${msg} From here, click the '${inf}+${msg}' icon${nc}"
         echo -e "${msg} On the new page, there are some things to change${nc}"
@@ -369,7 +369,7 @@ do
         echo -e "${msg} Remove default FFMpeg package:${nc}"
         echo -e "${cmd}    pkg delete -f ffmpeg${nc}"
         echo -e "${msg} Reinstall FFMpeg from ports with 'lame' & 'ass' options${nc}"
-        echo -e "${msg} enabled. To enable an option, higlight it using the arrow${nc}"
+        echo -e "${msg} enabled. To enable an option, highlight it using the arrow${nc}"
         echo -e "${msg} keys and press space (I also enable 'OPUS' option)${nc}"
         echo -e "${cmd}    cd /usr/ports/multimedia/ffmpeg${nc}"
         echo -e "${cmd}    make config${nc}"
@@ -1309,7 +1309,7 @@ fetch https://raw.githubusercontent.com/fsbruva/thebrig/alcatraz/thebrig_install
 
 echo " "
 echo -e "${sep}"
-echo -e "${msg} TheBrig should now be succesfully installed${nc}"
+echo -e "${msg} TheBrig should now be successfully installed${nc}"
 echo -e "${sep}"
 echo " "
 
@@ -2377,7 +2377,7 @@ done
 
 
 #------------------------------------------------------------------------------#
-### MORE INFORMATION / HOW-TO / FURTHER INSCTRUCTIONS SUBMENU (COMBINED)
+### MORE INFORMATION / HOW-TO / FURTHER INSTRUCTIONS SUBMENU (COMBINED)
 
 moreinfo.combined.submenu ()
 {
@@ -2415,7 +2415,7 @@ done
 
 
 #------------------------------------------------------------------------------#
-### MORE INFORMATION / HOW-TO / FURTHER INSCTRUCTIONS SUBMENU (SPECIFIC)
+### MORE INFORMATION / HOW-TO / FURTHER INSTRUCTIONS SUBMENU (SPECIFIC)
 # YAY OR NAY?
 
 moreinfo.submenu.cloud ()
@@ -2550,7 +2550,7 @@ mainmenu=""
 while [ "$choice" != "q,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.6 (March 30, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.6.1 (March 30, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "

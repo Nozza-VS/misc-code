@@ -1,5 +1,5 @@
 #!/bin/sh
-# Script Version: 1.0 (March 13, 2016)
+# Script Version: 1.0.1 (March 31, 2016)
 
 # DO NOT USE! THIS IS STILL VERY MUCH UNFINISHED AND MOST DEFINITELY UNTESTED!
 # TODO: Test Script
@@ -42,7 +42,7 @@ case "$response" in
 esac
 }
 
-confirminstall ()
+confirmsuccess ()
 {
 # Confirm with the user
 echo -e "${msg} Head to your NAS WebGUI (Refresh the page if you already have it open)${nc}"
@@ -121,7 +121,7 @@ echo -e "${sep}"
 echo " "
 
 # Confirm with user
-confirminstall
+confirmsuccess
 
 echo " "
 echo -e "${sep}"
@@ -167,4 +167,5 @@ echo -e "${msg} The absolute most important is the 'Jail Network settings'${nc}"
 echo -e "${msg}    On the right, make sure your network device is selected.${nc}"
 echo -e "${msg}    Next to that, type an IP Adress for the jail.${nc}"
 echo -e "${msg}    It can NOT BE THE SAME as any other device on your network.${nc}"
-echo -e "${msg}    It's best to use a high range such as 192.168.1.200 < VARIES DEPENDING ON YOUR NETWORK!${nc}"
+echo -e "${msg}    It's best to use a high range such as 192.168.1.200${nc}"
+echo -e "${msg}       ^ VARIES DEPENDING ON YOUR NETWORK!${nc}"

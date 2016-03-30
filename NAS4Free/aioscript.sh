@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script - Version: 1.0.5 (March 30, 2016)
+# AIO Script - Version: 1.0.6 (March 30, 2016)
 ################################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -20,18 +20,35 @@
 #            require an updated script. Has been tested on v8.x.x up to v9.0.0.
 #
 ###! OWNCLOUD CONFIG ! IMPORTANT ! DO NOT IGNORE ! ###
+
 cloud_server_port="81"
 cloud_server_ip="192.168.1.200"
 owncloud_version="9.0.0"
 
-### OTHER APP CONFIG ###
+###! END OF OWNCLOUD CONFIG ! IMPORTANT ! DO NOT IGNORE ! ###
+### No need to edit below here owncloud ###
+################################################################################
+##### OTHER APPS CONFIGURATION #####
+###! THEBRIG CONFIG !###
+
+# Define where to install TheBrig
 thebriginstalldir="/mnt/Storage/System/Jails"
-jail_ip="192.168.1.200" # Note: No need to change this for OwnCloud installs
-                        # Only change this for OTHER jails/apps
-                        # MUST be different to cloud_server_ip if you have
-                        # installed OwnCloud previously.
-#
-### No need to edit below here ###
+thebrigbranch="alcatraz"    # Define which version of TheBrig to install
+                            # 1 = master   - For 9.0 and 9.1 FreeBSD versions
+                            # 2 = working  - For 9.1 and 9.2 FreeBSD versions
+                            # 3 = alcatraz - For 9.3 and 10.x FreeBSD versions
+# thebrigversion="3"        # Not needed anymore
+
+###! END OF THEBRIG CONFIG !###
+
+### OTHER ###
+
+mystorage="/mnt/Storage"    # Modify this to reflect your storage location
+jail_ip="192.168.1.200"     # Note: No need to change this for OwnCloud installs
+                            # Only change this for OTHER jails/apps
+                            # MUST be different to cloud_server_ip if you have
+                            # installed OwnCloud previously.
+
 ##### END OF CONFIGURATION SECTION #####
 ################################################################################
 
@@ -136,7 +153,7 @@ echo -e "${cmd}    /usr/local/etc/rc.d/lighttpd restart"
 ################################################################################
 
 #------------------------------------------------------------------------------#
-### OWNCLOUD - HOW-TO FINISH SETUP
+### OWNCLOUD - HOW-TO: FINISH SETUP
 #------------------------------------------------------------------------------#
 
 cloud.howto.finishsetup ()
@@ -179,7 +196,35 @@ done
 
 
 #------------------------------------------------------------------------------#
-### THEBRIG - CREATING A JAIL
+### THEBRIG - HOW-TO: INSTALL THEBRIG
+#------------------------------------------------------------------------------#
+
+thebrig.howto.installthebrig ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} TheBrig - How to install TheBrig"
+        echo -e "${sep}"
+        echo " "
+        echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+        echo " "
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+}
+
+
+
+#------------------------------------------------------------------------------#
+### THEBRIG - HOW-TO: CREATE A JAIL
 #------------------------------------------------------------------------------#
 
 thebrig.howto.createajail ()
@@ -229,7 +274,7 @@ done
 
 
 #------------------------------------------------------------------------------#
-### THEBRIG - ENABLING PORT TREES
+### THEBRIG - HOW-TO: ENABLE PORTS TREE
 #------------------------------------------------------------------------------#
 
 thebrig.howto.enableportstree ()
@@ -241,6 +286,41 @@ do
         echo -e "${sep}"
         echo " "
         echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+        echo " "
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+}
+
+
+
+#------------------------------------------------------------------------------#
+### THEBRIG - ABOUT: RUDIMENTARY CONFIGURATION
+#------------------------------------------------------------------------------#
+
+thebrig.info.rudimentaryconfig ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} TheBrig - Rudimentary Configuration"
+        echo -e "${sep}"
+        echo " "
+        echo -e "${msg} Head to that new Extensions->TheBrig page in your WebGUI${nc}"
+        echo -e "${msg} After making sure the 'Installation folder' = ${mystorage}/Jails, Click 'Save'${nc}"
+        echo -e "${msg} Now head to 'Tarball Management' (Underneath 'Maintenance') > Click Query!${nc}"
+        echo -e "${msg} It should now have '10.2-RELEASE in the new dropdown menu (Select it if it isn't already)${nc}"
+        echo -e "${msg} Tick all boxes below that ${nc}"
+        echo -e "${msg}    (Only 'base.txz' and 'lib32.txz' are really needed but let's grab them all just in case)${nc}"
+        echo -e "${msg} Click Fetch, wait some time for the downloads to finish${nc}"
+        echo -e "${msg} Once all the download bars are gone you can proceed to making your jail${nc}"
         echo " "
         echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
 
@@ -1032,6 +1112,102 @@ echo " Instructions on creating a jail can be found in the 'more info' menu"
 
 
 
+#------------------------------------------------------------------------------#
+### THEBRIG EXPERIMENTAL INSTALL
+
+install.thebrig.EXPEREIMENTAL ()
+{
+confirmstorage ()
+{
+# Confirm with the user
+read -r -p "   Correct path? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              echo -e "${url} Great! We'll install thebrig in '${mystorage}/Jails'.${nc}"
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              echo -e "${alt} This needs to be correct.${nc}"
+              echo -e "${alt} Please modify the 'mystorage' at the start of${nc}"
+              echo -e "${alt} the script before running this again.${nc}"
+              echo " "
+              exit
+              ;;
+esac
+}
+
+confirmsuccess ()
+{
+# Confirm with the user
+echo -e "${msg} Head to your NAS WebGUI (Refresh page if it's already open)${nc}"
+read -r -p "   Can you seen an 'Extensions' tab with 'TheBrig' listed? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              echo -e "${url} Good! Now follow the How-To for finalizing the setup.${nc}"
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              echo -e "${alt} Seems this script had an issue somewhere :(${nc}"
+              echo " "
+              exit
+              ;;
+esac
+}
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Welcome to theBrig installer!${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Hopefully this script will succesfully guide you through${nc}"
+echo -e "${msg}   the process of installing TheBrig without any problems!${nc}"
+echo " "
+echo -e "${msg} Let's start with double checking your storage path.${nc}"
+echo -e "${msg} Is this the correct path to your mounted storage?${nc}."
+echo -e "${qry} ${mystorage} ${nc}."
+echo -e "${sep}"
+echo -e " "
+
+confirmstorage
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Let's get on with the install.${nc}"
+echo -e "${sep}"
+echo " "
+
+# Make folder for TheBrig and it's jails to live in
+mkdir ${mystorage}/Jails
+
+# Head to the directory we just made
+cd ${mystorage}/Jails
+
+# Download the installer
+fetch https://raw.githubusercontent.com/fsbruva/thebrig/alcatraz/thebrig_install.sh
+
+# Run the installer
+/bin/sh thebrig_install.sh ${mystorage}/Jails
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} TheBrig should now be succesfully installed${nc}"
+echo -e "${sep}"
+echo " "
+
+# Confirm with user
+confirmsuccess
+
+}
+
+
+
 ################################################################################
 ##### UPDATERS
 # TODO: Start working on all applicable updaters
@@ -1570,6 +1746,29 @@ esac
 
 
 #------------------------------------------------------------------------------#
+### THEBRIG EXPERIMENTAL CONFIRM INSTALL
+
+confirm.thebrig.EXPEREIMENTAL.install ()
+{
+# Confirm with the user
+echo -e "${emp} WARNING: THIS HAS BEEN UNTESTED"
+echo -e "${emp} USE AT YOUR OWN RISK"
+read -r -p "   Confirm Installation of TheBrig? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              install.thebrig.EXPEREIMENTAL
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              return
+              ;;
+esac
+}
+
+
+#------------------------------------------------------------------------------#
 ### UPDATE CONFIRMATIONS
 # TODO: Add run backup before update commands + inform the user of backup
 #------------------------------------------------------------------------------#
@@ -2056,9 +2255,10 @@ do
         echo -e "${sep}"
         echo -e "${qry} Choose one:"
         echo " "
-        echo -e "${fin}   1)${msg} Install"
+        echo -e "${fin}   1)${msg} Install (Guide Only)"
         echo -e "${fin}   2)${msg} Update"
         echo -e "${fin}   3)${msg} Backup"
+        echo -e "${fin}   i)${msg} Install (EXPERIMENTAL)"
         echo -e "${emp}   m) Main Menu${nc}"
 
         echo -e "${ssep}"
@@ -2066,14 +2266,17 @@ do
         echo -e "${ssep}"
 
         case $choice in
-            '1') echo -e "${inf} Installing..${nc}"
-                confirm.thebrig.install
+            '1') echo -e "${inf} Taking you to install instructions..${nc}"
+                thebrig.howto.installthebrig
                 ;;
             '2') echo -e "${inf} Running Update..${nc}"
                 confirm.thebrig.update
                 ;;
             '3') echo -e "${inf} Backup..${nc}"
                 backup.thebrig
+                ;;
+            'i') echo -e "${inf} Installing..${nc}"
+                confirm.thebrig.EXPEREIMENTAL.install
                 ;;
             'm') return
                 ;;
@@ -2086,7 +2289,7 @@ done
 #------------------------------------------------------------------------------#
 ### MORE INFORMATION / HOW-TO / FURTHER INSCTRUCTIONS SUBMENU (COMBINED)
 
-moreinfo.submenu ()
+moreinfo.combined.submenu ()
 {
 while [ "$choice" != "m" ]
 do
@@ -2161,9 +2364,12 @@ do
         echo -e "${sep}"
         echo -e "${qry} Choose one:${nc}"
         echo " "
+        echo -e "${msg} More info about...${nc}"
+        echo -e "${fin}   1)${msg} Rudimentary Config${nc}"
+        echo " "
         echo -e "${msg} How to...${nc}"
-        echo -e "${fin}   1)${msg} Create a jail${nc}"
-        echo -e "${fin}   2)${msg} Enable the 'Ports Tree'${nc}"
+        echo -e "${fin}   2)${msg} Create a jail${nc}"
+        echo -e "${fin}   3)${msg} Enable the 'Ports Tree'${nc}"
         echo " "
         echo -e "${emp}   m) Main Menu${nc}"
 
@@ -2172,9 +2378,11 @@ do
         echo -e "${ssep}"
 
         case $choice in
-            '1') thebrig.howto.createajail
+            '1') thebrig.info.rudimentaryconfig
                 ;;
-            '2') thebrig.howto.enableportstree
+            '2') thebrig.howto.createajail
+                ;;
+            '3') thebrig.howto.enableportstree
                 ;;
             'm') return
                 ;;
@@ -2252,7 +2460,7 @@ mainmenu=""
 while [ "$choice" != "q,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.5 (March 30, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.6 (March 30, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
@@ -2299,7 +2507,7 @@ do
                 thebrig.submenu
                 ;;
             'i')
-                moreinfo.submenu
+                moreinfo.combined.submenu
                 ;;
             'h')
                 gethelp

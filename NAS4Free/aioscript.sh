@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script - Version: 1.0.7.1 (March 31, 2016)
+# AIO Script - Version: 1.0.8 (March 31, 2016)
 ################################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -19,7 +19,7 @@
 #            this with "latest" but it isn't recommended as owncloud updates may
 #            require an updated script. Has been tested on v8.x.x up to v9.0.0.
 #
-###! OWNCLOUD CONFIG ! IMPORTANT ! DO NOT IGNORE ! ###
+###! OWNCLOUD CONFIG ! IMPORTANT ! DO NOT IGNORE ! #############################
 
 cloud_server_port="81"
 cloud_server_ip="192.168.1.200"
@@ -39,12 +39,26 @@ thebrigbranch="alcatraz"    # Define which version of TheBrig to install
                             # 3 = alcatraz - For 9.3 and 10.x FreeBSD versions
 # thebrigversion="3"        # Not needed anymore
 
-###! END OF THEBRIG CONFIG !###
-
-### OTHER ###
-
-mystorage="/mnt/Storage"    # Modify this to reflect your storage location
-jail_ip="192.168.1.200"     # Note: No need to change this for OwnCloud installs
+###! END OF THEBRIG CONFIG !######################
+### OTHER ########################################
+# Modify this to reflect your storage location
+mystorage="/mnt/Storage"
+##################################################
+###! CALIBRE CONFIG !#############################
+# Modify to where you store all of your books.
+CALIBRELIBRARYPATH="/mnt/Storage/Media/Books"
+##################################################
+###! MUNIN CONFIG !###############################
+# Enter the jail name you wish to run Munin in
+muninjail="Munin"
+##################################################
+###! DELUGE CONFIG !##############################
+delugejail="Deluge"
+user_ID="UID"
+deluge_user="JonDoe"
+deluge_user_password="MyC0mpL3xPass"
+##################################################
+jail_ip="192.168.1.200"     # ! No need to change this for OwnCloud installS !
                             # Only change this for OTHER jails/apps
                             # MUST be different to cloud_server_ip if you have
                             # installed OwnCloud previously.
@@ -64,7 +78,8 @@ emp='\033[1;31m'    # Emphasis Text
 msg='\033[1;37m'    # Message Text
 url='\033[1;32m'    # URL
 qry='\033[0;36m'    # Query Text
-sep='\033[1;30m-------------------------------------------------------\033[0m'    # Line Separator
+sep='\033[1;30m-------------------------------------------------------\033[0m'
+# ^ Line Separator
 ssep='\033[1;30m#----------------------#\033[0m'    # Small Line Separator
 cmd='\033[1;35m'    # Command to be entered
 fin='\033[0;32m'    # Green Text
@@ -1320,6 +1335,50 @@ confirmsuccess
 
 
 
+#------------------------------------------------------------------------------#
+### CALIBRE INSTALL
+
+install.calibre ()
+{
+
+echo -e "${sep}"
+echo -e "${sep}     Welcome to the Calibre installer!${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${sep} Let's get started with some packages${nc}"
+echo -e "${sep}"
+echo " "
+
+pkg install -y nano calibre
+
+# Configure /etc/rc.conf
+echo 'calibre_enable="YES"' >> /etc/rc.conf
+echo 'calibre_user="root"' >> /etc/rc.conf
+echo 'calibre_library="${CALIBRELIBRARYPATH}"' >> /etc/rc.conf
+
+#echo " Modify this file to use root as the user"
+#echo "    : ${calibre_user:=root}" #TODO: Use sed for this
+
+nano /usr/local/etc/rc.d/calibre
+
+echo " Start Calibre"
+echo " If you want to start it manually without restarting your jail"
+calibre-server --with-library="${CALIBRELIBRARYPATH}"
+
+echo " "
+echo -e "${sep}"
+echo " That should be it!"
+echo " Happy reading!!"
+echo -e "${sep}"
+echo " "
+
+}
+
+
+
 ################################################################################
 ##### UPDATERS
 # TODO: Start working on all applicable updaters
@@ -1945,6 +2004,27 @@ case "$response" in
               ;;
 esac
 }
+
+#------------------------------------------------------------------------------#
+### CALIBRE CONFIRM INSTALL
+
+confirm.calibre.install ()
+{
+# Confirm with the user
+read -r -p "   Confirm Installation of Calibre? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              install.calibre
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              return
+              ;;
+esac
+}
+
 
 
 #------------------------------------------------------------------------------#
@@ -2660,7 +2740,7 @@ mainmenu=""
 while [ "$choice" != "q,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.7.1 (March 31, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.8 (March 31, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
@@ -2724,10 +2804,10 @@ done
 
 # FUTURE: Add "TheBrig guided install"
 # FUTURE: When jail creation via shell is possible for thebrig, will add that option to script.
-# FUTURE: Add "Calibre"
-# FUTURE: Add "Deluge"
+# TODO: Finish adding "Calibre"
+# TODO: Finish adding "Deluge"
+# TODO: Finish adding "Munin"
 # FUTURE: Add "Mail Server"
-# FUTURE: Add "Munin"
 # FUTURE: Add "Plex"
 # FUTURE: Add "Pydio"
 # FUTURE: Add "Serviio"

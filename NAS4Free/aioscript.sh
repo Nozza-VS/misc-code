@@ -207,6 +207,24 @@ do
         echo -e "${inf} TheBrig - How to install TheBrig"
         echo -e "${sep}"
         echo " "
+        # Create directory
+        # mkdir -p ${thebriginstalldir}
+        # change to directory
+        # cd ${thebriginstalldir}
+        # Fetch TheBrig installer
+        # fetch https://raw.githubusercontent.com/fsbruva/thebrig/alcatraz/thebrig_install.sh
+        # Execute the script
+        # /bin/sh thebrig_install.sh ${thebriginstalldir} &
+
+        # echo " 1: Go to Extensions page in WebGUI > TheBrig > Maintenance > Rudimentary Config (Should take you to this config by default)"
+        # echo " 2: Click 'Save' (Make sure 'Installation folder' is correct first,"
+        # echo "    we want it outside of the NAS4Free operating system drive"
+        # echo " 3: Head to Tarball Management (Underneath 'Maintenance') > Clicked Query!"
+        # echo " 4: Chose 'Release: 10.2-RELEASE' from dropdown menu (Should be selected by     default after clicking query)"
+        # echo " 5: Tick all boxes below (Only 'base.txz' and 'lib32.txz' are really needed but grab all anyway)"
+        # echo " 6: Click Fetch, wait a while for the downloads to finish"
+        # echo " Once all the download bars are gone you can proceed to making your jail"
+        # echo " Instructions on creating a jail can be found in the 'more info' menu"
         echo -e "${emp} This part of the script is unfinished currently :(${nc}"
         echo " "
         echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
@@ -337,7 +355,7 @@ done
 
 
 #------------------------------------------------------------------------------#
-### EMBY SERVER - UPDATE FFMPEG (FOR TRANSCODING)
+### EMBY SERVER - HOW-TO: UPDATE FFMPEG FROM PORTS TREE (FOR TRANSCODING)
 #------------------------------------------------------------------------------#
 
 emby.howto.updateffmpeg ()
@@ -380,7 +398,7 @@ done
 ################################################################################
 
 #------------------------------------------------------------------------------#
-### TRUSTED DOMAIN WARNING FIX
+### OWNCLOUD - TRUSTED DOMAIN WARNING FIX
 #------------------------------------------------------------------------------#
 
 cloud.trusteddomain.fix ()
@@ -426,7 +444,7 @@ esac
 }
 
 #------------------------------------------------------------------------------#
-### Populating Raw Post Data Fix
+### OWNCLOUD - Populating Raw Post Data Fix
 #------------------------------------------------------------------------------#
 
 cloud.phpini ()
@@ -592,12 +610,8 @@ echo '        SetHandler application/x-httpd-php-source' >> /usr/local/etc/apach
 echo '    </FilesMatch>' >> /usr/local/etc/apache24/Includes/php.conf
 echo '</IfModule>' >> /usr/local/etc/apache24/Includes/php.conf
 
-# Is this next step even needed anymore?
-# Note: Disabling for now, I don't think we really need this.
-#echo -e "${sep}"
-#echo -e "${msg}   This part needs to be done by you${nc}"
-#echo -e "${sep}"
-#echo " "
+# Is this next step even needed anymore? If so, use sed command for this.
+
 #echo -e "${msg} Find: ${qry}DirectoryIndex index.html${nc}"
 #echo -e "${msg} and add ${qry}index.php${msg} to the end of that line${nc}"
 #echo -e "${msg} It should then look like this:${nc}"
@@ -982,12 +996,42 @@ echo " "
 
 install.emby ()
 {
-# Install via packages
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Emby Install Script${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Let's start with installing Emby from packages${nc}"
+echo -e "${sep}"
+echo " "
+
 pkg install -y emby-server
-# Enable automatic startup of Emby Server
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Enable automatic startup of Emby Server${nc}"
+echo -e "${sep}"
+echo " "
+
 sysrc emby_server_enable="YES"
-# Start the Emby Server
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Start the Emby Server${nc}"
+echo -e "${sep}"
+echo " "
+
 service emby-server start
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Using a web browser, head to ${url}yourjailip:8096${nc}"
+echo -e "${msg} to finish setting up your Emby server${nc}"
+echo -e "${sep}"
+echo " "
 }
 
 #------------------------------------------------------------------------------#
@@ -995,33 +1039,26 @@ service emby-server start
 
 install.sonarr ()
 {
-# Taken from Sonarr install script (In jail + root user version)
-# Version 1.00 (March 15, 2016)
-# This is for installations that followed the documented FreeBSD installation
-# You can find this information here: https://github.com/Sonarr/Sonarr/wiki/FreeBSD-installation
-# This can be used temporarily for when Built-In update mechanism fails or in place of it enitrely.
-
 echo " "
 echo -e "${sep}"
-echo "   Sonarr Install Script"
+echo -e "${msg}   Sonarr Install Script${nc}"
 echo -e "${sep}"
 echo " "
-
+echo " "
 echo " "
 echo -e "${sep}"
-echo "   Let's start with installing Sonarr from packages"
+echo -e "${msg}   Let's start with installing Sonarr from packages${nc}"
 echo -e "${sep}"
 echo " "
 
-pkg install -y sonarr
+pkg install -y sonarr ffmpeg mediainfo
 
-# Remove ffmpeg
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Start Sonarr${nc}"
+echo -e "${sep}"
+echo " "
 
-# Build from ports tree # TODO: Add instructions on how
-
-# Install new ffmpeg
-
-# Start sonarr
 service sonarr start
 
 # TODO: Direct user to sonarr
@@ -1032,33 +1069,83 @@ service sonarr start
 
 install.couchpotato ()
 {
-#Install required tools
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   CouchPotato Installer${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Let's install required packages first${nc}"
+echo -e "${sep}"
+echo " "
+
 pkg install python py27-sqlite3 fpc-libcurl docbook-xml git-lite
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} cd to installation directory${nc}"
+echo -e "${msg}    (/usr/local/CouchPotato)${nc}"
+echo -e "${sep}"
+echo " "
 
 #For default install location and running as root
 cd /usr/local
-
 #If running as root, expects python here
 ln -s /usr/local/bin/python /usr/bin/python
 
-#get couchpotato from git
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Grab CouchPotato from github${nc}"
+echo -e "${sep}"
+echo " "
+
 git clone https://github.com/CouchPotato/CouchPotatoServer.git
 
-#Copy the startup script
-cp CouchPotatoServer/init/freebsd /usr/local/etc/rc.d/couchpotato
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Copy startup script & make executable${nc}"
+echo -e "${sep}"
+echo " "
 
-#Make startup script executable
+cp CouchPotatoServer/init/freebsd /usr/local/etc/rc.d/couchpotato
 chmod 555 /usr/local/etc/rc.d/couchpotato
 
-#Add startup to boot
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Enable CouchPotato at startup${nc}"
+echo -e "${sep}"
+echo " "
+
 echo 'couchpotato_enable="YES"' >> /etc/rc.conf
 
 #Read the options at the top of more /usr/local/etc/rc.d/couchpotato
 #If not default install, specify options with startup flags in ee /etc/rc.conf
 #Finally,
 
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Start CouchPotato${nc}"
+echo -e "${sep}"
+echo " "
+
 service couchpotato start
-#Open your browser and go to: http://server:5050/
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Open your browser and go to: ${url}yourjailip:5050${nc}"
+echo -e "${msg} to finish setting up your Emby server${nc}"
+echo -e "${sep}"
+echo " "
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Done here!${nc}"
+echo -e "${msg} Feel free to visit the project homepage at:${nc}"
+echo -e "${url}    https://github.com/CouchPotato/CouchPotatoServer${nc}"
+echo -e "${sep}"
+echo " "
 }
 
 #------------------------------------------------------------------------------#
@@ -1066,51 +1153,77 @@ service couchpotato start
 
 install.headphones ()
 {
-# Headphones Installation (Covers Music)
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Headphones Installer${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Let's install required packages first${nc}"
+echo -e "${sep}"
+echo " "
+
+pkg install python py27-sqlite3 fpc-libcurl docbook-xml git-lite ffmpeg flac lame
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Grab Headphones from github${nc}"
+echo -e "${sep}"
+echo " "
+
 git clone https://github.com/rembo10/headphones.git
 
-#Copy the startup script
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Fetch Headphones startup script from github${nc}"
+echo -e "${sep}"
+echo " "
+
 # cp headphones/init-scripts/init.freebsd /usr/local/etc/rc.d/headphones
 #Fetch Nostalgist92's startup script instead
-
+fetch --no-verify-peer -o /usr/local/etc/rc.d/headphones "https://raw.githubusercontent.com/Nostalgist92/misc-code/master/NAS4Free/HeadPhones/init-script"
 #Make startup script executable
 chmod 555 /usr/local/etc/rc.d/headphones
+# Potentially need to modify the line:
+#command_args = "- f -p $ {python headphones_pid} $ {} headphones_dir /Headphones.py $ {} headphones_flags --quiet --nolaunch"
+# To:
+#command_args = "- f -p $ {} headphones_pid python2.7 $ {} headphones_dir /Headphones.py $ {} headphones_flags --quiet --nolaunch"
+# Further testing needed, will update my init script if deemed necessary.
 
-#Add startup to boot
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Enable automatic startup at boot for Headphones${nc}"
+echo -e "${sep}"
+echo " "
+
 echo 'headphones_enable="YES"' >> /etc/rc.conf
 
-#Start the server
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Start Headphones${nc}"
+echo -e "${sep}"
+echo " "
+
 service headphones start
 
-#Open your browser and go to: http://server:headphonesport?/
+#
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Open your browser and go to: ${url}jailip:8181${nc}"
+echo -e "${sep}"
+echo " "
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Done here!${nc}"
+echo -e "${msg} Feel free to visit the project homepage at:${nc}"
+#echo -e "${url}    https://gitlab.com/sarakha63/headphones${nc}"
+echo -e "${url}    https://github.com/rembo10/headphones${nc}"
+echo -e "${sep}"
+echo " "
 }
-
-#------------------------------------------------------------------------------#
-### THEBRIG INSTALL
-
-install.thebrig ()
-{
-# Create directory
-mkdir -p ${thebriginstalldir}
-# change to directory
-cd ${thebriginstalldir}
-# Fetch TheBrig installer
-fetch https://raw.githubusercontent.com/fsbruva/thebrig/alcatraz/thebrig_install.sh
-# Execute the script
-/bin/sh thebrig_install.sh ${thebriginstalldir} &
-
-echo " 1: Go to Extensions page in WebGUI > TheBrig > Maintenance > Rudimentary Config (Should take you to this config by default)"
-echo " 2: Click 'Save' (Make sure 'Installation folder' is correct first,"
-echo "    we want it outside of the NAS4Free operating system drive"
-echo " 3: Head to Tarball Management (Underneath 'Maintenance') > Clicked Query!"
-echo " 4: Chose 'Release: 10.2-RELEASE' from dropdown menu (Should be selected by default after clicking query)"
-echo " 5: Tick all boxes below (Only 'base.txz' and 'lib32.txz' are really needed but grab all anyway)"
-echo " 6: Click Fetch, wait a while for the downloads to finish"
-echo " Once all the download bars are gone you can proceed to making your jail"
-echo " Instructions on creating a jail can be found in the 'more info' menu"
-}
-
-
 
 #------------------------------------------------------------------------------#
 ### THEBRIG EXPERIMENTAL INSTALL
@@ -1166,8 +1279,7 @@ echo " "
 echo " "
 echo " "
 echo -e "${sep}"
-echo -e "${msg}   Hopefully this script will succesfully guide you through${nc}"
-echo -e "${msg}   the process of installing TheBrig without any problems!${nc}"
+echo -e "${msg}   This should hopefully install TheBrig for you without any problems!${nc}"
 echo " "
 echo -e "${msg} Let's start with double checking your storage path.${nc}"
 echo -e "${msg} Is this the correct path to your mounted storage?${nc}."
@@ -1722,28 +1834,6 @@ case "$response" in
               ;;
 esac
 }
-
-#------------------------------------------------------------------------------#
-### THEBRIG CONFIRM INSTALL
-
-confirm.thebrig.install ()
-{
-# Confirm with the user
-read -r -p "   Confirm Installation of TheBrig? [y/N] " response
-case "$response" in
-    [yY][eE][sS]|[yY])
-              # If yes, then continue
-              install.thebrig
-               ;;
-    *)
-              # Otherwise exit...
-              echo " "
-              return
-              ;;
-esac
-}
-
-
 
 #------------------------------------------------------------------------------#
 ### THEBRIG EXPERIMENTAL CONFIRM INSTALL

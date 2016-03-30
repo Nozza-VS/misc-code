@@ -1,10 +1,10 @@
 #!/bin/sh
-# Script Version: TESTING-1.0 (March 19, 2016)
+# Script Version: 1.0.1 (March 31, 2016)
 #	Install script for Calibre in a jailed environment
 #   See http://forums.nas4free.org/viewtopic.php?f=79&t=7074 for more info.
 
 # Modify to reflect the location of where you store all of your books.
-LIBRARYPATH='/mnt/path/to/your/library'
+CALIBRELIBRARYPATH="/mnt/Storage/Media/Books"
 
 # Add some colour!
 nc='\033[0m'        # No Color
@@ -58,7 +58,7 @@ pkg install -y nano calibre
 # Configure /etc/rc.conf
 echo 'calibre_enable="YES"' >> /etc/rc.conf
 echo 'calibre_user="root"' >> /etc/rc.conf
-echo 'calibre_library="${LIBRARYPATH}"' >> /etc/rc.conf
+echo 'calibre_library="${CALIBRELIBRARYPATH}"' >> /etc/rc.conf
 
 echo " Modify this file to use root as the user"
 echo "    : ${calibre_user:=root}"
@@ -67,7 +67,7 @@ nano /usr/local/etc/rc.d/calibre
 
 echo " Now restart this jail and calibre should be running"
 echo " If you want to start it manually without restarting your jail"
-echo calibre-server --with-library="${LIBRARYPATH}"
+echo 'calibre-server --with-library="${CALIBRELIBRARYPATH}"'
 
 echo " "
 echo -e "${sep}"

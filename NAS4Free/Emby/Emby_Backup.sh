@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Backup script for Emby Media Server (AKA MediaBrowser)
-# Version 1.02 (March 10, 2016)
+# Version 1.03 (March 31, 2016)
 # Taken directly from my update script
 
 # Grab the date & time to be used later
@@ -45,6 +45,10 @@ echo " "
 pkg install -y rsync
 
 echo " "
+echo -e "${sep}"
+echo -e "${msg} Create backups${nc}" # TODO: Give user option to backup or not
+echo -e "${sep}"
+echo " "
 
 echo -e "${msg} Application backup${nc}"
 mkdir -p /usr/local/lib/emby-server-backups/${date} # Using -p in case you've never run the script before or you have deleted this folder
@@ -52,7 +56,6 @@ rsync -a --info=progress2 /usr/local/lib/emby-server/ /usr/local/lib/emby-server
 #cp -r /usr/local/lib/emby-server/ /usr/local/lib/emby-server-backups/${date}
 echo -e "${fin}    Application backup done..${nc}"
 
-echo " "
 echo " "
 
 echo -e "${msg} Server data backup ${inf}(May take a while)${nc}"

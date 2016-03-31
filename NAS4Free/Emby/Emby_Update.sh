@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Update script for Emby Media Server (AKA MediaBrowser)
-# Version 1.05 (March 28, 2016)
+# Version 1.06 (March 31, 2016)
 # As ports official freebsd ports tree takes ages to accept updates
 # here is a simple script to grab the latest version and upgrade manually.
 
@@ -81,6 +81,8 @@ echo " "
 pkg install -y rsync
 
 echo " "
+echo -e "${sep}"
+echo -e "${msg} Create backups${nc}" # TODO: Give user option to backup or not
 echo -e "${sep}"
 echo " "
 

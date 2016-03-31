@@ -1,5 +1,5 @@
 #!/bin/sh
-# OwnCloud Script - Version: 2.0.3 (March 28, 2016)
+# OwnCloud Script - Version: 2.0.4 (March 31, 2016)
 ################################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -72,7 +72,7 @@ exerr () { echo -e "$*" >&2 ; exit 1; }
 ################################################################################
 
 
-installcloud ()
+install.cloud ()
 {
 
 echo " "
@@ -467,7 +467,7 @@ echo -e "${emp} This part of the script is unfinished currently :("
 ### ERROR FIXES SUBMENU
 #------------------------------------------------------------------------------#
 
-errorfixsubmenu ()
+cloud.errorfix.submenu ()
 {
 while [ "$choice" != "q,m" ]
 do
@@ -501,7 +501,7 @@ done
 ### FOR OTHER OPTIONS SUCH AS ENABLING MEMORY CACHING
 #------------------------------------------------------------------------------#
 
-otheroptions ()
+cloud.otheroptions.menu ()
 {
 while [ "$choice" != "q,m" ]
 do
@@ -564,7 +564,7 @@ done
 ### INSTALL CONFIRMATIONS
 #------------------------------------------------------------------------------#
 
-confirminstallcloud ()
+confirm.install.cloud ()
 {
 confirm ()
 {
@@ -613,7 +613,7 @@ read -r -p "   Confirm Installation of OwnCloud? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              installcloud
+              install.cloud
                ;;
     *)
               # Otherwise exit...
@@ -628,7 +628,7 @@ esac
 # TODO: Add run backup before update commands + inform the user of backup
 #------------------------------------------------------------------------------#
 
-confirmupdatecloud ()
+confirm.update.cloud ()
 {
 # Confirm with the user
 echo " Highly recommended to Backup first"
@@ -650,7 +650,7 @@ esac
 ### BACKUP CONFIRMATIONS
 #------------------------------------------------------------------------------#
 
-confirmbackupcloud ()
+confirm.backup.cloud ()
 {
 # Confirm with the user
 read -r -p "   Confirm Backup of OwnCloud? [y/N] " response
@@ -678,7 +678,7 @@ mainmenu=""
 while [ "$choice" != "q,i,h" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} OwnCloud Script - Version: 2.0.3 (March 28, 2016)"
+        echo -e "${inf} OwnCloud Script - Version: 2.0.4 (March 31, 2016)"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
@@ -701,19 +701,19 @@ do
 
         case $choice in
             '1')
-                confirminstallcloud
+                confirm.install.cloud
                 ;;
             '2')
-                confirmupdatecloud
+                confirm.update.cloud
                 ;;
             '3')
-                confirmbackupcloud
+                confirm.backup.cloud
                 ;;
             '4')
-                errorfixsubmenu
+                cloud.errorfix.submenu
                 ;;
             '5')
-                otheroptions
+                cloud.otheroptions.menu
                 ;;
             'i')
                 moreinfo
@@ -735,5 +735,4 @@ done
 ### Todo / Changes:
 #------------------------------------------------------------------------------#
 
-# FUTURE: Merge with AIO script
 # FUTURE: Add MySQL alternative setup options

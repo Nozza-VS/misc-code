@@ -1,5 +1,5 @@
 #!/bin/sh
-# Script Version: 1.14 (March 22, 2016)
+# Script Version: 1.15 (March 31, 2016)
 ###########################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -60,7 +60,7 @@ case "$response" in
 esac
 }
 
-trusteddomainerror ()
+cloud.trusteddomain.fix ()
 {
 # Confirm with the user
 echo " "
@@ -367,6 +367,11 @@ echo " "
 #echo " "
 
 #TODO: Enable Memory Caching by default
+#echo "  'memcache.local' => '\OC\Memcache\APCu'," >> #/usr/local/www/owncloud/config/memcache.txt
+#cp /usr/local/www/owncloud/config/config.php /usr/local/www/owncloud/config/old_config.bak
+#cat "/usr/local/www/owncloud/config/old_config.bak" | \
+#	sed '21r /usr/local/www/owncloud/config/memcache.txt' > \
+#    "/usr/local/www/owncloud/config/config.php"
 
 echo " "
 echo -e "${sep}"
@@ -374,7 +379,7 @@ echo -e "${msg} Now to finish owncloud setup${nc}"
 echo -e "${sep}"
 echo " "
 
-trusteddomainerror
+cloud.trusteddomain.fix
 
 echo " " 
 echo -e "${sep}"

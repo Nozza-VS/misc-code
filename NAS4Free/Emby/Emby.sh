@@ -1,6 +1,6 @@
 #!/bin/sh
 # AIO script for Emby Media Server (AKA MediaBrowser)
-# Version 1.0.0 (March 28, 2016)
+# Version 1.0.1 (March 31, 2016)
 ################################################################################
 ##### START OF CONFIGURATION SECTION #####
 ######
@@ -40,11 +40,44 @@ exerr () { echo -e "$*" >&2 ; exit 1; }
 ##### INSTALLER
 ################################################################################
 
-embyinstall ()
+install.emby ()
 {
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Emby Install Script${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Let's start with installing Emby from packages${nc}"
+echo -e "${sep}"
+echo " "
+
 pkg install -y emby-server
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Enable automatic startup of Emby Server${nc}"
+echo -e "${sep}"
+echo " "
+
 sysrc emby_server_enable="YES"
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Start the Emby Server${nc}"
+echo -e "${sep}"
+echo " "
+
 service emby-server start
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Using a web browser, head to ${url}yourjailip:8096${nc}"
+echo -e "${msg} to finish setting up your Emby server${nc}"
+echo -e "${sep}"
+echo " "
 }
 
 ################################################################################
@@ -52,7 +85,7 @@ service emby-server start
 ################################################################################
 ### USING LATEST VERSION FROM GITHUB
 
-embyupdate ()
+update.emby ()
 {
 echo " "
 echo -e "${sep}"
@@ -142,17 +175,81 @@ echo " "
 ### SAFE UPDATE (USING PACKAGES)
 #------------------------------------------------------------------------------#
 
-embyupdatesafe ()
+update.emby.safe ()
 {
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Emby Updater (Safe but slow updates)${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Let's start with a backup.${nc}"
+echo -e "${msg}   First, make sure we have rsync and then${nc}"
+echo -e "${msg}   we will use it to create a backup${nc}"
+echo -e "${sep}"
+echo " "
+
+# Using rsync rather than cp so we can see progress actually happen on the backup for large servers.
+pkg install -y rsync
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Create backups${nc}" # TODO: Give user option to backup or not
+echo -e "${sep}"
+echo " "
+
+echo -e "${emp} Application backup${nc}"
+mkdir -p /usr/local/lib/emby-server-backups/${date} # Using -p in case you've never run the script before or you have deleted this folder
+rsync -a --info=progress2 /usr/local/lib/emby-server/ /usr/local/lib/emby-server-backups/${date}
+echo -e "${fin}    Application backup done..${nc}"
+
+echo " "
+
+echo -e "${emp} Server data backup ${inf}(May take a while)${nc}"
+mkdir -p /var/db/emby-server-backups/${date}
+rsync -a --info=progress2 /var/db/emby-server/ /var/db/emby-server-backups/${date}
+echo -e "${fin}    Server backup done.${nc}"
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Check for & grab updates (if any)${nc}"
+echo -e "${sep}"
+echo " "
+
 pkg update
 pkg upgrade emby-server
+
+service emby-server restart
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} That should be it!${nc}"
+echo -e "${msg} NOTE: When viewing your Emby dashboard,${nc}"
+echo -e "${msg}    it may still say there is an update.${nc}"
+echo " "
+echo -e "${msg} This should be ignored unless you wish to use${nc}"
+echo -e "${msg} the other update method.${nc}"
+echo " "
+echo " "
+echo " "
+echo -e "${msg} If something went wrong you can do the following to restore the old version:${nc}"
+echo -e "${cmd}   rm -r /usr/local/lib/emby-server${nc}"
+echo -e "${cmd}   mv /usr/local/lib/emby-server-backups/${date} /usr/local/lib/emby-server${nc}"
+echo " "
+echo -e "${msg} And use this to restore your server database/settings:${nc}"
+echo -e "${cmd}   rm -r /var/db/emby-server${nc}"
+echo -e "${cmd}   mv /var/db/emby-server-backups/${date} /var/db/emby-server${nc}"
+echo -e "${sep}"
+echo " "
 }
 
 ################################################################################
 ##### BACKUP
 ################################################################################
 
-embybackup ()
+backup.emby ()
 {
 echo " "
 echo -e "${sep}"
@@ -201,7 +298,7 @@ echo " "
 ################################################################################
 ### INSTALL CONFIRMATION
 
-confirmembyinstall ()
+confirm.emby.install ()
 {
 echo " "
 echo -e "${sep}"
@@ -215,7 +312,7 @@ read -r -p "   Confirm Installtion of Emby Media Server? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              embyinstall
+              install.emby
                ;;
     *)
               # Otherwise exit...
@@ -229,7 +326,7 @@ esac
 ### BACKUP CONFIRMATIONS
 #------------------------------------------------------------------------------#
 
-confirmembybackup ()
+confirm.emby.backup ()
 {
 echo " "
 echo -e "${sep}"
@@ -247,7 +344,7 @@ read -r -p "   Confirm Backup of Emby?? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              embyupdate
+              update.emby
                ;;
     *)
               # Otherwise exit...
@@ -261,7 +358,7 @@ esac
 ### UPDATE CONFIRMATIONS
 #------------------------------------------------------------------------------#
 
-confirmembyupdatesafe ()
+confirm.emby.update.safe ()
 {
 echo " "
 echo -e "${sep}"
@@ -279,7 +376,7 @@ read -r -p "   Confirm Update of Emby Media Server? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              embyupdatesafe
+              update.emby.safe
                ;;
     *)
               # Otherwise exit...
@@ -291,7 +388,7 @@ echo " "
 echo " "
 }
 
-confirmembyupdategit ()
+confirm.emby.update.git ()
 {
 echo " "
 echo -e "${sep}"
@@ -314,7 +411,7 @@ read -r -p "   Confirm Update of Emby Media Server? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              embyupdate
+              update.emby
                ;;
     *)
               # Otherwise exit...
@@ -337,7 +434,7 @@ do
         echo -e "${sep}"
         echo " "
         echo -e "${fin} Emby Server Script${nc}"
-        echo -e "${inf}    Script Version: 1.0.0 (March 28, 2016)"
+        echo -e "${inf}    Script Version: 1.0.1 (March 31, 2016)"
         echo " "
         echo -e "${emp} Main Menu"
         echo " "
@@ -355,16 +452,16 @@ do
 
         case $choice in
             '1')
-                confirmembyinstall
+                confirm.emby.install
                 ;;
             '2')
-                confirmembyupdatesafe
+                confirm.emby.update.safe
                 ;;
             '3')
-                confirmembyupdategit
+                confirm.emby.update.git
                 ;;
             '4')
-                confirmembybackup
+                confirm.emby.backup
                 ;;
             'q') echo -e "${alt}        Exiting script!${nc}"
                 echo " "

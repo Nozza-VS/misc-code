@@ -1,5 +1,5 @@
 #!/bin/sh
-# Script Version: 1.15 (March 31, 2016)
+# Script Version: 1.15.1 (April 2, 2016)
 ###########################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -25,6 +25,7 @@
 server_port="81"
 server_ip="192.168.1.200"
 owncloud_version="9.0.0"
+# Press "X" while holding "Ctrl", Press "Y" then press "Enter" to save changes
 ### No need to edit below here ###
 ##### END OF CONFIGURATION SECTION #####
 ###########################################################################

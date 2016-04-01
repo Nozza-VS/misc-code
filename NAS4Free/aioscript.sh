@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script - Version: 1.0.8 (March 31, 2016)
+# AIO Script - Version: 1.0.9 (April 2, 2016)
 ################################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -34,9 +34,9 @@ owncloud_version="9.0.0"
 # Define where to install TheBrig
 thebriginstalldir="/mnt/Storage/System/Jails"
 thebrigbranch="alcatraz"    # Define which version of TheBrig to install
-                            # 1 = master   - For 9.0 and 9.1 FreeBSD versions
-                            # 2 = working  - For 9.1 and 9.2 FreeBSD versions
-                            # 3 = alcatraz - For 9.3 and 10.x FreeBSD versions
+                            # master   - For 9.0 and 9.1 FreeBSD versions
+                            # working  - For 9.1 and 9.2 FreeBSD versions
+                            # alcatraz - For 9.3 and 10.x FreeBSD versions
 # thebrigversion="3"        # Not needed anymore
 
 ###! END OF THEBRIG CONFIG !######################
@@ -58,7 +58,7 @@ user_ID="UID"
 deluge_user="JonDoe"
 deluge_user_password="MyC0mpL3xPass"
 ##################################################
-jail_ip="192.168.1.200"     # ! No need to change this for OwnCloud installS !
+jail_ip="192.168.1.200"     # ! No need to change this for OwnCloud installs !
                             # Only change this for OTHER jails/apps
                             # MUST be different to cloud_server_ip if you have
                             # installed OwnCloud previously.
@@ -78,9 +78,10 @@ emp='\033[1;31m'    # Emphasis Text
 msg='\033[1;37m'    # Message Text
 url='\033[1;32m'    # URL
 qry='\033[0;36m'    # Query Text
-sep='\033[1;30m-------------------------------------------------------\033[0m'
+sep='\033[1;30m----------------------------------------------------------------------\033[0m'
 # ^ Line Separator
 ssep='\033[1;30m#----------------------#\033[0m'    # Small Line Separator
+msep='\033[1;30m#--------------------------------------#\033[0m'    # Medium Line Separator
 cmd='\033[1;35m'    # Command to be entered
 fin='\033[0;32m'    # Green Text
 inf='\033[0;33m'    # Information Text
@@ -96,7 +97,7 @@ gethelp ()
 while [ "$choice" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} Ways of contacting me / getting help from others:${nc}"
+        echo -e "${inf} Ways of contacting me / Getting help from others:${nc}"
         echo -e "${sep}"
         echo " "
         echo -e "${fin}   My Discord Support (Usually faster responses):${nc}"
@@ -109,7 +110,11 @@ do
         echo -e "${msg}      VS Forums:${nc}"
         echo -e "${url}      forums.vengefulsyndicate.com${nc}"
         echo " "
+        echo -e "${fin}   Find an issue with the script? Drop a message using the above or head here:${nc}"
+        echo -e "${url}      https://github.com/Nostalgist92/misc-code/issues"
+        echo " "
         echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
 
         read choice
 
@@ -168,6 +173,282 @@ echo -e "${cmd}    /usr/local/etc/rc.d/lighttpd restart"
 ################################################################################
 
 #------------------------------------------------------------------------------#
+### ABOUT THE APPS
+#------------------------------------------------------------------------------#
+
+#------------------------------------------------------------------------------#
+### ABOUT: MYSQL
+
+about.thisscript ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} About: This Script${nc}"
+        echo " "
+        echo -e "${msg} I've been maintaining the 'OwnCloud in a Jail' NAS4Free script${nc}"
+        echo -e "${msg} for some time now and I tend to do a lot of messing around in jails on NAS4Free${nc}"
+        echo -e "${msg} As well as helping others set up jails for different things.${nc}"
+        echo " "
+        echo -e "${msg} So I figured, 'why am i always manually doing all this when i can script it?'${nc}"
+        echo -e "${msg} And now here we are! Aiming to have a mostly automated script for some of the${nc}"
+        echo -e "${msg} most common jail setups and hopefully some useful info about these setups${nc}"
+        echo -e "${msg} to help aid with any possible issues without google search frenzies!${nc}"
+        echo " "
+        echo -e "${msg} Wish to contribute? Feel free to drop me a message anyhere listed in the${nc}"
+        echo -e "${msg} 'Contact / Get Help' menu.${nc}"
+        echo " "
+        echo -e "${msg} Like my work enough to buy me a pizza? Please do!${nc}"
+        echo -e "${url} https://www.paypal.me/AshleyTownsend${nc}"
+        echo -e "${sep}"
+        echo " "
+
+        echo -e "${msep}"
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### ABOUT: MYSQL
+
+about.mysql ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} About: MySQL${nc}"
+        echo " "
+        echo -e "${msg} MySQL is an open-source relational database management system (RDBMS). The SQL${nc}"
+        echo -e "${msg} abbreviation stands for Structured Query Language. The MySQL development${nc}"
+        echo -e "${msg} project has made its source code available under the terms of the GNU General${nc}"
+        echo -e "${msg} Public License, as well as under a variety of proprietary agreements.${nc}"
+        echo " "
+        echo -e "${msg} MySQL is a popular choice of database for use in web applications, and is a${nc}"
+        echo -e "${msg} central component of the widely used LAMP open-source web application software${nc}"
+        echo -e "${msg} stack (and other 'AMP' stacks).${nc}"
+        echo -e "${sep}"
+        echo " "
+
+        echo -e "${msep}"
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### ABOUT: OWNCLOUD
+
+about.owncloud ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} About: ownCloud${nc}"
+        echo " "
+        echo -e "${msg} ownCloud is a self-hosted file sync & share server. It provides access to your${nc}"
+        echo -e "${msg} data through a web interface, sync clients or WebDAV while providing a platform${nc}"
+        echo -e "${msg} to view, sync and share across devices easily — all under your control.${nc}"
+        echo " "
+        echo -e "${msg} ownCloud’s open architecture is extensible via a simple but powerful API for${nc}"
+        echo -e "${msg} applications and plugins and it works with any storage.${nc}"
+        echo -e "${sep}"
+        echo " "
+
+        echo -e "${msep}"
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### ABOUT: EMBY SERVER
+
+about.emby ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} About: Emby Media Server${nc}"
+        echo " "
+        echo -e "${msg} Emby Server is a home media server built on top of other popular open source${nc}"
+        echo -e "${msg} technologies such as Service Stack, jQuery, jQuery  mobile, and Mono.${nc}"
+        echo " "
+        echo -e "${msg} It features a REST-based API with built-in documention to  facilitate client${nc}"
+        echo -e "${msg} development. It also has client libraries for API to enable rapid development.${nc}"
+        echo -e "${sep}"
+        echo " "
+
+        echo -e "${msep}"
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### ABOUT: SONARR
+
+about.sonarr ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} About: Sonarr (Formerly NZBDrone)${nc}"
+        echo " "
+        echo -e "${msg} Sonarr is a PVR for Usenet and BitTorrent users. It can monitor multiple RSS${nc}"
+        echo -e "${msg} feeds for new episodes of your favorite shows and  will grab, sort and rename${nc}"
+        echo -e "${msg} them. It can also be configured to  automatically upgrade the quality of files${nc}"
+        echo -e "${msg} already downloaded  when a better quality format becomes available.${nc}"
+        echo -e "${sep}"
+        echo " "
+
+        echo -e "${msep}"
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### ABOUT: COUCHPOTATO
+
+about.couchpotato ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} About: CouchPotato${nc}"
+        echo " "
+        echo -e "${msg} CouchPotato (CP) is an automatic NZB and torrent downloader.${nc}"
+        echo -e "${msg} You can keep a 'movies I want'-list and it will search for NZBs/torrents${nc}"
+        echo -e "${msg} of these movies every X hours. Once a movie is  found, it will send it to${nc}"
+        echo -e "${msg} SABnzbd/NZBGet or download the torrent to a specified directory.${nc}"
+        echo -e "${sep}"
+        echo " "
+
+        echo -e "${msep}"
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### ABOUT: HEADPHONES
+
+about.headphones ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} About: Headphones${nc}"
+        echo " "
+        echo -e "${msg} Headphones is an automated music downloader for NZB and Torrent, written in${nc}"
+        echo -e "${msg} Python. It supports SABnzbd, NZBget, Transmission, µTorrent, Deluge and${nc}"
+        echo -e "${msg} Blackhole.${nc}"
+        echo -e "${sep}"
+        echo " "
+
+        echo -e "${msep}"
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### ABOUT: THEBRIG
+
+about.thebrig ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} About: TheBrig${nc}"
+        echo " "
+        echo -e "${msg} thebrig is a set of PHP pages used to create & manage FreeBSD jails on NAS4Free${nc}"
+        echo " "
+        echo -e "${msg} The main advantage of thebrig is that it leverages the existing webgui control${nc}"
+        echo -e "${msg} and accounting mechanisms found within Nas4Free, and can be used on an embedded${nc}"
+        echo -e "${msg} installation.${nc}"
+        echo -e "${sep}"
+        echo " "
+
+        echo -e "${msep}"
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+
+}
+
+
+
+#------------------------------------------------------------------------------#
+### HOW-TO'S
+#------------------------------------------------------------------------------#
+
+#------------------------------------------------------------------------------#
 ### OWNCLOUD - HOW-TO: FINISH SETUP
 #------------------------------------------------------------------------------#
 
@@ -196,7 +477,10 @@ do
         echo -e "${msg} After it refreshes, if you are seeing a 'Trusted Domain' error,${nc}"
         echo -e "${msg} head back to the owncloud menu and select option 4.${nc}"
         echo " "
+
+        echo -e "${msep}"
         echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
 
         read choice
 
@@ -242,7 +526,10 @@ do
         # echo " Instructions on creating a jail can be found in the 'more info' menu"
         echo -e "${emp} This part of the script is unfinished currently :(${nc}"
         echo " "
+
+        echo -e "${msep}"
         echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
 
         read choice
 
@@ -292,7 +579,10 @@ do
         echo " "
         echo -e "${msg} Now press '${inf}Add${msg}' at the bottom and that should be it!${nc}"
         echo " "
+
+        echo -e "${msep}"
         echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
 
         read choice
 
@@ -320,7 +610,10 @@ do
         echo " "
         echo -e "${emp} This part of the script is unfinished currently :(${nc}"
         echo " "
+
+        echo -e "${msep}"
         echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
 
         read choice
 
@@ -355,7 +648,10 @@ do
         echo -e "${msg} Click Fetch, wait some time for the downloads to finish${nc}"
         echo -e "${msg} Once all the download bars are gone you can proceed to making your jail${nc}"
         echo " "
+
+        echo -e "${msep}"
         echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
 
         read choice
 
@@ -394,7 +690,10 @@ do
         echo -e "${msg} Once it is done, restart the emby server${nc}"
         echo -e "${cmd}    service emby-server restart${nc}"
         echo " "
+
+        echo -e "${msep}"
         echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
 
         read choice
 
@@ -1243,7 +1542,7 @@ echo " "
 #------------------------------------------------------------------------------#
 ### THEBRIG EXPERIMENTAL INSTALL
 
-install.thebrig.EXPEREIMENTAL ()
+install.thebrig.EXPERIMENTAL ()
 {
 confirmstorage ()
 {
@@ -1740,6 +2039,8 @@ pkg install -y rsync
 
 echo " "
 echo -e "${sep}"
+echo -e "${msg} Create backups${nc}" # TODO: Give user option to backup or not
+echo -e "${sep}"
 echo " "
 
 echo -e "${emp} Application backup${nc}"
@@ -1986,7 +2287,7 @@ esac
 #------------------------------------------------------------------------------#
 ### THEBRIG EXPERIMENTAL CONFIRM INSTALL
 
-confirm.thebrig.EXPEREIMENTAL.install ()
+confirm.thebrig.EXPERIMENTAL.install ()
 {
 # Confirm with the user
 echo -e "${emp} WARNING: THIS HAS BEEN UNTESTED"
@@ -1995,7 +2296,7 @@ read -r -p "   Confirm Installation of TheBrig? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              install.thebrig.EXPEREIMENTAL
+              install.thebrig.EXPERIMENTAL
                ;;
     *)
               # Otherwise exit...
@@ -2224,7 +2525,7 @@ echo " "
 
 mysql.submenu ()
 {
-while [ "$choice" != "m" ]
+while [ "$choice" != "a,h,i,m" ]
 do
         echo -e "${sep}"
         echo -e "${fin} MySQL + phpMyAdmin${nc}"
@@ -2239,6 +2540,7 @@ do
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
         echo -e "${ssep}"
+        echo " "
 
         case $choice in
             '1') echo -e "${inf} Installing..${nc}"
@@ -2250,7 +2552,11 @@ do
             '3') echo -e "${inf} Backup..${nc}"
                 backup.mysql
                 ;;
-            'm') return
+            'a')
+                about.mysql
+                ;;
+            'm')
+                return
                 ;;
         esac
 done
@@ -2261,7 +2567,7 @@ done
 
 cloud.submenu ()
 {
-while [ "$choice" != "h,i,m" ]
+while [ "$choice" != "a,h,i,m" ]
 do
         echo -e "${sep}"
         echo -e "${fin} OwnCloud Options${nc}"
@@ -2282,6 +2588,7 @@ do
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
         echo -e "${ssep}"
+        echo " "
 
         case $choice in
             '1') echo -e "${inf} Installing..${nc}"
@@ -2299,49 +2606,19 @@ do
             '5')
                 cloud.otheroptions.menu
                 ;;
+            'a')
+                about.owncloud
+                ;;
             'i')
-                moreinfo.submenu
+                moreinfo.submenu.cloud
                 ;;
             'h')
                 gethelp
                 ;;
-            'm') return
+            'm')
+                return
                 ;;
             *)   echo -e "${emp}        Invalid choice, please try again${nc}"
-                ;;
-        esac
-done
-}
-
-### ERROR FIXES SUBMENU
-#------------------------------------------------------------------------------#
-
-cloud.errorfix.submenu ()
-{
-while [ "$choice" != "b" ]
-do
-        echo -e "${sep}"
-        echo -e "${inf} OwnCloud - Fixes For Known Errors${nc}"
-        echo -e "${sep}"
-        echo -e "${qry} Choose one:"
-        echo " "
-        echo -e "${fin}   1)${msg} Trusted Domain Error"
-        echo -e "${fin}   2)${msg} Populating Raw Post Data Error"
-        echo " "
-        echo -e "${emp}   b) Back${nc}"
-
-        echo -e "${ssep}"
-        read -r -p "     Your choice: " choice
-        echo -e "${ssep}"
-
-        case $choice in
-            '1') echo -e "${inf} ${nc}"
-                cloud.trusteddomain.fix
-                ;;
-            '2') echo -e "${inf} ${nc}"
-                cloud.phpini
-                ;;
-            'b') return
                 ;;
         esac
 done
@@ -2352,7 +2629,7 @@ done
 
 emby.submenu ()
 {
-while [ "$choice" != "m" ]
+while [ "$choice" != "a,h,i,m" ]
 do
         echo -e "${sep}"
         echo -e "${fin} Emby Options${nc}"
@@ -2369,6 +2646,7 @@ do
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
         echo -e "${ssep}"
+        echo " "
 
         case $choice in
             '1') echo -e "${inf} Installing..${nc}"
@@ -2383,6 +2661,9 @@ do
             '4') echo -e "${inf} Backup..${nc}"
                 backup.emby
                 ;;
+            'a')
+                about.emby
+                ;;
             'm') return
                 ;;
         esac
@@ -2394,7 +2675,7 @@ done
 
 sonarr.submenu ()
 {
-while [ "$choice" != "m" ]
+while [ "$choice" != "a,h,i,m" ]
 do
         echo -e "${sep}"
         echo -e "${fin} Sonarr Options${nc}"
@@ -2421,6 +2702,9 @@ do
             '3') echo -e "${inf} Backup..${nc}"
                 backup.sonarr
                 ;;
+            'a')
+                about.sonarr
+                ;;
             'm') return
                 ;;
         esac
@@ -2432,7 +2716,7 @@ done
 
 couchpotato.submenu ()
 {
-while [ "$choice" != "m" ]
+while [ "$choice" != "a,h,i,m" ]
 do
         echo -e "${sep}"
         echo -e "${fin} CouchPotato Options${nc}"
@@ -2448,6 +2732,7 @@ do
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
         echo -e "${ssep}"
+        echo " "
 
         case $choice in
             '1') echo -e "${inf} Installing..${nc}"
@@ -2459,7 +2744,11 @@ do
             '3') echo -e "${inf} Backup..${nc}"
                 backup.couchpotato
                 ;;
-            'm') return
+            'a')
+                about.couchpotato
+                ;;
+            'm')
+                return
                 ;;
         esac
 done
@@ -2470,7 +2759,7 @@ done
 
 headphones.submenu ()
 {
-while [ "$choice" != "e,h,i,m" ]
+while [ "$choice" != "a,h,i,m" ]
 do
         echo -e "${sep}"
         echo -e "${fin} HeadPhones Options${nc}"
@@ -2488,6 +2777,7 @@ do
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
         echo -e "${ssep}"
+        echo " "
 
         case $choice in
             '1') echo -e "${inf} Installing..${nc}"
@@ -2498,6 +2788,9 @@ do
                 ;;
             '3') echo -e "${inf} Backup..${nc}"
                 backup.headphones
+                ;;
+            'a')
+                about.headphones
                 ;;
             'h')
                 gethelp
@@ -2518,7 +2811,7 @@ done
 
 thebrig.submenu ()
 {
-while [ "$choice" != "e,h,i,m" ]
+while [ "$choice" != "a,e,h,i,m" ]
 do
         echo -e "${sep}"
         echo -e "${fin} TheBrig Options${nc}"
@@ -2529,8 +2822,9 @@ do
         echo -e "${fin}   2)${msg} Update"
         echo -e "${fin}   3)${msg} Backup"
         echo " "
-        echo -e "${fin}   e)${msg} Install (EXPERIMENTAL)"
+        echo -e "${alt}   e)${emp} Install (EXPERIMENTAL)"
         echo " "
+        echo -e "${inf}  a) About TheBrig${nc}"
         echo -e "${inf}  i) More Info / How-To's${nc}"
         echo -e "${inf}  h) Get Help${nc}"
         echo -e "${emp}  m) Main Menu${nc}"
@@ -2538,6 +2832,7 @@ do
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
         echo -e "${ssep}"
+        echo " "
 
         case $choice in
             '1') echo -e "${inf} Taking you to install instructions..${nc}"
@@ -2550,7 +2845,10 @@ do
                 backup.thebrig
                 ;;
             'e') echo -e "${inf} Installing..${nc}"
-                confirm.thebrig.EXPEREIMENTAL.install
+                confirm.thebrig.EXPERIMENTAL.install
+                ;;
+            'a')
+                about.thebrig
                 ;;
             'h')
                 gethelp
@@ -2588,6 +2886,7 @@ do
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
         echo -e "${ssep}"
+        echo " "
 
         case $choice in
             '1') moreinfo.submenu.cloud
@@ -2625,6 +2924,7 @@ do
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
         echo -e "${ssep}"
+        echo " "
 
         case $choice in
             '1') cloud.howto.finishsetup
@@ -2656,6 +2956,7 @@ do
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
         echo -e "${ssep}"
+        echo " "
 
         case $choice in
             '1') thebrig.info.rudimentaryconfig
@@ -2687,11 +2988,49 @@ do
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
         echo -e "${ssep}"
+        echo " "
 
         case $choice in
             '1') emby.howto.updateffmpeg
                 ;;
             'm') return
+                ;;
+        esac
+done
+}
+
+
+
+### OWNCLOUD ERROR FIXES SUBMENU
+#------------------------------------------------------------------------------#
+
+cloud.errorfix.submenu ()
+{
+while [ "$choice" != "b" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} OwnCloud - Fixes For Known Errors${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:"
+        echo " "
+        echo -e "${fin}   1)${msg} Trusted Domain Error"
+        echo -e "${fin}   2)${msg} Populating Raw Post Data Error"
+        echo " "
+        echo -e "${emp}   b) Back${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+        echo " "
+
+        case $choice in
+            '1') echo -e "${inf} ${nc}"
+                cloud.trusteddomain.fix
+                ;;
+            '2') echo -e "${inf} ${nc}"
+                cloud.phpini
+                ;;
+            'b') return
                 ;;
         esac
 done
@@ -2718,6 +3057,7 @@ do
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
         echo -e "${ssep}"
+        echo " "
 
         case $choice in
             '1') echo -e "${inf} Enabling Memory Caching..${nc}"
@@ -2737,10 +3077,10 @@ done
 
 mainmenu=""
 
-while [ "$choice" != "q,h,i,j" ]
+while [ "$choice" != "q,a,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.8 (March 31, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.9 (April 2, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
@@ -2756,6 +3096,7 @@ do
         echo " "
         echo -e "${cmd}   j)${msg} TheBrig${nc}"
         echo " "
+        echo -e "${inf}  a) About This Script${nc}"
         echo -e "${inf}  h) Contact / Get Help${nc}"
         echo -e "${inf}  i) More Info / How-To's${nc}"
         echo -e "${alt}  q) Quit${nc}"
@@ -2763,6 +3104,7 @@ do
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
         echo -e "${ssep}"
+        echo " "
 
         case $choice in
             '1')
@@ -2782,6 +3124,9 @@ do
                 ;;
             '6')
                 headphones.submenu
+                ;;
+            'a')
+                about.thisscript
                 ;;
             'j')
                 thebrig.submenu

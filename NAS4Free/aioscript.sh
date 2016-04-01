@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script                    Version: 1.0.10 (April 2, 2016)
+# AIO Script                    Version: 1.0.11 (April 2, 2016)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -149,7 +149,7 @@ done
 #      using default installation folder otherwise the auto version won't work)
 #------------------------------------------------------------------------------#
 
-cloud.enablememcache ()
+owncloud.enablememcache ()
 {
 
 while [ "$choice" ]
@@ -290,6 +290,34 @@ do
         echo " "
         echo -e "${msg} ownCloud’s open architecture is extensible via a simple but powerful API for${nc}"
         echo -e "${msg} applications and plugins and it works with any storage.${nc}"
+        echo -e "${sep}"
+        echo " "
+
+        echo -e "${msep}"
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### ABOUT: PYDIO
+
+about.pydio ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} About: Pydio${nc}"
+        echo " "
+        echo "${msg} Pydio file sharing & sync includes applications for web, desktop and mobile assuring that your end users can easily manage their critical documents everywhere. Pydio is hosted exclusively on your private server or cloud so you can rest assured that files are securely managed under company control.${nc}"
         echo -e "${sep}"
         echo " "
 
@@ -538,7 +566,7 @@ done
 ### OWNCLOUD - HOW-TO: FINISH SETUP
 #------------------------------------------------------------------------------#
 
-cloud.howto.finishsetup ()
+owncloud.howto.finishsetup ()
 {
 while [ "$choice" ]
 do
@@ -801,7 +829,7 @@ done
 ### OWNCLOUD - TRUSTED DOMAIN WARNING FIX
 #------------------------------------------------------------------------------#
 
-cloud.trusteddomain.fix ()
+owncloud.trusteddomain.fix ()
 {
 # Confirm with the user
 echo " "
@@ -1088,7 +1116,7 @@ echo " "
 #------------------------------------------------------------------------------#
 ### OWNCLOUD INSTALL
 
-install.cloud ()
+install.owncloud ()
 {
 
 confirm ()
@@ -1767,7 +1795,24 @@ echo " "
 
 install.deluge ()
 {
-
+confirm ()
+{
+# Confirm with the user
+read -r -p "   Continue? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              echo -e " "
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              echo -e " "
+              echo " "
+              exit
+              ;;
+esac
+}
 echo -e "${sep}"
 echo -e "     \033[1;37mWelcome to the Deluge setup!${nc}"
 echo -e "${sep}"
@@ -1792,8 +1837,8 @@ echo -e "${msg} Now to enter the jail and set up some basic stuff${nc}"
 echo -e "${sep}"
 echo " "
 
-jexec $jail csh
-pw useradd -n deluge -u $user_ID -c "Deluge BitTorrent Client" -s /sbin/nologin -w no
+jexec ${jail} csh
+pw useradd -n deluge -u ${user_ID} -c "Deluge BitTorrent Client" -s /sbin/nologin -w no
 mkdir -p /home/deluge/.config/deluge
 chown -R deluge:deluge /home/deluge/
 
@@ -1813,7 +1858,7 @@ pkg install -y deluge nano
 touch /usr/local/etc/rc.d/deluged
 
 # Tell user to modify certain things before moving on
-echo " Change the deluge user in the scripts from the default asjklasdfjklasdf
+echo " Change the deluge user in the scripts from the default asjklasdfjklasdf"
 echo " to the 'deluge' user created earlier"
 
 # Set permissions
@@ -1825,21 +1870,21 @@ echo 'deluge_web_enabled="YES"' >> /etc/rc.conf
 echo 'deluged_user="deluge"' >> /etc/rc.conf
 
 # User to allow remote access to daemon
-echo "$deluge_user:$deluge_user_password:10" >> /home/deluge/.config/deluge/auth
+echo "${deluge_user}:${deluge_user_password}:10" >> /home/deluge/.config/deluge/auth
 # Let user know how to add more users to connect to the daemon
-echo " $deluge_user:$deluge_user_password:10 >> /home/deluge/.config/deluge/auth"
+echo " ${deluge_user}:${deluge_user_password}:10" >> /home/deluge/.config/deluge/auth
 echo " "
 
 # Allow remote connections
 echo " Find and change “allow_remote” from false to true."
 echo " Once you are done press Ctrl+X then Y to close and save the file"
-echo -e "${emp}   Make sure you read above before continuing${nc}";
+echo -e "${emp}   Make sure you read above before continuing${nc}"
 continue
 nano /home/deluge/.config/deluge/core.conf
 
 # Disable IPV6
 echo "Edit /etc/protocols and disable ipv6 by placing '#' in front of ipv6"
-echo -e "${emp}   Make sure you read above before continuing${nc}";
+echo -e "${emp}   Make sure you read above before continuing${nc}"
 continue
 nano /etc/protocols
 
@@ -1858,7 +1903,6 @@ echo " Happy torrenting!!"
 echo -e "${sep}"
 echo " "
 
-
 }
 
 #------------------------------------------------------------------------------#
@@ -1867,6 +1911,126 @@ echo " "
 install.nzbget ()
 {
 
+}
+
+#------------------------------------------------------------------------------#
+### WEB SERVER INSTALL
+
+install.webserver ()
+{
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Welcome to the MySQL / phpMyAdmin / Apache web server setup!${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Let's get started with some packages${nc}"
+echo -e "${sep}"
+echo " "
+
+# Install packages
+pkg install -y mysql56-server phpmyadmin mod_php56 php56-extensions php56-mysql php56-mysqli apache24 nano imagemagick
+
+echo " "
+echo -e "${sep}"
+echo "Packages installed - now configuring mySQL"
+echo -e "${sep}"
+echo " "
+
+echo 'mysql_enable="YES"' >> /etc/rc.conf
+echo '[mysqld]' >> /var/db/mysql/my.cnf
+echo 'skip-networking' >> /var/db/mysql/my.cnf
+
+service mysql-server start
+#/usr/local/etc/rc.d/mysql-server start
+
+echo " "
+echo -e "${sep}"
+echo "Getting ready to secure the install. The root password is blank, "
+echo "and you want to provide a strong root password, remove the anonymous accounts"
+echo "disallow remote root access, remove the test database, and reload privilege tables"
+echo -e "${sep}"
+echo " "
+
+mysql_secure_installation
+# OR (Less Secure)
+# /usr/local/bin/mysqladmin -u root password 'your-password'
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}     MySQL done, now to apache${nc}"
+echo -e "${sep}"
+echo " "
+
+echo 'apache24_enable="YES"' >> /etc/rc.conf
+service apache24 start
+#/usr/local/etc/rc.d/apache24 start
+
+# Confirm apache is working
+echo -e "${emp} Head to your jail ip, blah blah blah${nc}"
+confirm
+
+# Copy sample config file which will set php to default settings
+cp /usr/local/etc/php.ini-development /usr/local/etc/php.ini
+
+# Configure apache: /usr/local/etc/apache24/httpd.conf
+# Modify this line: DirectoryIndex index.html (Line 278)
+# To show as: DirectoryIndex index.html index.php
+# Restart apache to update changes
+
+# Also add these lines:
+#<FilesMatch "\.php$">
+#    SetHandler application/x-httpd-php
+#</FilesMatch>
+#<FilesMatch "\.phps$">
+#    SetHandler application/x-httpd-php-source
+#</FilesMatch>
+#
+#Alias /phpmyadmin "/usr/local/www/phpMyAdmin"
+#
+#<Directory "/usr/local/www/phpMyAdmin">
+#Options None
+#AllowOverride None
+#Require all granted
+#</Directory>
+
+service apache24 restart
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}     Apache setup done, now to phpmyadmin${nc}"
+echo -e "${sep}"
+echo " "
+
+# Create basic config & make it writable
+mkdir /usr/local/www/phpMyAdmin/config && chmod o+w /usr/local/www/phpMyAdmin/config
+chmod o+r /usr/local/www/phpMyAdmin/config.inc.php
+echo -e "${emp} Head to http://your-hostname-or-IP-address/phpmyadmin/setup, do stuff there${nc}"
+confirm
+
+# Move configuration file up one directory so phpmyadmin can make use of it
+mv /usr/local/www/phpMyAdmin/config/config.inc.php /usr/local/www/phpMyAdmin
+echo -e "${emp} Double check before proceeding${nc}"
+confirm
+
+# Everything should be working so deleting config directory
+rm -r /usr/local/www/phpMyAdmin/config
+
+# Secure permissions of config file
+chmod o-r /usr/local/www/phpMyAdmin/config.inc.php
+
+# Restart Apache & MySQL servers
+service apache24 restart
+service mysql-server restart
+
+echo " "
+echo -e "${sep}"
+echo " That should be it!"
+echo " Enjoy your Web server!"
+echo -e "${sep}"
+echo " "
 }
 
 
@@ -1881,16 +2045,14 @@ install.nzbget ()
 
 update.mysql ()
 {
-
 echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
-
 }
 
 #------------------------------------------------------------------------------#
 ### OWNCLOUD UPDATE
 
-update.cloud ()
+update.owncloud ()
 {
 echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
@@ -2233,7 +2395,7 @@ echo " "
 #------------------------------------------------------------------------------#
 ### OWNCLOUD BACKUP
 
-backup.cloud ()
+backup.owncloud ()
 {
 echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
@@ -2349,6 +2511,17 @@ echo " "
 
 }
 
+#------------------------------------------------------------------------------#
+### WEB SERVER BACKUP
+
+backup.webserver ()
+{
+
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+echo " "
+
+}
+
 
 
 ################################################################################
@@ -2382,7 +2555,7 @@ esac
 #------------------------------------------------------------------------------#
 ### OWNCLOUD CONFIRM INSTALL
 
-confirm.cloud.install ()
+confirm.owncloud.install ()
 {
 confirm ()
 {
@@ -2432,7 +2605,7 @@ read -r -p "   Confirm Installation of OwnCloud? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              install.cloud
+              install.owncloud
                ;;
     *)
               # Otherwise exit...
@@ -2607,6 +2780,26 @@ case "$response" in
 esac
 }
 
+#------------------------------------------------------------------------------#
+### WEB SERVER CONFIRM INSTALL
+
+confirm.webserver.install ()
+{
+# Confirm with the user
+read -r -p "   Confirm Installation of Web Server? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              install.webserver
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              return
+              ;;
+esac
+}
+
 
 
 #------------------------------------------------------------------------------#
@@ -2637,14 +2830,14 @@ esac
 #------------------------------------------------------------------------------#
 ### OWNCLOUD CONFIRM UPDATE
 
-confirm.cloud.update ()
+confirm.owncloud.update ()
 {
 # Confirm with the user
 read -r -p "   Confirm Update of OwnCloud? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              update.cloud
+              update.owncloud
                ;;
     *)
               # Otherwise exit...
@@ -2818,6 +3011,26 @@ echo " "
 
 }
 
+#------------------------------------------------------------------------------#
+### WEB SERVER CONFIRM UPDATE
+
+confirm.webserver.update ()
+{
+# Confirm with the user
+read -r -p "   Confirm Update of Web Server? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              update.webserver
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              return
+              ;;
+esac
+}
+
 
 
 ################################################################################
@@ -2868,11 +3081,60 @@ done
 }
 
 #------------------------------------------------------------------------------#
-### OWNCLOUD SUBMENU
+### CLOUD SUBMENU
 
 cloud.submenu ()
 {
-while [ "$choice" != "a,h,i,m" ]
+while [ "$choice" != "a,h,i,b" ]
+do
+        echo -e "${sep}"
+        echo -e "${fin} Self Hosted Cloud Storage Options${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:"
+        echo " "
+        echo -e "${fin}   1)${msg} ownCloud"
+        echo -e "${fin}   2)${msg} Pydio"
+        echo " "
+        echo -e "${inf}  i) More Information${nc}"
+        echo -e "${inf}  h) Get Help${nc}"
+        echo -e "${emp}  b) Back${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+        echo " "
+
+        case $choice in
+            '1')
+                owncloud.submenu
+                ;;
+            '2')
+                pydio.submenu
+                ;;
+            'a')
+                about.cloud
+                ;;
+            'i')
+                moreinfo.submenu.cloud
+                ;;
+            'h')
+                gethelp
+                ;;
+            'b')
+                return
+                ;;
+            *)   echo -e "${emp}        Invalid choice, please try again${nc}"
+                ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### OWNCLOUD SUBMENU
+
+owncloud.submenu ()
+{
+while [ "$choice" != "a,h,i,b" ]
 do
         echo -e "${sep}"
         echo -e "${fin} OwnCloud Options${nc}"
@@ -2888,6 +3150,65 @@ do
         echo " "
         echo -e "${inf}  i) More Info / How-To's${nc}"
         echo -e "${inf}  h) Get Help${nc}"
+        echo -e "${emp}  b) Back${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+        echo " "
+
+        case $choice in
+            '1') echo -e "${inf} Installing..${nc}"
+                confirm.owncloud.install
+                ;;
+            '2') echo -e "${inf} Running Update..${nc}"
+                confirm.owncloud.update
+                ;;
+            '3') echo -e "${inf} Backup..${nc}"
+                backup.owncloud
+                ;;
+            '4')
+                owncloud.errorfix.submenu
+                ;;
+            '5')
+                owncloud.otheroptions.menu
+                ;;
+            'a')
+                about.owncloud
+                ;;
+            'i')
+                moreinfo.submenu.owncloud
+                ;;
+            'h')
+                gethelp
+                ;;
+            'b')
+                return
+                ;;
+            *)   echo -e "${emp}        Invalid choice, please try again${nc}"
+                ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### PYDIO SUBMENU
+
+pydio.submenu ()
+{
+while [ "$choice" != "a,h,i,m" ]
+do
+        echo -e "${sep}"
+        echo -e "${fin} Pydio Options${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:"
+        echo " "
+        echo -e "${fin}   1)${msg} Install"
+        echo -e "${fin}   2)${msg} Update"
+        echo -e "${fin}   3)${msg} Backup"
+        echo " "
+        echo -e "${inf}  i) More Info / How-To's${nc}"
+        echo -e "${inf}  h) Get Help${nc}"
         echo -e "${emp}  m) Main Menu${nc}"
 
         echo -e "${ssep}"
@@ -2897,25 +3218,19 @@ do
 
         case $choice in
             '1') echo -e "${inf} Installing..${nc}"
-                confirm.cloud.install
+                confirm.pydio.install
                 ;;
             '2') echo -e "${inf} Running Update..${nc}"
-                confirm.cloud.update
+                confirm.pydio.update
                 ;;
             '3') echo -e "${inf} Backup..${nc}"
-                backup.cloud
-                ;;
-            '4')
-                cloud.errorfix.submenu
-                ;;
-            '5')
-                cloud.otheroptions.menu
+                backup.pydio
                 ;;
             'a')
-                about.owncloud
+                about.pydio
                 ;;
             'i')
-                moreinfo.submenu.cloud
+                moreinfo.submenu.pydio
                 ;;
             'h')
                 gethelp
@@ -3168,11 +3483,53 @@ done
 }
 
 #------------------------------------------------------------------------------#
+### DOWNLOAD TOOLS SUBMENU
+
+downloadtools.submenu ()
+{
+while [ "$choice" != "a,h,i,m" ]
+do
+        echo -e "${sep}"
+        echo -e "${fin} Download Tools${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:"
+        echo " "
+        echo -e "${fin}   1)${msg} Deluge (Torrenting)${nc}"
+        echo -e "${fin}   2)${msg} NZBGet (Usenet Downloader)${nc}"
+        echo " "
+        echo -e "${inf}  h) Get Help${nc}"
+        echo -e "${emp}  m) Main Menu${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+        echo " "
+
+        case $choice in
+            '1')
+                deluge.submenu
+                ;;
+            '2')
+                nzbget.submenu
+                ;;
+            'h')
+                gethelp
+                ;;
+            'm')
+                return
+                ;;
+            *)   echo -e "${emp}        Invalid choice, please try again${nc}"
+                ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
 ### DELUGE SUBMENU
 
 deluge.submenu ()
 {
-while [ "$choice" != "a,h,i,m" ]
+while [ "$choice" != "a,h,i,b" ]
 do
         echo -e "${sep}"
         echo -e "${fin} Deluge Options${nc}"
@@ -3186,7 +3543,7 @@ do
         echo -e "${inf}  a) About Deluge${nc}"
         echo -e "${inf}  i) More Info / How-To's${nc}"
         echo -e "${inf}  h) Get Help${nc}"
-        echo -e "${emp}  m) Main Menu${nc}"
+        echo -e "${emp}  b) Back${nc}"
 
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
@@ -3212,7 +3569,7 @@ do
             'i')
                 moreinfo.submenu.deluge
                 ;;
-            'm') return
+            'b') return
                 ;;
         esac
 done
@@ -3237,7 +3594,7 @@ do
         echo -e "${inf}  a) About NZBGet${nc}"
         echo -e "${inf}  i) More Info / How-To's${nc}"
         echo -e "${inf}  h) Get Help${nc}"
-        echo -e "${emp}  m) Main Menu${nc}"
+        echo -e "${emp}  b) Back${nc}"
 
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
@@ -3262,6 +3619,57 @@ do
                 ;;
             'i')
                 moreinfo.submenu.nzbget
+                ;;
+            'b') return
+                ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### WEB SERVER SUBMENU
+
+webserver.submenu ()
+{
+while [ "$choice" != "a,h,i,m" ]
+do
+        echo -e "${sep}"
+        echo -e "${fin} Web Server Options${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:"
+        echo " "
+        echo -e "${fin}   1)${msg} Install"
+        echo -e "${fin}   2)${msg} Update"
+        echo -e "${fin}   3)${msg} Backup"
+        echo " "
+        echo -e "${inf}  a) About Web Server${nc}"
+        echo -e "${inf}  i) More Info / How-To's${nc}"
+        echo -e "${inf}  h) Get Help${nc}"
+        echo -e "${emp}  m) Main Menu${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+        echo " "
+
+        case $choice in
+            '1') echo -e "${inf} Installing..${nc}"
+                confirm.webserver.install
+                ;;
+            '2') echo -e "${inf} Running Update..${nc}"
+                confirm.webserver.update
+                ;;
+            '3') echo -e "${inf} Backup..${nc}"
+                backup.webserver
+                ;;
+            'a')
+                about.webserver
+                ;;
+            'h')
+                gethelp
+                ;;
+            'i')
+                moreinfo.submenu.webserver
                 ;;
             'm') return
                 ;;
@@ -3296,7 +3704,7 @@ do
         echo " "
 
         case $choice in
-            '1') moreinfo.submenu.cloud
+            '1') moreinfo.submenu.owncloud
                 ;;
             '2') moreinfo.submenu.thebrig
                 ;;
@@ -3314,7 +3722,7 @@ done
 ### MORE INFORMATION / HOW-TO / FURTHER INSTRUCTIONS SUBMENU (SPECIFIC)
 # YAY OR NAY?
 
-moreinfo.submenu.cloud ()
+moreinfo.submenu.owncloud ()
 {
 while [ "$choice" != "m" ]
 do
@@ -3334,7 +3742,7 @@ do
         echo " "
 
         case $choice in
-            '1') cloud.howto.finishsetup
+            '1') owncloud.howto.finishsetup
                 ;;
             'm') return
                 ;;
@@ -3411,7 +3819,7 @@ done
 ### OWNCLOUD ERROR FIXES SUBMENU
 #------------------------------------------------------------------------------#
 
-cloud.errorfix.submenu ()
+owncloud.errorfix.submenu ()
 {
 while [ "$choice" != "b" ]
 do
@@ -3432,10 +3840,10 @@ do
 
         case $choice in
             '1') echo -e "${inf} ${nc}"
-                cloud.trusteddomain.fix
+                owncloud.trusteddomain.fix
                 ;;
             '2') echo -e "${inf} ${nc}"
-                cloud.phpini
+                owncloud.phpini
                 ;;
             'b') return
                 ;;
@@ -3448,7 +3856,7 @@ done
 #------------------------------------------------------------------------------#
 ### OWNCLOUD OTHER OPTIONS SUBMENU
 
-cloud.otheroptions.menu ()
+owncloud.otheroptions.menu ()
 {
 while [ "$choice" != "b" ]
 do
@@ -3468,7 +3876,7 @@ do
 
         case $choice in
             '1') echo -e "${inf} Enabling Memory Caching..${nc}"
-                cloud.enablememcache
+                owncloud.enablememcache
                 ;;
             'b') return
                 ;;
@@ -3487,21 +3895,20 @@ mainmenu=""
 while [ "$choice" != "q,a,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.10 (April 2, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.11 (April 2, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
-        echo -e "${qry} Please make a selection!${nc}"
-        echo "    (It's best to run 1-6 INSIDE of a jail)"
+        echo -e "${qry} Please make a selection! ${nc}(It's best to run 1-9 INSIDE of a jail)"
         echo " "
         echo -e "${fin}   1)${msg} MySQL + phpMyAdmin${nc}"
-        echo -e "${fin}   2)${msg} OwnCloud${nc}"
-        echo -e "${fin}   3)${msg} Emby Server${nc}"
-        echo -e "${fin}   4)${msg} Sonarr${nc}"
-        echo -e "${fin}   5)${msg} CouchPotato${nc}"
-        echo -e "${fin}   6)${msg} HeadPhones${nc}"
-        echo -e "${fin}   7)${msg} Deluge (Torrenting)${nc}"
-        echo -e "${fin}   8)${msg} NZBGet (Usenet Downloader)${nc}"
+        echo -e "${fin}   2)${msg} Self Hosted Cloud Storage (OwnCloud/Pydio)${nc}"
+        echo -e "${fin}   3)${msg} Self Hosted Web Server${nc}"
+        echo -e "${fin}   4)${msg} Emby Server${nc}"
+        echo -e "${fin}   5)${msg} Sonarr${nc}"
+        echo -e "${fin}   6)${msg} CouchPotato${nc}"
+        echo -e "${fin}   7)${msg} HeadPhones${nc}"
+        echo -e "${fin}   8)${msg} Download Tools${nc}"
         echo " "
         echo -e "${cmd}   j)${msg} TheBrig${nc}"
         echo " "
@@ -3523,22 +3930,22 @@ do
                 cloud.submenu
                 ;;
             '3')
-                emby.submenu
+                webserver.submenu
                 ;;
             '4')
-                sonarr.submenu
+                emby.submenu
                 ;;
             '5')
-                couchpotato.submenu
+                sonarr.submenu
                 ;;
             '6')
-                headphones.submenu
+                couchpotato.submenu
                 ;;
             '7')
-                deluge.submenu
+                headphones.submenu
                 ;;
             '8')
-                nzbget.submenu
+                downloadtools.submenu
                 ;;
             'a')
                 about.thisscript
@@ -3574,6 +3981,5 @@ done
 # FUTURE: Add "SqueezeBox"
 # FUTURE: Add "Subsonic"
 # FUTURE: Add "UMS"
-# FUTURE: Add "Web Server"
 # FUTURE: If this script has no issues then i may remove standalone scripts from github
 # FUTURE: IF & when jail creation via shell is possible for thebrig, will add that option to script.

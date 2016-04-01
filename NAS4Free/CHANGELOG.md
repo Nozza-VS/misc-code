@@ -1,5 +1,19 @@
 # Changelog
 
+### Version: 1.0.11 (April 2, 2016)
+* Fixed an issue in the deluge installer that broke the script
+* Fixed a couple deluge variables also
++ Add missing confirmation to deluge installer
++ Added "Web Server"
+   + Menus
+   + Confirmations for installer/updater
+   + Installer (Very much unfinished, just merging from an old script of mine)
+   + Updater (Still need to start on this)
+* Changed "cloud" to "owncloud" to get ready for addition of "Pydio"
++ Added "About Pydio" kind of, will revise this later as the description from the website wasnt very "About-ish"
+* Modified main menu to make it smaller
+   + Added new submenu for "download tools (nzbget/deluge)" and "self hosted cloud services (owncloud/pydio)"
+
 ### Version: 1.0.10 (April 2, 2016)
 + Added info about how to navigate inside nano and how to save once done editing
 + Added Deluge

@@ -1,5 +1,10 @@
 #!/bin/sh
-# AIO Script - Version: 1.0.9 (April 2, 2016)
+# AIO Script                    Version: 1.0.10 (April 2, 2016)
+# By Ashley Townsend (Nozza)    Copyright: Beerware License
+################################################################################
+# While using "nano" to edit this script (nano /aioscript.sh),
+# Use the up, down, left and right arrow keys to navigate. Once done editing,
+# Press "X" while holding "Ctrl", Press "Y" then press "Enter" to save changes
 ################################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -26,9 +31,15 @@ cloud_server_ip="192.168.1.200"
 owncloud_version="9.0.0"
 
 ###! END OF OWNCLOUD CONFIG ! IMPORTANT ! DO NOT IGNORE ! ###
-### No need to edit below here owncloud ###
+###! No need to edit below here unless the script asks you to !###
+
 ################################################################################
 ##### OTHER APPS CONFIGURATION #####
+jail_ip="192.168.1.200"     # ! No need to change this for OwnCloud installs !
+                            # Only change this for OTHER jails/apps
+                            # MUST be different to cloud_server_ip if you have
+                            # installed OwnCloud previously.
+################################################################################
 ###! THEBRIG CONFIG !###
 
 # Define where to install TheBrig
@@ -50,19 +61,19 @@ CALIBRELIBRARYPATH="/mnt/Storage/Media/Books"
 ##################################################
 ###! MUNIN CONFIG !###############################
 # Enter the jail name you wish to run Munin in
-muninjail="Munin"
+#muninjail="Munin"  # Unused currently
+                    # (For a future idea)
+##################################################
+###! NZBGET CONFIG !##############################
+#nzbgetjail="NZBGet" # Unused currently
+                    # (For a future idea)
 ##################################################
 ###! DELUGE CONFIG !##############################
-delugejail="Deluge"
+#delugejail="Deluge"     # Unused currently
 user_ID="UID"
 deluge_user="JonDoe"
 deluge_user_password="MyC0mpL3xPass"
 ##################################################
-jail_ip="192.168.1.200"     # ! No need to change this for OwnCloud installs !
-                            # Only change this for OTHER jails/apps
-                            # MUST be different to cloud_server_ip if you have
-                            # installed OwnCloud previously.
-
 ##### END OF CONFIGURATION SECTION #####
 ################################################################################
 
@@ -140,30 +151,45 @@ done
 
 cloud.enablememcache ()
 {
-echo "  'memcache.local' => '\OC\Memcache\APCu'," >> /usr/local/www/owncloud/config/memcache.txt
-cp /usr/local/www/owncloud/config/config.php /usr/local/www/owncloud/config/old_config.bak
-cat "/usr/local/www/owncloud/config/old_config.bak" | \
-	sed '21r /usr/local/www/owncloud/config/memcache.txt' > \
-    "/usr/local/www/owncloud/config/config.php"
 
-/usr/local/etc/rc.d/lighttpd restart
+while [ "$choice" ]
+do
+        echo "  'memcache.local' => '\OC\Memcache\APCu'," >> /usr/local/www/owncloud/config/memcache.txt
+        cp /usr/local/www/owncloud/config/config.php /usr/local/www/owncloud/config/old_config.bak
+        cat "/usr/local/www/owncloud/config/old_config.bak" | \
+	        sed '21r /usr/local/www/owncloud/config/memcache.txt' > \
+            "/usr/local/www/owncloud/config/config.php"
 
-echo " "
-echo "${sep}"
-echo " "
+        /usr/local/etc/rc.d/lighttpd restart
 
-echo -e " Head to your owncloud admin page/refresh it"
-echo -e " There should no longer be a message at the top about memory caching"
-echo -e " If it didn't work follow these steps:"
-echo -e " "
-echo -e "${msg} This is entirely optional. Edit config.php:${nc}"
-echo -e "${msg} Default location is:${nc}"
-echo -e "\033[1;36m    /usr/local/www/owncloud/config/config.php${nc}"
-echo -e "${msg} Add the following right above the last line:${nc}"
-echo -e "\033[1;33m    'memcache.local' => '\OC\Memcache\APCu',${nc}"
-echo " "
-echo -e "${msg} Once you've saved the file, restart the server with:${nc}"
-echo -e "${cmd}    /usr/local/etc/rc.d/lighttpd restart"
+        echo " "
+        echo "${sep}"
+        echo " "
+
+        echo -e " Head to your owncloud admin page/refresh it"
+        echo -e " There should no longer be a message at the top about memory caching"
+        echo -e " If it didn't work follow these steps:"
+        echo -e " "
+        echo -e "${msg} This is entirely optional. Edit config.php:${nc}"
+        echo -e "${msg} Default location is:${nc}"
+        echo -e "\033[1;36m    /usr/local/www/owncloud/config/config.php${nc}"
+        echo -e "${msg} Add the following right above the last line:${nc}"
+        echo -e "\033[1;33m    'memcache.local' => '\OC\Memcache\APCu',${nc}"
+        echo " "
+        echo -e "${msg} Once you've saved the file, restart the server with:${nc}"
+        echo -e "${cmd}    /usr/local/etc/rc.d/lighttpd restart"
+        echo " "
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
 }
 
 
@@ -171,10 +197,6 @@ echo -e "${cmd}    /usr/local/etc/rc.d/lighttpd restart"
 ################################################################################
 ##### INFORMATION / HOW-TO'S / OTHER INSTRUCTIONS
 ################################################################################
-
-#------------------------------------------------------------------------------#
-### ABOUT THE APPS
-#------------------------------------------------------------------------------#
 
 #------------------------------------------------------------------------------#
 ### ABOUT: MYSQL
@@ -424,6 +446,70 @@ do
         echo -e "${msg} The main advantage of thebrig is that it leverages the existing webgui control${nc}"
         echo -e "${msg} and accounting mechanisms found within Nas4Free, and can be used on an embedded${nc}"
         echo -e "${msg} installation.${nc}"
+        echo -e "${sep}"
+        echo " "
+
+        echo -e "${msep}"
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+
+}
+
+#------------------------------------------------------------------------------#
+### ABOUT: DELUGE
+
+about.deluge ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} About: Deluge${nc}"
+        echo " "
+        echo -e "${msg} Deluge is a lightweight, Free Software, cross-platform BitTorrent client.${nc}"
+        echo " "
+        echo -e "${msg} It provides: Full Encryption, WebUI, Plugin System & Much more${nc}"
+        echo -e "${sep}"
+        echo " "
+
+        echo -e "${msep}"
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+
+}
+
+#------------------------------------------------------------------------------#
+### ABOUT: NZBGET
+
+about.nzbget ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} About: NZBGet${nc}"
+        echo " "
+        echo -e "${msg} NZBGet is a binary downloader, which downloads files from Usenet based on${nc}"
+        echo -e "${msg} information given in nzb-files.${nc}"
+        echo " "
+        echo -e "${msg} NZBGet is written in C++ and is known for its extraordinary performance and${nc}"
+        echo -e "${msg} efficiency.${nc}"
         echo -e "${sep}"
         echo " "
 
@@ -1676,6 +1762,113 @@ echo " "
 
 }
 
+#------------------------------------------------------------------------------#
+### DELUGE INSTALL
+
+install.deluge ()
+{
+
+echo -e "${sep}"
+echo -e "     \033[1;37mWelcome to the Deluge setup!${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo -e "${emp}   This should be run in host NAS system${nc}"
+echo -e "${emp}   If you are inside a jail please answer no${nc}"
+echo -e "${emp}   Exit your jail and start again${nc}"
+echo " "
+continue
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Let's get started with adding a user${nc}"
+echo -e "${sep}"
+echo " "
+
+pw useradd -n deluge -c "Deluge BitTorrent Client" -s /sbin/nologin -w no
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Now to enter the jail and set up some basic stuff${nc}"
+echo -e "${sep}"
+echo " "
+
+jexec $jail csh
+pw useradd -n deluge -u $user_ID -c "Deluge BitTorrent Client" -s /sbin/nologin -w no
+mkdir -p /home/deluge/.config/deluge
+chown -R deluge:deluge /home/deluge/
+
+# Also create folder for plugins
+mkdir /.python-eggs
+chmod 777 /.python-eggs
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Time to install the packages${nc}"
+echo -e "${sep}"
+echo " "
+
+pkg install -y deluge nano
+
+# Create file
+touch /usr/local/etc/rc.d/deluged
+
+# Tell user to modify certain things before moving on
+echo " Change the deluge user in the scripts from the default asjklasdfjklasdf
+echo " to the 'deluge' user created earlier"
+
+# Set permissions
+chmod 555 /usr/local/etc/rc.d/deluged
+
+# Set daemon to launch upon jail start
+echo 'deluged_enable="YES"' >> /etc/rc.conf
+echo 'deluge_web_enabled="YES"' >> /etc/rc.conf
+echo 'deluged_user="deluge"' >> /etc/rc.conf
+
+# User to allow remote access to daemon
+echo "$deluge_user:$deluge_user_password:10" >> /home/deluge/.config/deluge/auth
+# Let user know how to add more users to connect to the daemon
+echo " $deluge_user:$deluge_user_password:10 >> /home/deluge/.config/deluge/auth"
+echo " "
+
+# Allow remote connections
+echo " Find and change “allow_remote” from false to true."
+echo " Once you are done press Ctrl+X then Y to close and save the file"
+echo -e "${emp}   Make sure you read above before continuing${nc}";
+continue
+nano /home/deluge/.config/deluge/core.conf
+
+# Disable IPV6
+echo "Edit /etc/protocols and disable ipv6 by placing '#' in front of ipv6"
+echo -e "${emp}   Make sure you read above before continuing${nc}";
+continue
+nano /etc/protocols
+
+# Start the daemon
+/usr/local/etc/rc.d/deluged start
+# May have to use this instead:
+# /usr/local/etc/rc.d/deluge_web start
+
+echo " Now you should be able to head to http://jailsipaddress:8112 and login"
+echo " using the password 'deluge' without the quotes"
+
+echo " "
+echo -e "${sep}"
+echo " That should be it!"
+echo " Happy torrenting!!"
+echo -e "${sep}"
+echo " "
+
+
+}
+
+#------------------------------------------------------------------------------#
+### NZBGET INSTALL
+
+install.nzbget ()
+{
+
+}
+
 
 
 ################################################################################
@@ -1688,8 +1881,10 @@ echo " "
 
 update.mysql ()
 {
+
 echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
+
 }
 
 #------------------------------------------------------------------------------#
@@ -1997,6 +2192,28 @@ echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
 }
 
+#------------------------------------------------------------------------------#
+### DELUGE UPDATE
+
+update.deluge ()
+{
+
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+echo " "
+
+}
+
+#------------------------------------------------------------------------------#
+### NZBGET UPDATE
+
+update.nzbget ()
+{
+
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+echo " "
+
+}
+
 
 
 ################################################################################
@@ -2108,6 +2325,28 @@ backup.thebrig ()
 {
 echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
+}
+
+#------------------------------------------------------------------------------#
+### DELUGE BACKUP
+
+backup.deluge ()
+{
+
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+echo " "
+
+}
+
+#------------------------------------------------------------------------------#
+### NZBGET BACKUP
+
+backup.nzbget ()
+{
+
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+echo " "
+
 }
 
 
@@ -2326,6 +2565,48 @@ case "$response" in
 esac
 }
 
+#------------------------------------------------------------------------------#
+### DELUGE CONFIRM INSTALL
+
+confirm.deluge.install ()
+{
+# Confirm with the user
+echo -e "${emp} WARNING: THIS HAS BEEN UNTESTED"
+echo -e "${emp} USE AT YOUR OWN RISK"
+read -r -p "   Confirm Installation of Deluge? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              install.deluge
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              return
+              ;;
+esac
+}
+
+#------------------------------------------------------------------------------#
+### NZBGET CONFIRM INSTALL
+
+confirm.nzbget.install ()
+{
+# Confirm with the user
+read -r -p "   Confirm Installation of NZBGet? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              install.nzbget
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              return
+              ;;
+esac
+}
+
 
 
 #------------------------------------------------------------------------------#
@@ -2509,8 +2790,32 @@ esac
 
 confirm.thebrig.update ()
 {
+
 echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
+
+}
+
+#------------------------------------------------------------------------------#
+### DELUGE CONFIRM UPDATE
+
+confirm.deluge.update ()
+{
+
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+echo " "
+
+}
+
+#------------------------------------------------------------------------------#
+### NZBGET CONFIRM UPDATE
+
+confirm.nzbget.update ()
+{
+
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+echo " "
+
 }
 
 
@@ -2862,6 +3167,108 @@ do
 done
 }
 
+#------------------------------------------------------------------------------#
+### DELUGE SUBMENU
+
+deluge.submenu ()
+{
+while [ "$choice" != "a,h,i,m" ]
+do
+        echo -e "${sep}"
+        echo -e "${fin} Deluge Options${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:"
+        echo " "
+        echo -e "${fin}   1)${msg} Install"
+        echo -e "${fin}   2)${msg} Update"
+        echo -e "${fin}   3)${msg} Backup"
+        echo " "
+        echo -e "${inf}  a) About Deluge${nc}"
+        echo -e "${inf}  i) More Info / How-To's${nc}"
+        echo -e "${inf}  h) Get Help${nc}"
+        echo -e "${emp}  m) Main Menu${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+        echo " "
+
+        case $choice in
+            '1') echo -e "${inf} Installing..${nc}"
+                confirm.deluge.install
+                ;;
+            '2') echo -e "${inf} Running Update..${nc}"
+                confirm.deluge.update
+                ;;
+            '3') echo -e "${inf} Backup..${nc}"
+                backup.deluge
+                ;;
+            'a')
+                about.deluge
+                ;;
+            'h')
+                gethelp
+                ;;
+            'i')
+                moreinfo.submenu.deluge
+                ;;
+            'm') return
+                ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### NZBGET SUBMENU
+
+nzbget.submenu ()
+{
+while [ "$choice" != "a,h,i,m" ]
+do
+        echo -e "${sep}"
+        echo -e "${fin} NZBGet Options${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:"
+        echo " "
+        echo -e "${fin}   1)${msg} Install"
+        echo -e "${fin}   2)${msg} Update"
+        echo -e "${fin}   3)${msg} Backup"
+        echo " "
+        echo -e "${inf}  a) About NZBGet${nc}"
+        echo -e "${inf}  i) More Info / How-To's${nc}"
+        echo -e "${inf}  h) Get Help${nc}"
+        echo -e "${emp}  m) Main Menu${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+        echo " "
+
+        case $choice in
+            '1') echo -e "${inf} Installing..${nc}"
+                confirm.nzbget.install
+                ;;
+            '2') echo -e "${inf} Running Update..${nc}"
+                confirm.nzbget.update
+                ;;
+            '3') echo -e "${inf} Backup..${nc}"
+                backup.nzbget
+                ;;
+            'a')
+                about.nzbget
+                ;;
+            'h')
+                gethelp
+                ;;
+            'i')
+                moreinfo.submenu.nzbget
+                ;;
+            'm') return
+                ;;
+        esac
+done
+}
+
 
 
 #------------------------------------------------------------------------------#
@@ -3080,7 +3487,7 @@ mainmenu=""
 while [ "$choice" != "q,a,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.9 (April 2, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.10 (April 2, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
@@ -3093,6 +3500,8 @@ do
         echo -e "${fin}   4)${msg} Sonarr${nc}"
         echo -e "${fin}   5)${msg} CouchPotato${nc}"
         echo -e "${fin}   6)${msg} HeadPhones${nc}"
+        echo -e "${fin}   7)${msg} Deluge (Torrenting)${nc}"
+        echo -e "${fin}   8)${msg} NZBGet (Usenet Downloader)${nc}"
         echo " "
         echo -e "${cmd}   j)${msg} TheBrig${nc}"
         echo " "
@@ -3125,6 +3534,12 @@ do
             '6')
                 headphones.submenu
                 ;;
+            '7')
+                deluge.submenu
+                ;;
+            '8')
+                nzbget.submenu
+                ;;
             'a')
                 about.thisscript
                 ;;
@@ -3147,11 +3562,11 @@ do
         esac
 done
 
-# FUTURE: Add "TheBrig guided install"
-# FUTURE: When jail creation via shell is possible for thebrig, will add that option to script.
-# TODO: Finish adding "Calibre"
-# TODO: Finish adding "Deluge"
-# TODO: Finish adding "Munin"
+# MED-TODO: Add a How-To for mounting your storage via fstab or thebrig jail dataset option
+# LOW-TODO: Finish adding "Calibre"
+# MED-TODO: Finish "Deluge" scripts (Lots of issues with it)
+# LOW-TODO: Finish adding "NZBGet" scripts / Also need to show user how to mount storage via fstab
+# LOW-TODO: Finish adding "Munin"
 # FUTURE: Add "Mail Server"
 # FUTURE: Add "Plex"
 # FUTURE: Add "Pydio"
@@ -3161,3 +3576,4 @@ done
 # FUTURE: Add "UMS"
 # FUTURE: Add "Web Server"
 # FUTURE: If this script has no issues then i may remove standalone scripts from github
+# FUTURE: IF & when jail creation via shell is possible for thebrig, will add that option to script.

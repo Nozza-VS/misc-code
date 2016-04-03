@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script                    Version: 1.0.11 (April 2, 2016)
+# AIO Script                    Version: 1.0.12 (April 3, 2016)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -24,15 +24,18 @@
 #            this with "latest" but it isn't recommended as owncloud updates may
 #            require an updated script. Has been tested on v8.x.x up to v9.0.0.
 #
-###! OWNCLOUD CONFIG ! IMPORTANT ! DO NOT IGNORE ! #############################
+###! OWNCLOUD INSTALLER CONFIG ! IMPORTANT ! DO NOT IGNORE ! ###################
 
 cloud_server_port="81"
 cloud_server_ip="192.168.1.200"
 owncloud_version="9.0.0"
 
-###! END OF OWNCLOUD CONFIG ! IMPORTANT ! DO NOT IGNORE ! ###
+###! END OF OWNCLOUD INSTALLER CONFIG ! IMPORTANT ! DO NOT IGNORE ! ###
 ###! No need to edit below here unless the script asks you to !###
-
+##### OOWNCLOUD UPDATER CONFIG #####
+owncloud_update="latest"    # This can be safely ignored unless you are planning
+                    # on using the updater in this script (not recommended)
+                    # It's best to leave it alone and let owncloud update itself
 ################################################################################
 ##### OTHER APPS CONFIGURATION #####
 jail_ip="192.168.1.200"     # ! No need to change this for OwnCloud installs !
@@ -1154,8 +1157,10 @@ echo -e "${msg} Database user = ${qry}root${nc} | Database password = ${nc}"
 echo -e "${msg} the ${qry}mysql password${msg} you chose earlier during the script.${nc}"
 echo -e "${msg} Database name = your choice (just ${qry}owncloud${msg} is fine)${nc}"
 echo " "
-echo " Once the page reloads,"
-read -r -p "   do you have a 'untrusted domain' error? [y/N] " response
+echo -e "${inf} You can always perform this next step later from the menu but it's best to do${nc}"
+echo -e "${inf} it now if your installing version 9.0.0 or above (8.x.x shouln't need this)${nc}"
+echo " "
+read -r -p "    Once the page reloads, do you have a 'untrusted domain' warning? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, let's fix that.
@@ -1910,7 +1915,65 @@ echo " "
 
 install.nzbget ()
 {
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Welcome to the NZBGet installer!${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Let's get right to it and download the package${nc}"
+echo -e "${msg}    (Will grab ffmpeg as well purely for ffprobe)${nc}"
+echo -e "${sep}"
+echo " "
 
+pkg install -y nzbget ffmpeg
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Copy the default configuration to get the webui working${nc}"
+echo -e "${sep}"
+echo " "
+
+cp /usr/local/etc/nzbget.conf.sample /usr/local/etc/nzbget.conf
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Enable NZBGet at startup${nc}"
+echo -e "${sep}"
+echo " "
+
+sysrc 'nzbget_enable=YES'
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Create a temp folder for NZBGet and modify config file${nc}"
+echo -e "${msg} to enable the web interface${nc}"
+echo -e "${sep}"
+echo " "
+
+mkdir -p /downloads/dst
+# Need to modify "WebDir=" at line 79 of "/usr/local/etc/nzbget.conf"
+# Needs to be "WebDir=/usr/local/share/nzbget/webui"
+# Maybe use "sed" command for this which could also eliminate the cp command above
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Start NZBGet${nc}"
+echo -e "${sep}"
+echo " "
+
+service nzbget start
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Now finish setting it up by opening your web browser and heading to:${nc}"
+echo -e "${url}    http://your-jail-ip:6789${nc}"
+echo -e "${msg} Default username: nzbget${nc}"
+echo -e "${msg} Default password: tegbzn6789${nc}"
+echo -e "${sep}"
+echo " "
 }
 
 #------------------------------------------------------------------------------#
@@ -2054,7 +2117,90 @@ echo " "
 
 update.owncloud ()
 {
-echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+echo " "
+echo -e "${sep}"
+echo -e "${msg}     Welcome to the OwnCloud Updater!${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${msg}     Let's start with downloading the update.${nc}"
+echo -e "${sep}"
+echo " "
+
+cd "/tmp"
+fetch "https://download.owncloud.org/community/owncloud-${owncloud_update}.tar.bz2"
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}     Stop the web server until the update is done.${nc}"
+echo -e "${sep}"
+echo " "
+
+/usr/local/etc/rc.d/lighttpd stop
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}     Create backup.${nc}"
+echo -e "${sep}"
+echo " "
+
+# Create inital backup folder if it doesn't exist
+mkdir -p /usr/local/www/.owncloud-backup
+
+# Copy current install to backup directory
+# mv /usr/local/www/owncloud  /usr/local/www/.owncloud-backup/owncloud-${backupdate} # NOTE: May not need this but leaving it in just in case
+cp -R /usr/local/www/owncloud  /usr/local/www/.owncloud-backup/owncloud-${backupdate}
+
+echo -e "${msg} Backup of current install made in:${nc}"
+echo -e "${qry}     /usr/local/www/.owncloud-backup/owncloud-${nc}\033[1;36m${backupdate}${nc}"
+echo -e "${msg} Keep note of this just in case something goes wrong with the update${nc}"
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}     Now to extract OwnCloud in place of the old install.${nc}"
+echo -e "${sep}"
+echo " "
+
+tar xf "owncloud-${owncloud_update}.tar.bz2" -C /usr/local/www
+echo " Done!"
+# Give permissions to www
+chown -R www:www /usr/local/www/
+
+#echo " " # NOTE: May not need the next few lines but leaving them in just in case
+#echo -e "${sep}"
+#echo -e "${msg}     Restore owncloud config, /data & /themes${nc}"
+#echo -e "${sep}"
+#echo " "
+
+# cp -R /usr/local/www/.owncloud-backup/owncloud-${backupdate}/data /usr/local/www/owncloud/
+# cp -R /usr/local/www/.owncloud-backup/owncloud-${backupdate}/themes/* /usr/local/www/owncloud/
+# cp /usr/local/www/.owncloud-backup/owncloud-${backupdate}/config/config.php /usr/local/www/owncloud/config/
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}     Starting the web server back up${nc}"
+echo -e "${sep}"
+echo " "
+
+/usr/local/etc/rc.d/lighttpd start
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} That should be it!${nc}"
+echo -e "${msg} Now head to your OwnCloud webpage and make sure everything is working correctly.${nc}"
+echo " "
+echo -e "${msg} If something went wrong you can do the following to restore the old install:${nc}"
+echo -e "${cmd}   rm -r /usr/local/www/owncloud${nc}"
+echo -e "${cmd}   mv /usr/local/www/.owncloud-backup/owncloud-${backupdate} /usr/local/www/owncloud${nc}"
+echo " "
+echo -e "${msg} After you check to make sure everything is working fine as expected,${nc}"
+echo -e "${msg} You can safely remove backups with this command (May take some time):${nc}"
+echo -e "${cmd}   rm -r /usr/local/www/.owncloud-backup${nc}"
+echo -e "${alt} THIS WILL REMOVE ANY AND ALL BACKUPS MADE BY THIS SCRIPT${nc}"
+echo " "
+echo -e "${sep}"
 echo " "
 }
 
@@ -2371,8 +2517,9 @@ echo " "
 update.nzbget ()
 {
 
-echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
+pkg update
+pkg upgrade nzbget
 
 }
 
@@ -2833,6 +2980,14 @@ esac
 confirm.owncloud.update ()
 {
 # Confirm with the user
+echo -e "${emp} NOTE: ${msg}OwnCloud should be able to handle it's own updates automatically${nc}"
+echo -e "${msg}       This updater should only be used if the built-in one fails${nc}"
+echo " "
+echo -e "${msg} Also note that this won't remove any old backups so the backup folder may get${nc}"
+echo -e "${msg} very large depending on your /data, it's up to you to clean it up if you wish.${nc}"
+echo " "
+echo -e "${msg} One last thing to note is you need to modify the .${nc}"
+echo " "
 read -r -p "   Confirm Update of OwnCloud? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
@@ -3048,11 +3203,12 @@ do
         echo -e "${sep}"
         echo -e "${fin} MySQL + phpMyAdmin${nc}"
         echo -e "${sep}"
-        echo -e "${qry} Choose one:"
+        echo -e "${qry} Choose one:${nc}"
         echo " "
-        echo -e "${fin}   1)${msg} Install"
-        echo -e "${fin}   2)${msg} Update"
-        echo -e "${fin}   3)${msg} Backup"
+        echo -e "${fin}   1)${msg} Install${nc}"
+        echo -e "${fin}   2)${msg} Update ${alt}(Currently Unavailable)${nc}"
+        echo -e "${fin}   3)${msg} Backup ${alt}(Currently Unavailable)${nc}"
+        echo " "
         echo -e "${emp}   m) Main Menu${nc}"
 
         echo -e "${ssep}"
@@ -3064,12 +3220,12 @@ do
             '1') echo -e "${inf} Installing..${nc}"
                 confirm.mysql.install
                 ;;
-            '2') echo -e "${inf} Running Update..${nc}"
-                confirm.mysql.update
-                ;;
-            '3') echo -e "${inf} Backup..${nc}"
-                backup.mysql
-                ;;
+            #'2') echo -e "${inf} Running Update..${nc}"
+            #    confirm.mysql.update
+            #    ;;
+            #'3') echo -e "${inf} Backup..${nc}"
+            #    backup.mysql
+            #    ;;
             'a')
                 about.mysql
                 ;;
@@ -3090,14 +3246,15 @@ do
         echo -e "${sep}"
         echo -e "${fin} Self Hosted Cloud Storage Options${nc}"
         echo -e "${sep}"
-        echo -e "${qry} Choose one:"
+        echo -e "${qry} Choose one:${nc}"
         echo " "
-        echo -e "${fin}   1)${msg} ownCloud"
-        echo -e "${fin}   2)${msg} Pydio"
+        echo -e "${fin}   1)${msg} ownCloud${nc}"
+        echo -e "${fin}   2)${msg} Pydio  ${alt}(Currently Unavailable)${nc}"
         echo " "
         echo -e "${inf}  i) More Information${nc}"
         echo -e "${inf}  h) Get Help${nc}"
-        echo -e "${emp}  b) Back${nc}"
+        echo " "
+        echo -e "${emp}  m) Main Menu${nc}"
 
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
@@ -3108,9 +3265,9 @@ do
             '1')
                 owncloud.submenu
                 ;;
-            '2')
-                pydio.submenu
-                ;;
+            #'2')
+            #    pydio.submenu
+            #    ;;
             'a')
                 about.cloud
                 ;;
@@ -3120,10 +3277,11 @@ do
             'h')
                 gethelp
                 ;;
-            'b')
+            'm')
                 return
                 ;;
             *)   echo -e "${emp}        Invalid choice, please try again${nc}"
+                echo " "
                 ;;
         esac
 done
@@ -3139,17 +3297,18 @@ do
         echo -e "${sep}"
         echo -e "${fin} OwnCloud Options${nc}"
         echo -e "${sep}"
-        echo -e "${qry} Choose one:"
+        echo -e "${qry} Choose one:${nc}"
         echo " "
-        echo -e "${fin}   1)${msg} Install"
-        echo -e "${fin}   2)${msg} Update"
-        echo -e "${fin}   3)${msg} Backup"
+        echo -e "${fin}   1)${msg} Install${nc}"
+        echo -e "${fin}   2)${msg} Update${nc}"
+        echo -e "${fin}   3)${msg} Backup${nc}"
         echo " "
         echo -e "${fin}   4)${msg} Fix Known Errors${nc}"
         echo -e "${fin}   5)${msg} Other${nc}"
         echo " "
         echo -e "${inf}  i) More Info / How-To's${nc}"
         echo -e "${inf}  h) Get Help${nc}"
+        echo " "
         echo -e "${emp}  b) Back${nc}"
 
         echo -e "${ssep}"
@@ -3186,6 +3345,7 @@ do
                 return
                 ;;
             *)   echo -e "${emp}        Invalid choice, please try again${nc}"
+                echo " "
                 ;;
         esac
 done
@@ -3201,14 +3361,15 @@ do
         echo -e "${sep}"
         echo -e "${fin} Pydio Options${nc}"
         echo -e "${sep}"
-        echo -e "${qry} Choose one:"
+        echo -e "${qry} Choose one:${nc}"
         echo " "
-        echo -e "${fin}   1)${msg} Install"
-        echo -e "${fin}   2)${msg} Update"
-        echo -e "${fin}   3)${msg} Backup"
+        echo -e "${fin}   1)${msg} Install${nc}"
+        echo -e "${fin}   2)${msg} Update${nc}"
+        echo -e "${fin}   3)${msg} Backup${nc}"
         echo " "
         echo -e "${inf}  i) More Info / How-To's${nc}"
         echo -e "${inf}  h) Get Help${nc}"
+        echo " "
         echo -e "${emp}  m) Main Menu${nc}"
 
         echo -e "${ssep}"
@@ -3239,6 +3400,7 @@ do
                 return
                 ;;
             *)   echo -e "${emp}        Invalid choice, please try again${nc}"
+                echo " "
                 ;;
         esac
 done
@@ -3254,14 +3416,14 @@ do
         echo -e "${sep}"
         echo -e "${fin} Emby Options${nc}"
         echo -e "${sep}"
-        echo -e "${qry} Choose one:"
+        echo -e "${qry} Choose one:${nc}"
         echo " "
         echo -e "${fin}   1)${msg} Install${nc}"
         echo -e "${fin}   2)${msg} Update via Packages ${inf}(Safe)${nc}"
         echo -e "${fin}   3)${msg} Update via GitHub ${inf}(More Up To Date)${nc}"
         echo -e "${fin}   4)${msg} Backup${nc}"
         echo " "
-        echo -e "${alt}  m) Main Menu${nc}"
+        echo -e "${emp}  m) Main Menu${nc}"
 
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
@@ -3300,11 +3462,11 @@ do
         echo -e "${sep}"
         echo -e "${fin} Sonarr Options${nc}"
         echo -e "${sep}"
-        echo -e "${qry} Choose one:"
+        echo -e "${qry} Choose one:${nc}"
         echo " "
-        echo -e "${fin}   1)${msg} Install"
-        echo -e "${fin}   2)${msg} Update"
-        echo -e "${fin}   3)${msg} Backup"
+        echo -e "${fin}   1)${msg} Install${nc}"
+        echo -e "${fin}   2)${msg} Update${nc}"
+        echo -e "${fin}   3)${msg} Backup${nc}"
         echo " "
         echo -e "${emp}   m) Main Menu${nc}"
 
@@ -3341,11 +3503,11 @@ do
         echo -e "${sep}"
         echo -e "${fin} CouchPotato Options${nc}"
         echo -e "${sep}"
-        echo -e "${qry} Choose one:"
+        echo -e "${qry} Choose one:${nc}"
         echo " "
-        echo -e "${fin}   1)${msg} Install"
-        echo -e "${fin}   2)${msg} Update"
-        echo -e "${fin}   3)${msg} Backup"
+        echo -e "${fin}   1)${msg} Install${nc}"
+        echo -e "${fin}   2)${msg} Update${nc}"
+        echo -e "${fin}   3)${msg} Backup${nc}"
         echo " "
         echo -e "${emp}   m) Main Menu${nc}"
 
@@ -3384,14 +3546,15 @@ do
         echo -e "${sep}"
         echo -e "${fin} HeadPhones Options${nc}"
         echo -e "${sep}"
-        echo -e "${qry} Choose one:"
+        echo -e "${qry} Choose one:${nc}"
         echo " "
-        echo -e "${fin}   1)${msg} Install"
-        echo -e "${fin}   2)${msg} Update"
-        echo -e "${fin}   3)${msg} Backup"
+        echo -e "${fin}   1)${msg} Install${nc}"
+        echo -e "${fin}   2)${msg} Update${nc}"
+        echo -e "${fin}   3)${msg} Backup${nc}"
         echo " "
         echo -e "${inf}  i) More Info / How-To's${nc}"
         echo -e "${inf}  h) Get Help${nc}"
+        echo " "
         echo -e "${emp}  m) Main Menu${nc}"
 
         echo -e "${ssep}"
@@ -3436,17 +3599,18 @@ do
         echo -e "${sep}"
         echo -e "${fin} TheBrig Options${nc}"
         echo -e "${sep}"
-        echo -e "${qry} Choose one:"
+        echo -e "${qry} Choose one:${nc}"
         echo " "
-        echo -e "${fin}   1)${msg} Install (Guide Only)"
-        echo -e "${fin}   2)${msg} Update"
-        echo -e "${fin}   3)${msg} Backup"
+        echo -e "${fin}   1)${msg} Install (Guide Only)${nc}"
+        echo -e "${fin}   2)${msg} Update ${alt}(Currently Unavailable)${nc}"
+        echo -e "${fin}   3)${msg} Backup ${alt}(Currently Unavailable)${nc}"
         echo " "
-        echo -e "${alt}   e)${emp} Install (EXPERIMENTAL)"
+        echo -e "${alt}   e)${emp} Install (EXPERIMENTAL)${nc}"
         echo " "
         echo -e "${inf}  a) About TheBrig${nc}"
         echo -e "${inf}  i) More Info / How-To's${nc}"
         echo -e "${inf}  h) Get Help${nc}"
+        echo " "
         echo -e "${emp}  m) Main Menu${nc}"
 
         echo -e "${ssep}"
@@ -3458,12 +3622,12 @@ do
             '1') echo -e "${inf} Taking you to install instructions..${nc}"
                 thebrig.howto.installthebrig
                 ;;
-            '2') echo -e "${inf} Running Update..${nc}"
-                confirm.thebrig.update
-                ;;
-            '3') echo -e "${inf} Backup..${nc}"
-                backup.thebrig
-                ;;
+            #'2') echo -e "${inf} Running Update..${nc}"
+            #    confirm.thebrig.update
+            #    ;;
+            #'3') echo -e "${inf} Backup..${nc}"
+            #    backup.thebrig
+            #    ;;
             'e') echo -e "${inf} Installing..${nc}"
                 confirm.thebrig.EXPERIMENTAL.install
                 ;;
@@ -3492,12 +3656,13 @@ do
         echo -e "${sep}"
         echo -e "${fin} Download Tools${nc}"
         echo -e "${sep}"
-        echo -e "${qry} Choose one:"
+        echo -e "${qry} Choose one:${nc}"
         echo " "
-        echo -e "${fin}   1)${msg} Deluge (Torrenting)${nc}"
+        echo -e "${fin}   1)${msg} Deluge (Torrenting) ${alt}(Currently Unavailable)${nc}"
         echo -e "${fin}   2)${msg} NZBGet (Usenet Downloader)${nc}"
         echo " "
         echo -e "${inf}  h) Get Help${nc}"
+        echo " "
         echo -e "${emp}  m) Main Menu${nc}"
 
         echo -e "${ssep}"
@@ -3506,9 +3671,9 @@ do
         echo " "
 
         case $choice in
-            '1')
-                deluge.submenu
-                ;;
+            #'1')
+            #    deluge.submenu
+            #    ;;
             '2')
                 nzbget.submenu
                 ;;
@@ -3519,6 +3684,7 @@ do
                 return
                 ;;
             *)   echo -e "${emp}        Invalid choice, please try again${nc}"
+                echo " "
                 ;;
         esac
 done
@@ -3534,15 +3700,16 @@ do
         echo -e "${sep}"
         echo -e "${fin} Deluge Options${nc}"
         echo -e "${sep}"
-        echo -e "${qry} Choose one:"
+        echo -e "${qry} Choose one:${nc}"
         echo " "
-        echo -e "${fin}   1)${msg} Install"
-        echo -e "${fin}   2)${msg} Update"
-        echo -e "${fin}   3)${msg} Backup"
+        echo -e "${fin}   1)${msg} Install${nc}"
+        echo -e "${fin}   2)${msg} Update${nc}"
+        echo -e "${fin}   3)${msg} Backup${nc}"
         echo " "
         echo -e "${inf}  a) About Deluge${nc}"
         echo -e "${inf}  i) More Info / How-To's${nc}"
         echo -e "${inf}  h) Get Help${nc}"
+        echo " "
         echo -e "${emp}  b) Back${nc}"
 
         echo -e "${ssep}"
@@ -3585,15 +3752,16 @@ do
         echo -e "${sep}"
         echo -e "${fin} NZBGet Options${nc}"
         echo -e "${sep}"
-        echo -e "${qry} Choose one:"
+        echo -e "${qry} Choose one:${nc}"
         echo " "
-        echo -e "${fin}   1)${msg} Install"
-        echo -e "${fin}   2)${msg} Update"
-        echo -e "${fin}   3)${msg} Backup"
+        echo -e "${fin}   1)${msg} Install${nc}"
+        echo -e "${fin}   2)${msg} Update${nc}"
+        echo -e "${fin}   3)${msg} Backup${nc}"
         echo " "
         echo -e "${inf}  a) About NZBGet${nc}"
         echo -e "${inf}  i) More Info / How-To's${nc}"
         echo -e "${inf}  h) Get Help${nc}"
+        echo " "
         echo -e "${emp}  b) Back${nc}"
 
         echo -e "${ssep}"
@@ -3636,15 +3804,16 @@ do
         echo -e "${sep}"
         echo -e "${fin} Web Server Options${nc}"
         echo -e "${sep}"
-        echo -e "${qry} Choose one:"
+        echo -e "${qry} Choose one:${nc}"
         echo " "
-        echo -e "${fin}   1)${msg} Install"
-        echo -e "${fin}   2)${msg} Update"
-        echo -e "${fin}   3)${msg} Backup"
+        echo -e "${fin}   1)${msg} Install${nc}"
+        echo -e "${fin}   2)${msg} Update${nc}"
+        echo -e "${fin}   3)${msg} Backup${nc}"
         echo " "
         echo -e "${inf}  a) About Web Server${nc}"
         echo -e "${inf}  i) More Info / How-To's${nc}"
         echo -e "${inf}  h) Get Help${nc}"
+        echo " "
         echo -e "${emp}  m) Main Menu${nc}"
 
         echo -e "${ssep}"
@@ -3689,7 +3858,7 @@ do
         echo -e "${sep}"
         echo -e "${inf} More Info / How-To's Top Menu"
         echo -e "${sep}"
-        echo -e "${qry} Choose one:"
+        echo -e "${qry} Choose one:${nc}"
         echo " "
         echo -e "${msg} More info & how-to's about..."
         echo -e "${fin}   1)${msg} OwnCloud"
@@ -3826,7 +3995,7 @@ do
         echo -e "${sep}"
         echo -e "${inf} OwnCloud - Fixes For Known Errors${nc}"
         echo -e "${sep}"
-        echo -e "${qry} Choose one:"
+        echo -e "${qry} Choose one:${nc}"
         echo " "
         echo -e "${fin}   1)${msg} Trusted Domain Error"
         echo -e "${fin}   2)${msg} Populating Raw Post Data Error"
@@ -3863,7 +4032,7 @@ do
         echo -e "${sep}"
         echo -e "${inf} OwnCloud - Other Options"
         echo -e "${sep}"
-        echo -e "${qry} Choose one:"
+        echo -e "${qry} Choose one:${nc}"
         echo " "
         echo -e "${fin}   1)${msg} Enable Memory Caching"
         echo " "
@@ -3895,20 +4064,20 @@ mainmenu=""
 while [ "$choice" != "q,a,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.11 (April 2, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.12 (April 3, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
-        echo -e "${qry} Please make a selection! ${nc}(It's best to run 1-9 INSIDE of a jail)"
+        echo -e "${qry} Please make a selection! ${nc}(It's best to run 1-8 INSIDE of a jail)"
         echo " "
         echo -e "${fin}   1)${msg} MySQL + phpMyAdmin${nc}"
         echo -e "${fin}   2)${msg} Self Hosted Cloud Storage (OwnCloud/Pydio)${nc}"
-        echo -e "${fin}   3)${msg} Self Hosted Web Server${nc}"
+        echo -e "${fin}   3)${msg} Self Hosted Web Server ${alt}(Currently Unavailable)${nc}"
         echo -e "${fin}   4)${msg} Emby Server${nc}"
         echo -e "${fin}   5)${msg} Sonarr${nc}"
         echo -e "${fin}   6)${msg} CouchPotato${nc}"
         echo -e "${fin}   7)${msg} HeadPhones${nc}"
-        echo -e "${fin}   8)${msg} Download Tools${nc}"
+        echo -e "${fin}   8)${msg} Download Tools (NZBGet / Deluge)${nc}"
         echo " "
         echo -e "${cmd}   j)${msg} TheBrig${nc}"
         echo " "
@@ -3929,9 +4098,9 @@ do
             '2')
                 cloud.submenu
                 ;;
-            '3')
-                webserver.submenu
-                ;;
+            #'3')
+            #    webserver.submenu
+            #    ;;
             '4')
                 emby.submenu
                 ;;
@@ -3965,17 +4134,20 @@ do
                 exit
                 ;;
             *)   echo -e "${emp}        Invalid choice, please try again${nc}"
+                echo " "
                 ;;
         esac
 done
 
+# LOW-TODO: Change "confirm.app.update" to "confirm.update.app", makes searching easier
+# LOW-TODO: Change "confirm.app.install" to "confirm.install.app", makes searching easier
 # MED-TODO: Add a How-To for mounting your storage via fstab or thebrig jail dataset option
 # LOW-TODO: Finish adding "Calibre"
 # MED-TODO: Finish "Deluge" scripts (Lots of issues with it)
-# LOW-TODO: Finish adding "NZBGet" scripts / Also need to show user how to mount storage via fstab
 # LOW-TODO: Finish adding "Munin"
 # FUTURE: Add "Mail Server"
-# FUTURE: Add "Plex"
+# FUTURE: Add "Plex"    - Maybe utilize ezPlex Portable Addon by JoseMR? (With permission of course)
+#                       If not, use ports tree or whatever, will decide later.
 # FUTURE: Add "Pydio"
 # FUTURE: Add "Serviio"
 # FUTURE: Add "SqueezeBox"
@@ -3983,3 +4155,5 @@ done
 # FUTURE: Add "UMS"
 # FUTURE: If this script has no issues then i may remove standalone scripts from github
 # FUTURE: IF & when jail creation via shell is possible for thebrig, will add that option to script.
+# FUTUTE: Add "Sickbeard"?
+# FUTURE: Add "SABnzbd"

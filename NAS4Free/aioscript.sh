@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script                    Version: 1.0.12 (April 3, 2016)
+# AIO Script                    Version: 1.0.13 (April 3, 2016)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -86,7 +86,7 @@ deluge_user_password="MyC0mpL3xPass"
 backupdate=$(date +"%Y.%m.%d-%I.%M%p")
 
 # Add some colour!
-nc='\033[0m'        # No Color
+nc='\033[0m'        # Default Text (No Formatting / No Color)
 alt='\033[0;31m'    # Alert Text
 emp='\033[1;31m'    # Emphasis Text
 msg='\033[1;37m'    # Message Text
@@ -99,6 +99,11 @@ msep='\033[1;30m#--------------------------------------#\033[0m'    # Medium Lin
 cmd='\033[1;35m'    # Command to be entered
 fin='\033[0;32m'    # Green Text
 inf='\033[0;33m'    # Information Text
+ul='\033[4m'        # Underline Text
+lct='\033[1;34m'    # Light Blue Text
+yt='\033[1;33m'     # Yellow Text
+lct='\033[1;36m'    # Light Cyan Text
+ca='\033[1;30m'     # Currently Unavailable (Dark Grey Text)
 
 
 
@@ -114,17 +119,18 @@ do
         echo -e "${inf} Ways of contacting me / Getting help from others:${nc}"
         echo -e "${sep}"
         echo " "
-        echo -e "${fin}   My Discord Support (Usually faster responses):${nc}"
+        echo -e "${fin}   ${ul}My Discord Support${fin} (Usually faster responses):${nc}"
         echo -e "${msg}      https://discord.gg/0bXnhqvo189oM8Cr${nc}"
-        echo -e "${fin}   My Email (Might add this later, Discord is easier though):${nc}"
+        echo -e "${fin}   ${ul}My Email${fin} (Might add this later, Discord is easier though):${nc}"
         echo -e "${msg}      myemail@domain.com${nc}"
-        echo -e "${fin}   Forums:${nc}"
+        echo -e "${fin}   ${ul}Forums:${nc}"
         echo -e "${msg}      NAS4Free Forums - OwnCloud:${nc}"
         echo -e "${url}      http://forums.nas4free.org/viewtopic.php?f=79&t=9383${nc}"
         echo -e "${msg}      VS Forums:${nc}"
         echo -e "${url}      forums.vengefulsyndicate.com${nc}"
         echo " "
-        echo -e "${fin}   Find an issue with the script? Drop a message using the above or head here:${nc}"
+        echo -e "${fin}   Find an issue with the script or have a suggestion?${nc}"
+        echo -e "${msg}   Drop a message using the above or head here:${nc}"
         echo -e "${url}      https://github.com/Nostalgist92/misc-code/issues"
         echo " "
         echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
@@ -261,6 +267,31 @@ do
         echo -e "${msg} central component of the widely used LAMP open-source web application software${nc}"
         echo -e "${msg} stack (and other 'AMP' stacks).${nc}"
         echo -e "${sep}"
+        echo " "
+
+        echo -e "${msep}"
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### ABOUT: CLOUD STORAGE
+
+about.cloudstorage ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} About: Cloud Storage${nc}"
         echo " "
 
         echo -e "${msep}"
@@ -748,7 +779,7 @@ done
 ### THEBRIG - ABOUT: RUDIMENTARY CONFIGURATION
 #------------------------------------------------------------------------------#
 
-thebrig.info.rudimentaryconfig ()
+info.thebrig.rudimentaryconfig ()
 {
 while [ "$choice" ]
 do
@@ -756,13 +787,16 @@ do
         echo -e "${inf} TheBrig - Rudimentary Configuration"
         echo -e "${sep}"
         echo " "
-        echo -e "${msg} Head to that new Extensions->TheBrig page in your WebGUI${nc}"
-        echo -e "${msg} After making sure the 'Installation folder' = ${mystorage}/Jails, Click 'Save'${nc}"
-        echo -e "${msg} Now head to 'Tarball Management' (Underneath 'Maintenance') > Click Query!${nc}"
-        echo -e "${msg} It should now have '10.2-RELEASE in the new dropdown menu (Select it if it isn't already)${nc}"
+        echo -e "${msg} Head to that new ${fin}Extensions->TheBrig${msg} page in your WebGUI${nc}"
+        echo -e "${msg} After making sure the '${fin}Installation folder${msg}' =${fin} ${mystorage}/Jails${msg}, Click '${inf}Save${msg}'${nc}"
+        echo " "
+        echo -e "${msg} Now head to '${fin}Tarball Management${msg}' (Underneath 'Maintenance') > Click ${inf}Query!${nc}"
+        echo -e "${msg} It should now have '${fin}10.2-RELEASE${msg}' in the new dropdown menu${nc}"
+        echo -e "${msg}    (Select it if it isn't already)${nc}"
         echo -e "${msg} Tick all boxes below that ${nc}"
-        echo -e "${msg}    (Only 'base.txz' and 'lib32.txz' are really needed but let's grab them all just in case)${nc}"
-        echo -e "${msg} Click Fetch, wait some time for the downloads to finish${nc}"
+        echo -e "${msg}    (Only '${fin}base.txz${msg}' and '${fin}lib32.txz${msg}' are really needed${nc}"
+        echo -e "${msg}     but let's grab them all just in case)${nc}"
+        echo -e "${msg} Click '${inf}Fetch${msg}', wait some time for the downloads to finish${nc}"
         echo -e "${msg} Once all the download bars are gone you can proceed to making your jail${nc}"
         echo " "
 
@@ -2682,7 +2716,7 @@ echo " "
 #------------------------------------------------------------------------------#
 ### MYSQL CONFIRM INSTALL
 
-confirm.mysql.install ()
+confirm.install.mysql ()
 {
 # Confirm with the user
 read -r -p "   Confirm Installation of MySQL? [y/N] " response
@@ -2702,7 +2736,7 @@ esac
 #------------------------------------------------------------------------------#
 ### OWNCLOUD CONFIRM INSTALL
 
-confirm.owncloud.install ()
+confirm.install.owncloud ()
 {
 confirm ()
 {
@@ -2766,7 +2800,7 @@ esac
 #------------------------------------------------------------------------------#
 ### EMBY SERVER CONFIRM INSTALL
 
-confirm.emby.install ()
+confirm.install.emby ()
 {
 # Confirm with the user
 read -r -p "   Confirm Installation of Emby Media Server? [y/N] " response
@@ -2786,7 +2820,7 @@ esac
 #------------------------------------------------------------------------------#
 ### SONARR CONFIRM INSTALL
 
-confirm.sonarr.install ()
+confirm.install.sonarr ()
 {
 # Confirm with the user
 read -r -p "   Confirm Installation of Sonarr? [y/N] " response
@@ -2806,7 +2840,7 @@ esac
 #------------------------------------------------------------------------------#
 ### COUCHPOTATO CONFIRM INSTALL
 
-confirm.couchpotato.install ()
+confirm.install.couchpotato ()
 {
 # Confirm with the user
 read -r -p "   Confirm Installation of CouchPotato? [y/N] " response
@@ -2826,7 +2860,7 @@ esac
 #------------------------------------------------------------------------------#
 ### HEADPHONES CONFIRM INSTALL
 
-confirm.headphones.install ()
+confirm.install.headphones ()
 {
 # Confirm with the user
 read -r -p "   Confirm Installation of Headphones? [y/N] " response
@@ -2846,7 +2880,7 @@ esac
 #------------------------------------------------------------------------------#
 ### THEBRIG EXPERIMENTAL CONFIRM INSTALL
 
-confirm.thebrig.EXPERIMENTAL.install ()
+confirm.install.thebrig.EXPERIMENTAL ()
 {
 # Confirm with the user
 echo -e "${emp} WARNING: THIS HAS BEEN UNTESTED"
@@ -2868,7 +2902,7 @@ esac
 #------------------------------------------------------------------------------#
 ### CALIBRE CONFIRM INSTALL
 
-confirm.calibre.install ()
+confirm.install.calibre ()
 {
 # Confirm with the user
 read -r -p "   Confirm Installation of Calibre? [y/N] " response
@@ -2888,7 +2922,7 @@ esac
 #------------------------------------------------------------------------------#
 ### DELUGE CONFIRM INSTALL
 
-confirm.deluge.install ()
+confirm.install.deluge ()
 {
 # Confirm with the user
 echo -e "${emp} WARNING: THIS HAS BEEN UNTESTED"
@@ -2910,7 +2944,7 @@ esac
 #------------------------------------------------------------------------------#
 ### NZBGET CONFIRM INSTALL
 
-confirm.nzbget.install ()
+confirm.install.nzbget ()
 {
 # Confirm with the user
 read -r -p "   Confirm Installation of NZBGet? [y/N] " response
@@ -2930,7 +2964,7 @@ esac
 #------------------------------------------------------------------------------#
 ### WEB SERVER CONFIRM INSTALL
 
-confirm.webserver.install ()
+confirm.install.webserver ()
 {
 # Confirm with the user
 read -r -p "   Confirm Installation of Web Server? [y/N] " response
@@ -2957,7 +2991,7 @@ esac
 ### MYSQL CONFIRM UPDATE
 #------------------------------------------------------------------------------#
 
-confirm.mysql.update ()
+confirm.update.mysql ()
 {
 # Confirm with the user
 read -r -p "   Confirm Update of MySQL? [y/N] " response
@@ -2977,7 +3011,7 @@ esac
 #------------------------------------------------------------------------------#
 ### OWNCLOUD CONFIRM UPDATE
 
-confirm.owncloud.update ()
+confirm.update.owncloud ()
 {
 # Confirm with the user
 echo -e "${emp} NOTE: ${msg}OwnCloud should be able to handle it's own updates automatically${nc}"
@@ -3005,7 +3039,7 @@ esac
 #------------------------------------------------------------------------------#
 ### EMBY SERVER CONFIRM UPDATE (SAFE METHOD)
 
-confirm.emby.update.safe ()
+confirm.update.emby.safe ()
 {
 echo " "
 echo -e "${sep}"
@@ -3038,7 +3072,7 @@ echo " "
 #------------------------------------------------------------------------------#
 ### EMBY SERVER CONFIRM UPDATE (LATEST GIT METHOD)
 
-confirm.emby.update.git ()
+confirm.update.emby.git ()
 {
 echo " "
 echo -e "${sep}"
@@ -3076,7 +3110,7 @@ echo " "
 #------------------------------------------------------------------------------#
 ### SONARR CONFIRM UPDATE
 
-confirm.sonarr.update ()
+confirm.update.sonarr ()
 {
 # Confirm with the user
 read -r -p "   Confirm Update of Sonarr? [y/N] " response
@@ -3096,7 +3130,7 @@ esac
 #------------------------------------------------------------------------------#
 ### COUCHPOTATO CONFIRM UPDATE
 
-confirm.couchpotato.update ()
+confirm.update.couchpotato ()
 {
 # Confirm with the user
 read -r -p "   Confirm Update of CouchPotato? [y/N] " response
@@ -3116,7 +3150,7 @@ esac
 #------------------------------------------------------------------------------#
 ### HEADPHONES CONFIRM UPDATE
 
-confirm.headphones.update ()
+confirm.update.headphones ()
 {
 # Confirm with the user
 read -r -p "   Confirm Update of Headphones? [y/N] " response
@@ -3136,7 +3170,7 @@ esac
 #------------------------------------------------------------------------------#
 ### THEBRIG CONFIRM UPDATE
 
-confirm.thebrig.update ()
+confirm.update.thebrig ()
 {
 
 echo -e "${emp} This part of the script is unfinished currently :(${nc}"
@@ -3147,7 +3181,7 @@ echo " "
 #------------------------------------------------------------------------------#
 ### DELUGE CONFIRM UPDATE
 
-confirm.deluge.update ()
+confirm.update.deluge ()
 {
 
 echo -e "${emp} This part of the script is unfinished currently :(${nc}"
@@ -3158,7 +3192,7 @@ echo " "
 #------------------------------------------------------------------------------#
 ### NZBGET CONFIRM UPDATE
 
-confirm.nzbget.update ()
+confirm.update.nzbget ()
 {
 
 echo -e "${emp} This part of the script is unfinished currently :(${nc}"
@@ -3169,7 +3203,7 @@ echo " "
 #------------------------------------------------------------------------------#
 ### WEB SERVER CONFIRM UPDATE
 
-confirm.webserver.update ()
+confirm.update.webserver ()
 {
 # Confirm with the user
 read -r -p "   Confirm Update of Web Server? [y/N] " response
@@ -3198,7 +3232,7 @@ esac
 
 mysql.submenu ()
 {
-while [ "$choice" != "a,h,i,m" ]
+while [ "$choice" != "a,h,i,m,q" ]
 do
         echo -e "${sep}"
         echo -e "${fin} MySQL + phpMyAdmin${nc}"
@@ -3206,8 +3240,12 @@ do
         echo -e "${qry} Choose one:${nc}"
         echo " "
         echo -e "${fin}   1)${msg} Install${nc}"
-        echo -e "${fin}   2)${msg} Update ${alt}(Currently Unavailable)${nc}"
-        echo -e "${fin}   3)${msg} Backup ${alt}(Currently Unavailable)${nc}"
+        echo -e "${ca}   2)${ca} Update (Currently Unavailable)${nc}"
+        echo -e "${ca}   3)${ca} Backup (Currently Unavailable)${nc}"
+        echo " "
+        echo -e "${inf}  a) About MySQL${nc}"
+        echo -e "${ca}  i) More Information (Currently Unavailable)${nc}"
+        echo -e "${inf}  h) Get Help${nc}"
         echo " "
         echo -e "${emp}   m) Main Menu${nc}"
 
@@ -3217,20 +3255,32 @@ do
         echo " "
 
         case $choice in
-            '1') echo -e "${inf} Installing..${nc}"
-                confirm.mysql.install
+            '1') echo -e "${inf} Please confirm that you wish to install MySQL${nc}"
+                echo " "
+                confirm.install.mysql
                 ;;
             #'2') echo -e "${inf} Running Update..${nc}"
-            #    confirm.mysql.update
+            #    echo " "
+            #    confirm.update.mysql
             #    ;;
             #'3') echo -e "${inf} Backup..${nc}"
+            #    echo " "
             #    backup.mysql
             #    ;;
             'a')
                 about.mysql
                 ;;
+            #'i')
+            #    moreinfo.submenu.mysql
+            #    ;;
+            'h')
+                gethelp
+                ;;
             'm')
                 return
+                ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
                 ;;
         esac
 done
@@ -3249,12 +3299,13 @@ do
         echo -e "${qry} Choose one:${nc}"
         echo " "
         echo -e "${fin}   1)${msg} ownCloud${nc}"
-        echo -e "${fin}   2)${msg} Pydio  ${alt}(Currently Unavailable)${nc}"
+        echo -e "${ca}   2)${ca} Pydio  (Currently Unavailable)${nc}"
         echo " "
-        echo -e "${inf}  i) More Information${nc}"
+        echo -e "${ca}  a) About Cloud Storage (Currently Unavailable)${nc}"
+        echo -e "${ca}  i) More Information / How-To's${nc}"
         echo -e "${inf}  h) Get Help${nc}"
         echo " "
-        echo -e "${emp}  m) Main Menu${nc}"
+        echo -e "${emp}  b) Back${nc}"
 
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
@@ -3269,18 +3320,18 @@ do
             #    pydio.submenu
             #    ;;
             'a')
-                about.cloud
+                about.cloudstorage
                 ;;
-            'i')
-                moreinfo.submenu.cloud
-                ;;
+            #'i')
+            #    moreinfo.submenu.cloud
+            #    ;;
             'h')
                 gethelp
                 ;;
-            'm')
+            'b')
                 return
                 ;;
-            *)   echo -e "${emp}        Invalid choice, please try again${nc}"
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
                 echo " "
                 ;;
         esac
@@ -3306,6 +3357,7 @@ do
         echo -e "${fin}   4)${msg} Fix Known Errors${nc}"
         echo -e "${fin}   5)${msg} Other${nc}"
         echo " "
+        echo -e "${ca}  a) About OwnCloud (Currently Unavailable)${nc}"
         echo -e "${inf}  i) More Info / How-To's${nc}"
         echo -e "${inf}  h) Get Help${nc}"
         echo " "
@@ -3318,12 +3370,15 @@ do
 
         case $choice in
             '1') echo -e "${inf} Installing..${nc}"
-                confirm.owncloud.install
+                echo " "
+                confirm.install.owncloud
                 ;;
             '2') echo -e "${inf} Running Update..${nc}"
-                confirm.owncloud.update
+                echo " "
+                confirm.update.owncloud
                 ;;
             '3') echo -e "${inf} Backup..${nc}"
+                echo " "
                 backup.owncloud
                 ;;
             '4')
@@ -3344,7 +3399,7 @@ do
             'b')
                 return
                 ;;
-            *)   echo -e "${emp}        Invalid choice, please try again${nc}"
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
                 echo " "
                 ;;
         esac
@@ -3356,7 +3411,7 @@ done
 
 pydio.submenu ()
 {
-while [ "$choice" != "a,h,i,m" ]
+while [ "$choice" != "a,h,i,m,q" ]
 do
         echo -e "${sep}"
         echo -e "${fin} Pydio Options${nc}"
@@ -3367,6 +3422,7 @@ do
         echo -e "${fin}   2)${msg} Update${nc}"
         echo -e "${fin}   3)${msg} Backup${nc}"
         echo " "
+        echo -e "${ca}  a) About Pydio (Currently Unavailable)${nc}"
         echo -e "${inf}  i) More Info / How-To's${nc}"
         echo -e "${inf}  h) Get Help${nc}"
         echo " "
@@ -3379,12 +3435,15 @@ do
 
         case $choice in
             '1') echo -e "${inf} Installing..${nc}"
-                confirm.pydio.install
+                echo " "
+                confirm.install.pydio
                 ;;
             '2') echo -e "${inf} Running Update..${nc}"
-                confirm.pydio.update
+                echo " "
+                confirm.update.pydio
                 ;;
             '3') echo -e "${inf} Backup..${nc}"
+                echo " "
                 backup.pydio
                 ;;
             'a')
@@ -3399,7 +3458,60 @@ do
             'm')
                 return
                 ;;
-            *)   echo -e "${emp}        Invalid choice, please try again${nc}"
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
+                ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### STREAMING SUBMENU
+
+streaming.submenu ()
+{
+while [ "$choice" != "a,h,i,m,q" ]
+do
+        echo -e "${sep}"
+        echo -e "${fin} Self Hosting Options${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one: Media Streaming with...${nc}"
+        echo " "
+        echo -e "${fin}   1)${msg} Emby Media Server${nc}"
+        echo -e "${fin}   2)${msg} Plex Media Server${nc}"
+        echo " "
+        echo -e "${ca}  a) About Media Streaming (Currently Unavailable)${nc}"
+        echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
+        echo -e "${ca}  h) Get Help${nc}"
+        echo " "
+        echo -e "${emp}  m) Main Menu${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+        echo " "
+
+        case $choice in
+            '1') echo -e "${inf} Taking you to the Emby menu..${nc}"
+                echo " "
+                emby.submenu
+                ;;
+            #'2') echo -e "${inf} Taking you to the Plex menu..${nc}"
+            #    echo " "
+            #    plex.submenu
+            #    ;;
+            #'a')
+            #    about.streaming
+            #    ;;
+            'h')
+                gethelp
+                ;;
+            #'i')
+            #    moreinfo.submenu.streaming
+            #    ;;
+            'm') return
+                ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
                 echo " "
                 ;;
         esac
@@ -3411,7 +3523,7 @@ done
 
 emby.submenu ()
 {
-while [ "$choice" != "a,h,i,m" ]
+while [ "$choice" != "a,h,i,m,q" ]
 do
         echo -e "${sep}"
         echo -e "${fin} Emby Options${nc}"
@@ -3423,6 +3535,10 @@ do
         echo -e "${fin}   3)${msg} Update via GitHub ${inf}(More Up To Date)${nc}"
         echo -e "${fin}   4)${msg} Backup${nc}"
         echo " "
+        echo -e "${ca}  a) About Emby${nc}"
+        echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
+        echo -e "${ca}  h) Get Help${nc}"
+        echo " "
         echo -e "${emp}  m) Main Menu${nc}"
 
         echo -e "${ssep}"
@@ -3432,21 +3548,34 @@ do
 
         case $choice in
             '1') echo -e "${inf} Installing..${nc}"
-                confirm.emby.install
+                echo " "
+                confirm.install.emby
                 ;;
             '2') echo -e "${inf} Running Update..${nc}"
-                confirm.emby.update.safe
+                echo " "
+                confirm.update.emby.safe
                 ;;
             '3') echo -e "${inf} Running Update..${nc}"
-                confirm.emby.update.git
+                echo " "
+                confirm.update.emby.git
                 ;;
             '4') echo -e "${inf} Backup..${nc}"
+                echo " "
                 backup.emby
                 ;;
             'a')
                 about.emby
                 ;;
+            'h')
+                gethelp
+                ;;
+            #'i')
+            #    moreinfo.submenu.emby
+            #    ;;
             'm') return
+                ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
                 ;;
         esac
 done
@@ -3457,7 +3586,7 @@ done
 
 sonarr.submenu ()
 {
-while [ "$choice" != "a,h,i,m" ]
+while [ "$choice" != "a,h,i,m,q" ]
 do
         echo -e "${sep}"
         echo -e "${fin} Sonarr Options${nc}"
@@ -3466,28 +3595,44 @@ do
         echo " "
         echo -e "${fin}   1)${msg} Install${nc}"
         echo -e "${fin}   2)${msg} Update${nc}"
-        echo -e "${fin}   3)${msg} Backup${nc}"
+        echo -e "${ca}   3)${ca} Backup (Currently Unavailable)${nc}"
+        echo " "
+        echo -e "${inf}  a) About Sonarr${nc}"
+        echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
+        echo -e "${ca}  h) Get Help${nc}"
         echo " "
         echo -e "${emp}   m) Main Menu${nc}"
 
         echo -e "${ssep}"
-        read choice
+        read -r -p "     Your choice: " choice
         echo -e "${ssep}"
 
         case $choice in
             '1') echo -e "${inf} Installing..${nc}"
-                confirm.sonarr.install
+                echo " "
+                confirm.install.sonarr
                 ;;
             '2') echo -e "${inf} Running Update..${nc}"
-                confirm.sonarr.update
+                echo " "
+                confirm.update.sonarr
                 ;;
-            '3') echo -e "${inf} Backup..${nc}"
-                backup.sonarr
+            #'3') echo -e "${inf} Backup..${nc}"
+            #    echo " "
+            #    backup.sonarr
                 ;;
             'a')
                 about.sonarr
                 ;;
+            'h')
+                gethelp
+                ;;
+            #'i')
+            #    moreinfo.submenu.sonarr
+            #    ;;
             'm') return
+                ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
                 ;;
         esac
 done
@@ -3498,7 +3643,7 @@ done
 
 couchpotato.submenu ()
 {
-while [ "$choice" != "a,h,i,m" ]
+while [ "$choice" != "a,h,i,m,q" ]
 do
         echo -e "${sep}"
         echo -e "${fin} CouchPotato Options${nc}"
@@ -3509,6 +3654,10 @@ do
         echo -e "${fin}   2)${msg} Update${nc}"
         echo -e "${fin}   3)${msg} Backup${nc}"
         echo " "
+        echo -e "${inf}  a) About CouchPotato${nc}"
+        echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
+        echo -e "${ca}  h) Get Help${nc}"
+        echo " "
         echo -e "${emp}   m) Main Menu${nc}"
 
         echo -e "${ssep}"
@@ -3518,19 +3667,31 @@ do
 
         case $choice in
             '1') echo -e "${inf} Installing..${nc}"
-                confirm.couchpotato.install
+                echo " "
+                confirm.install.couchpotato
                 ;;
             '2') echo -e "${inf} Running Update..${nc}"
-                confirm.couchpotato.update
+                echo " "
+                confirm.update.couchpotato
                 ;;
             '3') echo -e "${inf} Backup..${nc}"
+                echo " "
                 backup.couchpotato
                 ;;
             'a')
                 about.couchpotato
                 ;;
+            'h')
+                gethelp
+                ;;
+            #'i')
+            #    moreinfo.submenu.couchpotato
+            #    ;;
             'm')
                 return
+                ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
                 ;;
         esac
 done
@@ -3541,7 +3702,7 @@ done
 
 headphones.submenu ()
 {
-while [ "$choice" != "a,h,i,m" ]
+while [ "$choice" != "a,h,i,m,q" ]
 do
         echo -e "${sep}"
         echo -e "${fin} HeadPhones Options${nc}"
@@ -3549,10 +3710,11 @@ do
         echo -e "${qry} Choose one:${nc}"
         echo " "
         echo -e "${fin}   1)${msg} Install${nc}"
-        echo -e "${fin}   2)${msg} Update${nc}"
-        echo -e "${fin}   3)${msg} Backup${nc}"
+        echo -e "${ca}   2)${ca} Update (Currently Unavailable)${nc}"
+        echo -e "${ca}   3)${ca} Backup (Currently Unavailable)${nc}"
         echo " "
-        echo -e "${inf}  i) More Info / How-To's${nc}"
+        echo -e "${inf}  a) About CouchPotato${nc}"
+        echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
         echo -e "${inf}  h) Get Help${nc}"
         echo " "
         echo -e "${emp}  m) Main Menu${nc}"
@@ -3564,12 +3726,15 @@ do
 
         case $choice in
             '1') echo -e "${inf} Installing..${nc}"
-                confirm.headphones.install
+                echo " "
+                confirm.install.headphones
                 ;;
             '2') echo -e "${inf} Running Update..${nc}"
-                confirm.headphones.update
+                echo " "
+                confirm.update.headphones
                 ;;
             '3') echo -e "${inf} Backup..${nc}"
+                echo " "
                 backup.headphones
                 ;;
             'a')
@@ -3578,10 +3743,13 @@ do
             'h')
                 gethelp
                 ;;
-            'i')
-                moreinfo.submenu.headphones
-                ;;
+            #'i')
+            #    moreinfo.submenu.headphones
+            #    ;;
             'm') return
+                ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
                 ;;
         esac
 done
@@ -3602,8 +3770,8 @@ do
         echo -e "${qry} Choose one:${nc}"
         echo " "
         echo -e "${fin}   1)${msg} Install (Guide Only)${nc}"
-        echo -e "${fin}   2)${msg} Update ${alt}(Currently Unavailable)${nc}"
-        echo -e "${fin}   3)${msg} Backup ${alt}(Currently Unavailable)${nc}"
+        echo -e "${ca}   2)${ca} Update (Currently Unavailable)${nc}"
+        echo -e "${ca}   3)${ca} Backup (Currently Unavailable)${nc}"
         echo " "
         echo -e "${alt}   e)${emp} Install (EXPERIMENTAL)${nc}"
         echo " "
@@ -3620,16 +3788,20 @@ do
 
         case $choice in
             '1') echo -e "${inf} Taking you to install instructions..${nc}"
+                echo " "
                 thebrig.howto.installthebrig
                 ;;
             #'2') echo -e "${inf} Running Update..${nc}"
-            #    confirm.thebrig.update
+            #    echo " "
+            #    confirm.update.thebrig
             #    ;;
             #'3') echo -e "${inf} Backup..${nc}"
+            #    echo " "
             #    backup.thebrig
             #    ;;
             'e') echo -e "${inf} Installing..${nc}"
-                confirm.thebrig.EXPERIMENTAL.install
+                echo " "
+                confirm.install.thebrig.EXPERIMENTAL
                 ;;
             'a')
                 about.thebrig
@@ -3642,6 +3814,9 @@ do
                 ;;
             'm') return
                 ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
+                ;;
         esac
 done
 }
@@ -3651,16 +3826,17 @@ done
 
 downloadtools.submenu ()
 {
-while [ "$choice" != "a,h,i,m" ]
+while [ "$choice" != "a,h,i,m,q" ]
 do
         echo -e "${sep}"
         echo -e "${fin} Download Tools${nc}"
         echo -e "${sep}"
         echo -e "${qry} Choose one:${nc}"
         echo " "
-        echo -e "${fin}   1)${msg} Deluge (Torrenting) ${alt}(Currently Unavailable)${nc}"
+        echo -e "${ca}   1)${ca} Deluge (Torrenting) (Currently Unavailable)${nc}"
         echo -e "${fin}   2)${msg} NZBGet (Usenet Downloader)${nc}"
         echo " "
+        echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
         echo -e "${inf}  h) Get Help${nc}"
         echo " "
         echo -e "${emp}  m) Main Menu${nc}"
@@ -3677,13 +3853,16 @@ do
             '2')
                 nzbget.submenu
                 ;;
+            'i')
+                moreinfo.submenu.thebrig
+                ;;
             'h')
                 gethelp
                 ;;
             'm')
                 return
                 ;;
-            *)   echo -e "${emp}        Invalid choice, please try again${nc}"
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
                 echo " "
                 ;;
         esac
@@ -3719,12 +3898,15 @@ do
 
         case $choice in
             '1') echo -e "${inf} Installing..${nc}"
-                confirm.deluge.install
+                echo " "
+                confirm.install.deluge
                 ;;
             '2') echo -e "${inf} Running Update..${nc}"
-                confirm.deluge.update
+                echo " "
+                confirm.update.deluge
                 ;;
             '3') echo -e "${inf} Backup..${nc}"
+                echo " "
                 backup.deluge
                 ;;
             'a')
@@ -3738,6 +3920,9 @@ do
                 ;;
             'b') return
                 ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
+                ;;
         esac
 done
 }
@@ -3747,7 +3932,7 @@ done
 
 nzbget.submenu ()
 {
-while [ "$choice" != "a,h,i,m" ]
+while [ "$choice" != "a,h,i,m,q" ]
 do
         echo -e "${sep}"
         echo -e "${fin} NZBGet Options${nc}"
@@ -3756,9 +3941,127 @@ do
         echo " "
         echo -e "${fin}   1)${msg} Install${nc}"
         echo -e "${fin}   2)${msg} Update${nc}"
-        echo -e "${fin}   3)${msg} Backup${nc}"
+        echo -e "${fin}   3)${msg} Backup (Currently Unavailable)${nc}"
         echo " "
         echo -e "${inf}  a) About NZBGet${nc}"
+        echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
+        echo -e "${inf}  h) Get Help${nc}"
+        echo " "
+        echo -e "${emp}  b) Back${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+        echo " "
+
+        case $choice in
+            '1') echo -e "${inf} Installing..${nc}"
+                echo " "
+                confirm.install.nzbget
+                ;;
+            '2') echo -e "${inf} Running Update..${nc}"
+                echo " "
+                confirm.update.nzbget
+                ;;
+            #'3') echo -e "${inf} Backup..${nc}"
+            #    echo " "
+            #    backup.nzbget
+            #    ;;
+            'a')
+                about.nzbget
+                ;;
+            'h')
+                gethelp
+                ;;
+            #'i')
+            #    moreinfo.submenu.nzbget
+            #    ;;
+            'b') return
+                ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
+                ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### SELF HOSTING SUBMENU
+
+selfhosting.submenu ()
+{
+while [ "$choice" != "a,h,i,m,q" ]
+do
+        echo -e "${sep}"
+        echo -e "${fin} Self Hosting Options${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one: Host Your Own...${nc}"
+        echo " "
+        echo -e "${ca}   1)${ca} Web Server (Currently Unavailable)${nc}"
+        echo -e "${fin}   2)${msg} Cloud Storage (${lct}OwnCloud${nc} / ${lct}Pydio${nc})${nc}"
+        echo -e "${ca}   3)${ca} Game Server(s) (Currently Unavailable)${nc}"
+        echo " "
+        echo -e "${ca}  a) About Self Hosting (Currently Unavailable)${nc}"
+        echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
+        echo -e "${inf}  h) Get Help${nc}"
+        echo " "
+        echo -e "${emp}  m) Main Menu${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+        echo " "
+
+        case $choice in
+            #'1') echo -e "${inf} Taking you to the Web Server menu..${nc}"
+            #    echo " "
+            #    webserver.submenu
+            #    ;;
+            '2') echo -e "${inf} Taking you to the Cloud Services menu..${nc}"
+                echo " "
+                cloud.submenu
+                ;;
+            #'3') echo -e "${inf} Backup..${nc}"
+            #    echo " "
+            #    gameservers.submenu
+            #    ;;
+            #'a')
+            #    about.selhosting
+            #    ;;
+            'h')
+                gethelp
+                ;;
+            #'i')
+            #    moreinfo.submenu.selfhosting
+            #    ;;
+            'm') return
+                ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
+                ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### WEB SERVER SUBMENU
+
+webserver.submenu ()
+{
+while [ "$choice" != "a,h,i,b,q" ]
+do
+        echo -e "${sep}"
+        echo -e "${fin} Web Server Options${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:${nc}"
+        echo " "
+        echo -e "${fin}   1)${msg} Install${nc}"
+        echo -e "${fin}   2)${msg} Update${nc}"
+        echo -e "${fin}   3)${msg} Backup${nc}"
+        echo " "
+        echo -e "${ca}   4)${ca} Install WordPress (Currently Unavailable)${nc}" # (Use above install first)
+        echo " "
+        echo -e "${inf}  a) About Web Server${nc}"
         echo -e "${inf}  i) More Info / How-To's${nc}"
         echo -e "${inf}  h) Get Help${nc}"
         echo " "
@@ -3771,66 +4074,21 @@ do
 
         case $choice in
             '1') echo -e "${inf} Installing..${nc}"
-                confirm.nzbget.install
+                echo " "
+                confirm.install.webserver
                 ;;
             '2') echo -e "${inf} Running Update..${nc}"
-                confirm.nzbget.update
+                echo " "
+                confirm.update.webserver
                 ;;
             '3') echo -e "${inf} Backup..${nc}"
-                backup.nzbget
-                ;;
-            'a')
-                about.nzbget
-                ;;
-            'h')
-                gethelp
-                ;;
-            'i')
-                moreinfo.submenu.nzbget
-                ;;
-            'b') return
-                ;;
-        esac
-done
-}
-
-#------------------------------------------------------------------------------#
-### WEB SERVER SUBMENU
-
-webserver.submenu ()
-{
-while [ "$choice" != "a,h,i,m" ]
-do
-        echo -e "${sep}"
-        echo -e "${fin} Web Server Options${nc}"
-        echo -e "${sep}"
-        echo -e "${qry} Choose one:${nc}"
-        echo " "
-        echo -e "${fin}   1)${msg} Install${nc}"
-        echo -e "${fin}   2)${msg} Update${nc}"
-        echo -e "${fin}   3)${msg} Backup${nc}"
-        echo " "
-        echo -e "${inf}  a) About Web Server${nc}"
-        echo -e "${inf}  i) More Info / How-To's${nc}"
-        echo -e "${inf}  h) Get Help${nc}"
-        echo " "
-        echo -e "${emp}  m) Main Menu${nc}"
-
-        echo -e "${ssep}"
-        read -r -p "     Your choice: " choice
-        echo -e "${ssep}"
-        echo " "
-
-        case $choice in
-            '1') echo -e "${inf} Installing..${nc}"
-                confirm.webserver.install
-                ;;
-            '2') echo -e "${inf} Running Update..${nc}"
-                confirm.webserver.update
-                ;;
-            '3') echo -e "${inf} Backup..${nc}"
+                echo " "
                 backup.webserver
                 ;;
+            #'3') echo -e "${inf} Installing WordPress..${nc}"
+            #    echo " "
+            #    confirm.install.wordpress
+            #    ;;
             'a')
                 about.webserver
                 ;;
@@ -3840,7 +4098,10 @@ do
             'i')
                 moreinfo.submenu.webserver
                 ;;
-            'm') return
+            'b') return
+                ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
                 ;;
         esac
 done
@@ -3881,6 +4142,9 @@ do
                 ;;
             'm') return
                 ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
+                ;;
         esac
 done
 }
@@ -3915,13 +4179,16 @@ do
                 ;;
             'm') return
                 ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
+                ;;
         esac
 done
 }
 
 moreinfo.submenu.thebrig ()
 {
-while [ "$choice" != "m" ]
+while [ "$choice" != "b" ]
 do
         echo -e "${sep}"
         echo -e "${inf} TheBrig - Info / How-To's Menu${nc}"
@@ -3935,7 +4202,7 @@ do
         echo -e "${fin}   2)${msg} Create a jail${nc}"
         echo -e "${fin}   3)${msg} Enable the 'Ports Tree'${nc}"
         echo " "
-        echo -e "${emp}   m) Main Menu${nc}"
+        echo -e "${emp}   b) Back${nc}"
 
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
@@ -3943,13 +4210,16 @@ do
         echo " "
 
         case $choice in
-            '1') thebrig.info.rudimentaryconfig
+            '1') info.thebrig.rudimentaryconfig
                 ;;
             '2') thebrig.howto.createajail
                 ;;
             '3') thebrig.howto.enableportstree
                 ;;
-            'm') return
+            'b') return
+                ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
                 ;;
         esac
 done
@@ -3978,6 +4248,9 @@ do
             '1') emby.howto.updateffmpeg
                 ;;
             'm') return
+                ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
                 ;;
         esac
 done
@@ -4016,6 +4289,9 @@ do
                 ;;
             'b') return
                 ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
+                ;;
         esac
 done
 }
@@ -4049,6 +4325,9 @@ do
                 ;;
             'b') return
                 ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
+                ;;
         esac
 done
 }
@@ -4064,27 +4343,27 @@ mainmenu=""
 while [ "$choice" != "q,a,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.12 (April 3, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.13 (April 3, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
         echo -e "${qry} Please make a selection! ${nc}(It's best to run 1-8 INSIDE of a jail)"
         echo " "
         echo -e "${fin}   1)${msg} MySQL + phpMyAdmin${nc}"
-        echo -e "${fin}   2)${msg} Self Hosted Cloud Storage (OwnCloud/Pydio)${nc}"
-        echo -e "${fin}   3)${msg} Self Hosted Web Server ${alt}(Currently Unavailable)${nc}"
-        echo -e "${fin}   4)${msg} Emby Server${nc}"
-        echo -e "${fin}   5)${msg} Sonarr${nc}"
-        echo -e "${fin}   6)${msg} CouchPotato${nc}"
-        echo -e "${fin}   7)${msg} HeadPhones${nc}"
-        echo -e "${fin}   8)${msg} Download Tools (NZBGet / Deluge)${nc}"
+        echo -e "${fin}   2)${msg} Web Server / Cloud Storage / Game Servers (${lct}WordPress${msg}/${lct}OwnCloud${msg}/${lct}Pydio${msg} etc.)${nc}"
+        echo -e "${fin}   3)${msg} Emby Server ${bld}(Media Streaming)${nc}"
+        echo -e "${fin}   4)${msg} Sonarr${nc}"
+        echo -e "${fin}   5)${msg} CouchPotato${nc}"
+        echo -e "${fin}   6)${msg} HeadPhones${nc}"
+        echo -e "${fin}   7)${msg} Download Tools (NZBGet / Deluge)${nc}"
         echo " "
         echo -e "${cmd}   j)${msg} TheBrig${nc}"
         echo " "
         echo -e "${inf}  a) About This Script${nc}"
         echo -e "${inf}  h) Contact / Get Help${nc}"
         echo -e "${inf}  i) More Info / How-To's${nc}"
-        echo -e "${alt}  q) Quit${nc}"
+        echo " "
+        echo -e "${alt}   q) Quit${nc}"
 
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
@@ -4096,24 +4375,21 @@ do
                 mysql.submenu
                 ;;
             '2')
-                cloud.submenu
+                selfhosting.submenu
                 ;;
-            #'3')
-            #    webserver.submenu
-            #    ;;
-            '4')
+            '3')
                 emby.submenu
                 ;;
-            '5')
+            '4')
                 sonarr.submenu
                 ;;
-            '6')
+            '5')
                 couchpotato.submenu
                 ;;
-            '7')
+            '6')
                 headphones.submenu
                 ;;
-            '8')
+            '7')
                 downloadtools.submenu
                 ;;
             'a')
@@ -4133,14 +4409,12 @@ do
                 echo  " "
                 exit
                 ;;
-            *)   echo -e "${emp}        Invalid choice, please try again${nc}"
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
                 echo " "
                 ;;
         esac
 done
 
-# LOW-TODO: Change "confirm.app.update" to "confirm.update.app", makes searching easier
-# LOW-TODO: Change "confirm.app.install" to "confirm.install.app", makes searching easier
 # MED-TODO: Add a How-To for mounting your storage via fstab or thebrig jail dataset option
 # LOW-TODO: Finish adding "Calibre"
 # MED-TODO: Finish "Deluge" scripts (Lots of issues with it)

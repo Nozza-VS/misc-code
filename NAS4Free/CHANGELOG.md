@@ -1,5 +1,16 @@
 # Changelog
 
+### Version: 1.0.12 (April 3, 2016)
++ Added NZBGet installer
+   * Still need to add command to get web interface on by default
++ Added NZBGet updater, nothing really special needed here
++ Added OwnCloud updater
+   + Added warnings to confirmation
+* Made certain items unavailable so people are unable to use them for now
++ Added a notice to owncloud installer about potential "untrusted domain" warnings
++ Added missing spacers above "main menu" & "back" menu options
+
+
 ### Version: 1.0.11 (April 2, 2016)
 * Fixed an issue in the deluge installer that broke the script
 * Fixed a couple deluge variables also

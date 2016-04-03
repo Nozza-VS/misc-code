@@ -1,5 +1,8 @@
 # Changelog
 
+### Version: 1.0.13.1 (April 3, 2016)
+* Forgot to comment out a line which broke the script, oops! Fixed now
+
 ### Version: 1.0.13 (April 3, 2016)
 + Added underline text formatting to make things stand out even more where needed ( bold doesn't seem to work for me anymore, same with italics :(  )
    * Used new underline to empasize a couple things

@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script                    Version: 1.0.13 (April 3, 2016)
+# AIO Script                    Version: 1.0.13.1 (April 3, 2016)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -100,7 +100,7 @@ cmd='\033[1;35m'    # Command to be entered
 fin='\033[0;32m'    # Green Text
 inf='\033[0;33m'    # Information Text
 ul='\033[4m'        # Underline Text
-lct='\033[1;34m'    # Light Blue Text
+lbt='\033[1;34m'    # Light Blue Text
 yt='\033[1;33m'     # Yellow Text
 lct='\033[1;36m'    # Light Cyan Text
 ca='\033[1;30m'     # Currently Unavailable (Dark Grey Text)
@@ -3619,7 +3619,7 @@ do
             #'3') echo -e "${inf} Backup..${nc}"
             #    echo " "
             #    backup.sonarr
-                ;;
+            #    ;;
             'a')
                 about.sonarr
                 ;;
@@ -3998,7 +3998,7 @@ do
         echo -e "${qry} Choose one: Host Your Own...${nc}"
         echo " "
         echo -e "${ca}   1)${ca} Web Server (Currently Unavailable)${nc}"
-        echo -e "${fin}   2)${msg} Cloud Storage (${lct}OwnCloud${nc} / ${lct}Pydio${nc})${nc}"
+        echo -e "${fin}   2)${msg} Cloud Storage (${lbt}OwnCloud${nc} / ${lbt}Pydio${nc})${nc}"
         echo -e "${ca}   3)${ca} Game Server(s) (Currently Unavailable)${nc}"
         echo " "
         echo -e "${ca}  a) About Self Hosting (Currently Unavailable)${nc}"
@@ -4343,14 +4343,14 @@ mainmenu=""
 while [ "$choice" != "q,a,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.13 (April 3, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.13.1 (April 3, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
         echo -e "${qry} Please make a selection! ${nc}(It's best to run 1-8 INSIDE of a jail)"
         echo " "
         echo -e "${fin}   1)${msg} MySQL + phpMyAdmin${nc}"
-        echo -e "${fin}   2)${msg} Web Server / Cloud Storage / Game Servers (${lct}WordPress${msg}/${lct}OwnCloud${msg}/${lct}Pydio${msg} etc.)${nc}"
+        echo -e "${fin}   2)${msg} Web Server / Cloud Storage / Game Servers (${lbt}WordPress${msg}/${lbt}OwnCloud${msg}/${lbt}Pydio${msg} etc.)${nc}"
         echo -e "${fin}   3)${msg} Emby Server ${bld}(Media Streaming)${nc}"
         echo -e "${fin}   4)${msg} Sonarr${nc}"
         echo -e "${fin}   5)${msg} CouchPotato${nc}"

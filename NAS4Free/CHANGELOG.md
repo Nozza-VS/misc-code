@@ -1,5 +1,18 @@
 # Changelog
 
+### Version: 1.0.13 (April 3, 2016)
++ Added underline text formatting to make things stand out even more where needed ( bold doesn't seem to work for me anymore, same with italics :(  )
+   * Used new underline to empasize a couple things
+* Fixed some missing menu items
+* Modified menus to show things that are currently not fully implemented and disabled access to them
+   + Added new darker text for this too
++ Added new menu for streaming services, will move emby here and add plex later
++ Added some spacers in a few areas to make some output text look a bit nicer
+* A lot of menus were missing the "invalid choice" notification, fixed that up
++ Added menu for self hosting services, this will be where the "web server", "cloud storage" and (in the future) "game servers" menus will live
+   + Moved Web Server and Cloud Storage to this menu
+* Change "confirm.*.update" / "confirm.*.install" done, this was mainly for myself as it makes searching for things easier
+
 ### Version: 1.0.12 (April 3, 2016)
 + Added NZBGet installer
    * Still need to add command to get web interface on by default

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Update script for Emby Media Server (AKA MediaBrowser)
-# Version 1.07 (April 4, 2016)
+# Version 1.08 (April 4, 2016)
 # As ports official freebsd ports tree takes ages to accept updates
 # here is a simple script to grab the latest version and upgrade manually.
 
@@ -27,6 +27,52 @@ case "$response" in
               echo -e "${alt}    Stopping script..${nc}"
               echo " "
               exit
+              ;;
+esac
+}
+
+create.emby.backup ()
+{
+# Confirm with the user
+echo -e "${msg} Recommended if you haven't done so already:${nc}"
+read -r -p "   Create a backup before updating? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then make a backup before proceeding
+              echo " "
+              echo -e "${sep}"
+              echo -e "${msg}   First, make sure we have rsync and then${nc}"
+              echo -e "${msg}   we will use it to create a backup${nc}"
+              echo -e "${sep}"
+              echo " "
+
+              # Using rsync rather than cp so we can see progress actually happen on the backup for large servers.
+              pkg install -y rsync
+
+
+              # If yes, then create backup
+              echo " "
+              echo -e "${sep}"
+              echo -e "${msg} Running backups${nc}"
+              echo -e "${sep}"
+              echo " "
+
+              echo -e "${emp} Application backup${nc}"
+              mkdir -p /usr/local/lib/emby-server-backups/${date} # Using -p in case you've never run the script before or you have deleted this folder
+              rsync -a --info=progress2 /usr/local/lib/emby-server/ /usr/local/lib/emby-server-backups/${date}
+              echo -e "${fin}    Application backup done..${nc}"
+
+              echo " "
+
+              echo -e "${emp} Server data backup ${inf}(May take a while)${nc}"
+              mkdir -p /var/db/emby-server-backups/${date}
+              rsync -a --info=progress2 /var/db/emby-server/ /var/db/emby-server-backups/${date}
+              echo -e "${fin}    Server backup done.${nc}"
+              ;;
+    *)
+              # Otherwise continue with update...
+              echo " "
+              echo -e "${inf} Skipping backup..${nc}"
               ;;
 esac
 }
@@ -60,55 +106,18 @@ echo " "
 echo -e "${msg} If you need to restart the server, you can with:${nc}"
 echo -e "${cmd}    service emby-server restart${nc}"
 echo " "
-echo -e "${qry} Reminder${msg}: make sure you have modified the 'emby_update_ver'${nc}"
+echo -e "${qry} Reminder${msg}: make sure you have modified the '${inf}emby_update_ver${msg}'${nc}"
 echo -e "${msg} line at the top of this script to the latest version.${nc}"
 echo " "
 echo -e "${msg} Only continue if you are 100% sure${nc}"
 confirm
 echo " "
-echo " "
-echo " "
 echo -e "${sep}"
-echo -e "${msg}   Let's start with a backup.${nc}"
-echo -e "${msg}   First, make sure we have rsync and then${nc}"
-echo -e "${msg}   we will use it to create a backup${nc}"
+echo -e "${msg}   Shall we create a backup before updating?${nc}"
 echo -e "${sep}"
 echo " "
 
-# Swapping to rsync rather than cp so we can see progress actually happen on the backup for large servers.
-pkg install -y rsync
-
-echo " "
-echo -e "${sep}"
-echo -e "${msg} Create backups${nc}" # TODO: Give user option to backup or not
-echo -e "${sep}"
-echo " "
-
-echo -e "${emp} Application backup${nc}"
-mkdir -p /usr/local/lib/emby-server-backups/${date} # Using -p in case you've never run the script before or you have deleted this folder
-rsync -a --info=progress2 /usr/local/lib/emby-server/ /usr/local/lib/emby-server-backups/${date}
-#cp -r /usr/local/lib/emby-server/ /usr/local/lib/emby-server-backups/${date}
-echo -e "${fin}    Application backup done..${nc}"
-
-echo " "
-
-echo -e "${emp} Server data backup ${inf}(May take a while)${nc}"
-mkdir -p /var/db/emby-server-backups/${date}
-rsync -a --info=progress2 /var/db/emby-server/ /var/db/emby-server-backups/${date}
-#cp -r /var/db/emby-server/ /var/db/emby-server-backups/${date}
-echo -e "${fin}    Server backup done.${nc}"
-
-# Emby BSD package version will always be below latest release so
-# removing the next steps for the time being.
-
-# echo " "
-# echo -e "${sep}"
-# echo -e "${msg} Now let's check for BSD upgrades${nc}"
-# echo -e "${sep}"
-# echo " "
-
-# pkg update
-# pkg upgrade emby-server
+create.emby.backup
 
 echo " "
 echo -e "${sep}"
@@ -134,22 +143,34 @@ echo " "
 
 unzip -o "/tmp/emby-${emby_update_ver}.zip" -d /usr/local/lib/emby-server
 
+echo " "
+echo -e "${sep}"
+echo -e "${msg} And finally, start the server back up.${nc}"
+echo -e "${sep}"
+echo " "
+
 service emby-server start
 
 echo " "
 echo -e "${sep}"
+echo " "
 echo -e "${msg} That should be it!${nc}"
 echo -e "${msg} Now head to your Emby dashboard to ensure it's up to date.${nc}"
+echo -e "${msg}    (Refresh the page if you already have Emby open)${nc}"
 echo " "
 echo " "
 echo " "
-echo -e "${msg} If something went wrong you can do the following to restore the old version:${nc}"
+echo -e "${msg} If something went wrong you can do this to restore the old app version:${nc}"
+echo -e "${cmd}   service emby-server stop${nc}"
 echo -e "${cmd}   rm -r /usr/local/lib/emby-server${nc}"
 echo -e "${cmd}   mv /usr/local/lib/emby-server-backups/${date} /usr/local/lib/emby-server${nc}"
+echo -e "${cmd}   service emby-server start${nc}"
 echo " "
 echo -e "${msg} And use this to restore your server database/settings:${nc}"
+echo -e "${cmd}   service emby-server stop${nc}"
 echo -e "${cmd}   rm -r /var/db/emby-server${nc}"
 echo -e "${cmd}   mv /var/db/emby-server-backups/${date} /var/db/emby-server${nc}"
+echo -e "${cmd}   service emby-server start${nc}"
 echo -e "${sep}"
 echo " "
 echo -e "${msg} You can get in touch with me any of the ways listed here:${nc}"

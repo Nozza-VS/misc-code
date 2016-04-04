@@ -1,5 +1,5 @@
 #!/bin/sh
-# OwnCloud Script v2            Version: 2.0.6 (April 4, 2016)
+# OwnCloud Script v2            Version: 2.0.7 (April 4, 2016)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -30,6 +30,10 @@ server_ip="192.168.1.200"
 owncloud_version="9.0.0"
 ### No need to edit below here ###
 ### Any modifications made below here are done at your own risk ###
+##### OWNCLOUD UPDATER CONFIG #####
+owncloud_update="latest"    # This can be safely ignored unless you are planning
+                    # on using the updater in this script (not recommended)
+                    # It's best to leave it alone and let owncloud update itself
 ##### END OF CONFIGURATION SECTION #####
 ################################################################################
 
@@ -79,6 +83,49 @@ exerr () { echo -e "$*" >&2 ; exit 1; }
 
 install.cloud ()
 {
+
+trusteddomain.error ()
+{
+# Confirm with the user
+echo " "
+echo -e "${emp} Please finish the owncloud setup before continuing${nc}"
+echo -e "${msg} Head to ${url}https://$cloud_server_ip:$cloud_server_port ${msg}to do this.${nc}"
+echo -e "${msg} Fill out the page you are presented with and hit finish${nc}"
+echo " "
+echo -e "${msg} Admin username & password = whatever you choose${nc}"
+echo " "
+echo -e "${emp} Make sure you click 'Storage & database'${nc}"
+echo " "
+echo -e "${msg} Database user = ${qry}root${nc} | Database password = ${nc}"
+echo -e "${msg} the ${qry}mysql password${msg} you chose earlier during the script.${nc}"
+echo -e "${msg} Database name = your choice (just ${qry}owncloud${msg} is fine)${nc}"
+echo " "
+echo -e "${inf} You can always perform this next step later from the menu but it's best to do${nc}"
+echo -e "${inf} it now if your installing version 9.0.0 or above (8.x.x shouln't need this)${nc}"
+echo " "
+read -r -p "    Once the page reloads, do you have a 'untrusted domain' warning? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, let's fix that.
+              echo " "
+              echo -e "${url} Doing some last second changes to fix that..${nc}"
+              echo " "
+              # Prevent "Trusted Domain" error
+              echo "    '${server_ip}'," >> /usr/local/www/owncloud/config/trusted.txt
+              cat "/usr/local/www/owncloud/config/old_config.bak" | \
+                sed '8r /usr/local/www/owncloud/config/trusted.txt' > \
+                "/usr/local/www/owncloud/config/config.php"
+              rm /usr/local/www/owncloud/config/trusted.txt
+              echo -e " Done, continuing with the rest of the script"
+               ;;
+    *)
+              # If no, just continue like normal.
+              echo " "
+              echo -e "${qry} Great!, no need to do anything, continuing with script..${nc}"
+              echo " "
+              ;;
+esac
+}
 
 echo " "
 echo -e "${sep}"
@@ -290,21 +337,30 @@ echo " "
 echo -e "${sep}"
 echo -e "${msg} Now to finish owncloud setup${nc}"
 echo -e "${sep}"
-
-echo -e "${msg} Head to ${url}https://$server_ip:$server_port ${msg}and fill out the${nc}"
-echo -e "${msg} appropriate information. If you are unsure what to do,${nc}"
-echo -e "${msg} go back to the main menu and select 'More Info'${nc}"
-
-echo -e "${sep}"
-echo -e "${msg} Looks like we are done here!!! Now you can head to${nc}"
-echo -e "${url}    https://$server_ip:$server_port ${msg}to use your owncloud!${nc}"
 echo " "
-echo -e "${emp} Memory Caching ${msg}is currently disabled by default.${nc}"
-echo -e "${msg}    Head back to the main menu to enable it.${nc}"
+
+trusteddomain.error
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} It looks like we finished here!!! NICE${nc}"
+echo -e "${msg} Now you can head to ${url}https://$cloud_server_ip:$cloud_server_port${nc}"
+echo -e "${msg} to use your owncloud whenever you wish!${nc}"
+echo " "
+echo " "
+echo " "
+echo -e "${emp} Memory Caching ${msg}is an optional feature that is not enabled by default${nc}"
+echo -e "${msg} This is entirely optional and any messages about it can be safely ignored.${nc}"
+echo -e "${msg} If you wish to enable it, you can do so via the 'Other Options' menu.${nc}"
+echo " "
+echo " "
 echo " "
 echo -e "${msg} If you need any help, visit the forums here:${nc}"
 echo -e "${url} http://forums.nas4free.org/viewtopic.php?f=79&t=9383${nc}"
+echo -e "${msg} Or jump on my Discord server${nc}"
+echo -e "${url} https://discord.gg/0bXnhqvo189oM8Cr${nc}"
 echo -e "${sep}"
+echo " "
 }
 
 ################################################################################
@@ -480,9 +536,93 @@ echo always_populate_raw_post_data = -1 > /usr/local/etc/php.ini
 # TODO: Merge owncloud_update.sh in to this script.
 ################################################################################
 
-updatecloud ()
+update.owncloud ()
 {
-echo -e "${emp} This part of the script is unfinished currently :("
+echo " "
+echo -e "${sep}"
+echo -e "${msg}     Welcome to the OwnCloud Updater!${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${msg}     Let's start with downloading the update.${nc}"
+echo -e "${sep}"
+echo " "
+
+cd "/tmp"
+fetch "https://download.owncloud.org/community/owncloud-${owncloud_update}.tar.bz2"
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}     Stop the web server until the update is done.${nc}"
+echo -e "${sep}"
+echo " "
+
+/usr/local/etc/rc.d/lighttpd stop
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}     Create backup.${nc}"
+echo -e "${sep}"
+echo " "
+
+# Create inital backup folder if it doesn't exist
+mkdir -p /usr/local/www/.owncloud-backup
+
+# Copy current install to backup directory
+# mv /usr/local/www/owncloud  /usr/local/www/.owncloud-backup/owncloud-${backupdate} # NOTE: May not need this but leaving it in just in case
+cp -R /usr/local/www/owncloud  /usr/local/www/.owncloud-backup/owncloud-${backupdate}
+
+echo -e "${msg} Backup of current install made in:${nc}"
+echo -e "${qry}     /usr/local/www/.owncloud-backup/owncloud-${nc}\033[1;36m${backupdate}${nc}"
+echo -e "${msg} Keep note of this just in case something goes wrong with the update${nc}"
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}     Now to extract OwnCloud in place of the old install.${nc}"
+echo -e "${sep}"
+echo " "
+
+tar xf "owncloud-${owncloud_update}.tar.bz2" -C /usr/local/www
+echo " Done!"
+# Give permissions to www
+chown -R www:www /usr/local/www/
+
+#echo " " # NOTE: May not need the next few lines but leaving them in just in case
+#echo -e "${sep}"
+#echo -e "${msg}     Restore owncloud config, /data & /themes${nc}"
+#echo -e "${sep}"
+#echo " "
+
+# cp -R /usr/local/www/.owncloud-backup/owncloud-${backupdate}/data /usr/local/www/owncloud/
+# cp -R /usr/local/www/.owncloud-backup/owncloud-${backupdate}/themes/* /usr/local/www/owncloud/
+# cp /usr/local/www/.owncloud-backup/owncloud-${backupdate}/config/config.php /usr/local/www/owncloud/config/
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}     Starting the web server back up${nc}"
+echo -e "${sep}"
+echo " "
+
+/usr/local/etc/rc.d/lighttpd start
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} That should be it!${nc}"
+echo -e "${msg} Now head to your OwnCloud webpage and make sure everything is working correctly.${nc}"
+echo " "
+echo -e "${msg} If something went wrong you can do the following to restore the old install:${nc}"
+echo -e "${cmd}   rm -r /usr/local/www/owncloud${nc}"
+echo -e "${cmd}   mv /usr/local/www/.owncloud-backup/owncloud-${backupdate} /usr/local/www/owncloud${nc}"
+echo " "
+echo -e "${msg} After you check to make sure everything is working fine as expected,${nc}"
+echo -e "${msg} You can safely remove backups with this command (May take some time):${nc}"
+echo -e "${cmd}   rm -r /usr/local/www/.owncloud-backup${nc}"
+echo -e "${alt} THIS WILL REMOVE ANY AND ALL BACKUPS MADE BY THIS SCRIPT${nc}"
+echo " "
+echo -e "${sep}"
+echo " "
 }
 
 
@@ -670,12 +810,14 @@ esac
 confirm.update.cloud ()
 {
 # Confirm with the user
+echo -e "${alt} This updater is untested and may not work at all${nc}"
+echo -e "${msg} Proceed at your own risk${nc}"
 echo " Highly recommended to Backup first"
 read -r -p "   Confirm Update of OwnCloud? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              updatecloud
+              update.owncloud
                ;;
     *)
               # Otherwise exit...
@@ -717,7 +859,7 @@ mainmenu=""
 while [ "$choice" != "q,i,h" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} OwnCloud Script - Version: 2.0.6 (April 4, 2016)"
+        echo -e "${inf} OwnCloud Script - Version: 2.0.7 (April 4, 2016)"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "

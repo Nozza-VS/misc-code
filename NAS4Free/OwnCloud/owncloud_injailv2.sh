@@ -1,5 +1,10 @@
 #!/bin/sh
-# OwnCloud Script - Version: 2.0.4 (March 31, 2016)
+# OwnCloud Script v2            Version: 2.0.5 (April 4, 2016)
+# By Ashley Townsend (Nozza)    Copyright: Beerware License
+################################################################################
+# While using "nano" to edit this script (nano /aioscript.sh),
+# Use the up, down, left and right arrow keys to navigate. Once done editing,
+# Press "X" while holding "Ctrl", Press "Y" then press "Enter" to save changes
 ################################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
@@ -338,15 +343,48 @@ done
 ##### OTHER OPTIONS
 ################################################################################
 
-enablememcache ()
+owncloud.enablememcache ()
 {
-echo -e "${msg} This part of the script is unfinished currently :("
-#echo -e "${msg} This is entirely optional. Head to this file:${nc}"
-#echo -e "\033[1;36m    /usr/local/www/owncloud/config/config.php${nc} ${msg}and add:${nc}"
-#echo -e "\033[1;33m    'memcache.local' => '\OC\Memcache\APCu',${nc}"
-#echo -e "${msg} right above the last line.${nc}"
-#echo -e "${msg} Once you've edited this file, restart the server with:${nc}"
-#/usr/local/etc/rc.d/lighttpd restart
+
+while [ "$choice" ]
+do
+        echo "  'memcache.local' => '\OC\Memcache\APCu'," >> /usr/local/www/owncloud/config/memcache.txt
+        cp /usr/local/www/owncloud/config/config.php /usr/local/www/owncloud/config/old_config.bak
+        cat "/usr/local/www/owncloud/config/old_config.bak" | \
+	        sed '21r /usr/local/www/owncloud/config/memcache.txt' > \
+            "/usr/local/www/owncloud/config/config.php"
+        rm /usr/local/www/owncloud/config/memcache.txt
+
+        /usr/local/etc/rc.d/lighttpd restart
+
+        echo " "
+        echo "${sep}"
+        echo " "
+
+        echo -e " Head to your owncloud admin page/refresh it"
+        echo -e " There should no longer be a message at the top about memory caching"
+        echo -e " If it didn't work follow these steps:"
+        echo -e " "
+        echo -e "${msg} This is entirely optional. Edit config.php:${nc}"
+        echo -e "${msg} Default location is:${nc}"
+        echo -e "\033[1;36m    /usr/local/www/owncloud/config/config.php${nc}"
+        echo -e "${msg} Add the following right above the last line:${nc}"
+        echo -e "\033[1;33m    'memcache.local' => '\OC\Memcache\APCu',${nc}"
+        echo " "
+        echo -e "${msg} Once you've saved the file, restart the server with:${nc}"
+        echo -e "${cmd}    /usr/local/etc/rc.d/lighttpd restart"
+        echo " "
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
 }
 
 howtofinishsetup ()
@@ -407,6 +445,7 @@ case "$response" in
               cat "/usr/local/www/owncloud/config/old_config.bak" | \
                 sed '8r /usr/local/www/owncloud/config/trusted.txt' > \
                 "/usr/local/www/owncloud/config/config.php"
+              rm /usr/local/www/owncloud/config/trusted.txt
               echo -e " Done, continuing with the rest of the script"
                ;;
     *)
@@ -517,7 +556,7 @@ do
 
         case $choice in
             '1') echo -e "${inf} Enabling Memory Caching..${nc}"
-                enablememcache
+                owncloud.enablememcache
                 ;;
             'm') return
                 ;;

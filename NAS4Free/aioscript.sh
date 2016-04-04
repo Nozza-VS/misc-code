@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script                    Version: 1.0.13.1 (April 3, 2016)
+# AIO Script                    Version: 1.0.14 (April 4, 2016)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -43,8 +43,10 @@ jail_ip="192.168.1.200"     # ! No need to change this for OwnCloud installs !
                             # MUST be different to cloud_server_ip if you have
                             # installed OwnCloud previously.
 ################################################################################
-###! THEBRIG CONFIG !###
+###! EMBY CONFIG !###
+emby_update_ver="3.0.5912"  # You may use the version number or use "latest"
 
+###! THEBRIG CONFIG !###
 # Define where to install TheBrig
 thebriginstalldir="/mnt/Storage/System/Jails"
 thebrigbranch="alcatraz"    # Define which version of TheBrig to install
@@ -2241,8 +2243,55 @@ echo " "
 #------------------------------------------------------------------------------#
 ### EMBY SERVER UPDATE
 
-update.emby ()
+update.emby.git ()
 {
+
+create.emby.backup ()
+{
+# Confirm with the user
+echo -e "${msg} Recommended if you haven't done so already:${nc}"
+read -r -p "   Create a backup before updating? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then make a backup before proceeding
+              echo " "
+              echo -e "${sep}"
+              echo -e "${msg}   First, make sure we have rsync and then${nc}"
+              echo -e "${msg}   we will use it to create a backup${nc}"
+              echo -e "${sep}"
+              echo " "
+
+              # Using rsync rather than cp so we can see progress actually happen on the backup for large servers.
+              pkg install -y rsync
+
+
+              # If yes, then create backup
+              echo " "
+              echo -e "${sep}"
+              echo -e "${msg} Running backups${nc}"
+              echo -e "${sep}"
+              echo " "
+
+              echo -e "${emp} Application backup${nc}"
+              mkdir -p /usr/local/lib/emby-server-backups/${date} # Using -p in case you've never run the script before or you have deleted this folder
+              rsync -a --info=progress2 /usr/local/lib/emby-server/ /usr/local/lib/emby-server-backups/${date}
+              echo -e "${fin}    Application backup done..${nc}"
+
+              echo " "
+
+              echo -e "${emp} Server data backup ${inf}(May take a while)${nc}"
+              mkdir -p /var/db/emby-server-backups/${date}
+              rsync -a --info=progress2 /var/db/emby-server/ /var/db/emby-server-backups/${date}
+              echo -e "${fin}    Server backup done.${nc}"
+              ;;
+    *)
+              # Otherwise continue with update...
+              echo " "
+              echo -e "${inf} Skipping backup..${nc}"
+              ;;
+esac
+}
+
 echo " "
 echo -e "${sep}"
 echo -e "${msg}   Emby Updater (Faster Updates)${nc}"
@@ -2251,32 +2300,11 @@ echo " "
 echo " "
 echo " "
 echo -e "${sep}"
-echo -e "${msg}   Let's start with a backup.${nc}"
-echo -e "${msg}   First, make sure we have rsync and then${nc}"
-echo -e "${msg}   we will use it to create a backup${nc}"
+echo -e "${msg}   Shall we create a backup before updating?${nc}"
 echo -e "${sep}"
 echo " "
 
-# Using rsync rather than cp so we can see progress actually happen on the backup for large servers.
-pkg install -y rsync
-
-echo " "
-echo -e "${sep}"
-echo -e "${msg} Create backups${nc}" # TODO: Give user option to backup or not
-echo -e "${sep}"
-echo " "
-
-echo -e "${emp} Application backup${nc}"
-mkdir -p /usr/local/lib/emby-server-backups/${date} # Using -p in case you've never run the script before or you have deleted this folder
-rsync -a --info=progress2 /usr/local/lib/emby-server/ /usr/local/lib/emby-server-backups/${date}
-echo -e "${fin}    Application backup done..${nc}"
-
-echo " "
-
-echo -e "${emp} Server data backup ${inf}(May take a while)${nc}"
-mkdir -p /var/db/emby-server-backups/${date}
-rsync -a --info=progress2 /var/db/emby-server/ /var/db/emby-server-backups/${date}
-echo -e "${fin}    Server backup done.${nc}"
+create.emby.backup
 
 echo " "
 echo -e "${sep}"
@@ -2284,7 +2312,7 @@ echo -e "${msg}   Grab the update${nc}"
 echo -e "${sep}"
 echo " "
 
-fetch --no-verify-peer -o /tmp/emby-${embyver}.zip https://github.com/MediaBrowser/Emby/releases/download/${embyver}/Emby.Mono.zip
+fetch --no-verify-peer -o /tmp/emby-${emby_update_ver}.zip https://github.com/MediaBrowser/Emby/releases/download/${emby_update_ver}/Emby.Mono.zip
 
 echo " "
 echo -e "${sep}"
@@ -2300,7 +2328,7 @@ echo -e "${msg} Now to extract the download and replace old version${nc}"
 echo -e "${sep}"
 echo " "
 
-unzip -o "/tmp/emby-${embyver}.zip" -d /usr/local/lib/emby-server
+unzip -o "/tmp/emby-${emby_update_ver}.zip" -d /usr/local/lib/emby-server
 
 echo " "
 echo -e "${sep}"
@@ -2312,19 +2340,24 @@ service emby-server start
 
 echo " "
 echo -e "${sep}"
+echo " "
 echo -e "${msg} That should be it!${nc}"
 echo -e "${msg} Now head to your Emby dashboard to ensure it's up to date.${nc}"
-echo -e "${msg} (Refresh the page if you already have Emby open)${nc}"
+echo -e "${msg}    (Refresh the page if you already have Emby open)${nc}"
 echo " "
 echo " "
 echo " "
-echo -e "${msg} If something went wrong you can do the following to restore the old version:${nc}"
+echo -e "${msg} If something went wrong you can do this to restore the old app version:${nc}"
+echo -e "${cmd}   service emby-server stop${nc}"
 echo -e "${cmd}   rm -r /usr/local/lib/emby-server${nc}"
 echo -e "${cmd}   mv /usr/local/lib/emby-server-backups/${date} /usr/local/lib/emby-server${nc}"
+echo -e "${cmd}   service emby-server start${nc}"
 echo " "
 echo -e "${msg} And use this to restore your server database/settings:${nc}"
+echo -e "${cmd}   service emby-server stop${nc}"
 echo -e "${cmd}   rm -r /var/db/emby-server${nc}"
 echo -e "${cmd}   mv /var/db/emby-server-backups/${date} /var/db/emby-server${nc}"
+echo -e "${cmd}   service emby-server start${nc}"
 echo -e "${sep}"
 echo " "
 echo -e "${msg} You can get in touch with me any of the ways listed here:${nc}"
@@ -2340,6 +2373,54 @@ echo " "
 
 update.emby.safe ()
 {
+
+create.emby.backup ()
+{
+# Confirm with the user
+echo -e "${msg} Recommended if you haven't done so already:${nc}"
+read -r -p "   Create a backup before updating? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then make a backup before proceeding
+              echo " "
+              echo -e "${sep}"
+              echo -e "${msg}   First, make sure we have rsync and then${nc}"
+              echo -e "${msg}   we will use it to create a backup${nc}"
+              echo -e "${sep}"
+              echo " "
+
+              # Using rsync rather than cp so we can see progress actually happen on the backup for large servers.
+              pkg install -y rsync
+
+
+              # If yes, then create backup
+              echo " "
+              echo -e "${sep}"
+              echo -e "${msg} Running backups${nc}"
+              echo -e "${sep}"
+              echo " "
+
+              echo -e "${emp} Application backup${nc}"
+              mkdir -p /usr/local/lib/emby-server-backups/${date} # Using -p in case you've never run the script before or you have deleted this folder
+              rsync -a --info=progress2 /usr/local/lib/emby-server/ /usr/local/lib/emby-server-backups/${date}
+              echo -e "${fin}    Application backup done..${nc}"
+
+              echo " "
+
+              echo -e "${emp} Server data backup ${inf}(May take a while)${nc}"
+              mkdir -p /var/db/emby-server-backups/${date}
+              rsync -a --info=progress2 /var/db/emby-server/ /var/db/emby-server-backups/${date}
+              echo -e "${fin}    Server backup done.${nc}"
+              ;;
+    *)
+              # Otherwise continue with update...
+              echo " "
+              echo -e "${inf} Skipping backup..${nc}"
+              ;;
+esac
+}
+
+
 echo " "
 echo -e "${sep}"
 echo -e "${msg}   Emby Updater (Safe but slow updates)${nc}"
@@ -2348,32 +2429,12 @@ echo " "
 echo " "
 echo " "
 echo -e "${sep}"
-echo -e "${msg}   Let's start with a backup.${nc}"
-echo -e "${msg}   First, make sure we have rsync and then${nc}"
-echo -e "${msg}   we will use it to create a backup${nc}"
+echo -e "${sep}"
+echo -e "${msg}   Shall we create a backup before updating?${nc}"
 echo -e "${sep}"
 echo " "
 
-# Using rsync rather than cp so we can see progress actually happen on the backup for large servers.
-pkg install -y rsync
-
-echo " "
-echo -e "${sep}"
-echo -e "${msg} Create backups${nc}" # TODO: Give user option to backup or not
-echo -e "${sep}"
-echo " "
-
-echo -e "${emp} Application backup${nc}"
-mkdir -p /usr/local/lib/emby-server-backups/${date} # Using -p in case you've never run the script before or you have deleted this folder
-rsync -a --info=progress2 /usr/local/lib/emby-server/ /usr/local/lib/emby-server-backups/${date}
-echo -e "${fin}    Application backup done..${nc}"
-
-echo " "
-
-echo -e "${emp} Server data backup ${inf}(May take a while)${nc}"
-mkdir -p /var/db/emby-server-backups/${date}
-rsync -a --info=progress2 /var/db/emby-server/ /var/db/emby-server-backups/${date}
-echo -e "${fin}    Server backup done.${nc}"
+create.emby.backup
 
 echo " "
 echo -e "${sep}"
@@ -2397,13 +2458,23 @@ echo -e "${msg} the other update method.${nc}"
 echo " "
 echo " "
 echo " "
-echo -e "${msg} If something went wrong you can do the following to restore the old version:${nc}"
+echo -e "${msg} If something went wrong you can do this to restore the old app version:${nc}"
+echo -e "${cmd}   service emby-server stop${nc}"
 echo -e "${cmd}   rm -r /usr/local/lib/emby-server${nc}"
 echo -e "${cmd}   mv /usr/local/lib/emby-server-backups/${date} /usr/local/lib/emby-server${nc}"
+echo -e "${cmd}   service emby-server start${nc}"
 echo " "
 echo -e "${msg} And use this to restore your server database/settings:${nc}"
+echo -e "${cmd}   service emby-server stop${nc}"
 echo -e "${cmd}   rm -r /var/db/emby-server${nc}"
 echo -e "${cmd}   mv /var/db/emby-server-backups/${date} /var/db/emby-server${nc}"
+echo -e "${cmd}   service emby-server start${nc}"
+echo -e "${sep}"
+echo " "
+echo -e "${msg} You can get in touch with me any of the ways listed here:${nc}"
+echo -e "${url} http://vengefulsyndicate.com/about-us${nc}"
+echo -e "${msg}      Happy Streaming!${nc}"
+echo " "
 echo -e "${sep}"
 echo " "
 }
@@ -3085,7 +3156,7 @@ echo " "
 echo -e "${msg} If you need to restart the server, you can with:${nc}"
 echo -e "${cmd}    service emby-server restart${nc}"
 echo " "
-echo -e "${qry} Reminder${msg}: make sure you have modified the 'embyver'${nc}"
+echo -e "${qry} Reminder${msg}: make sure you have modified the 'emby_update_ver'${nc}"
 echo -e "${msg} line at the top of this script to the latest version.${nc}"
 echo " "
 echo -e "${msg} Only continue if you are 100% sure${nc}"
@@ -3095,7 +3166,7 @@ read -r -p "   Confirm Update of Emby Media Server? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              update.emby
+              update.emby.git
                ;;
     *)
               # Otherwise exit...
@@ -4343,7 +4414,7 @@ mainmenu=""
 while [ "$choice" != "q,a,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.13.1 (April 3, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.14 (April 4, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "

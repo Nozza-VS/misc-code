@@ -1,5 +1,5 @@
 #!/bin/sh
-# OwnCloud Script v2            Version: 2.0.5 (April 4, 2016)
+# OwnCloud Script v2            Version: 2.0.6 (April 4, 2016)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -717,7 +717,7 @@ mainmenu=""
 while [ "$choice" != "q,i,h" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} OwnCloud Script - Version: 2.0.4 (March 31, 2016)"
+        echo -e "${inf} OwnCloud Script - Version: 2.0.6 (April 4, 2016)"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
@@ -760,8 +760,10 @@ do
             'h')
                 help
                 ;;
-            'q') echo -e "${alt}        Exiting script!${nc}"
-                echo " "
+            'q') echo " "
+                echo -e "${alt}        Quitting, Bye!${nc}"
+                echo  " "
+                exit
                 ;;
             *)   echo -e "${emp}        Invalid choice, please try again${nc}"
                 ;;

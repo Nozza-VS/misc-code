@@ -1,6 +1,11 @@
 #!/bin/sh
-# Script Version: 1.15.1 (April 2, 2016)
-###########################################################################
+# OwnCloud Script               Version: 1.16 (April 4, 2016)
+# By Ashley Townsend (Nozza)    Copyright: Beerware License
+################################################################################
+# While using "nano" to edit this script (nano /aioscript.sh),
+# Use the up, down, left and right arrow keys to navigate. Once done editing,
+# Press "X" while holding "Ctrl", Press "Y" then press "Enter" to save changes
+################################################################################
 ##### START OF CONFIGURATION SECTION #####
 #
 #   In order to use this script, the following variables must be defined by the user:
@@ -28,7 +33,7 @@ owncloud_version="9.0.0"
 # Press "X" while holding "Ctrl", Press "Y" then press "Enter" to save changes
 ### No need to edit below here ###
 ##### END OF CONFIGURATION SECTION #####
-###########################################################################
+################################################################################
 
 
 
@@ -91,6 +96,7 @@ case "$response" in
               cat "/usr/local/www/owncloud/config/old_config.bak" | \
                 sed '8r /usr/local/www/owncloud/config/trusted.txt' > \
                 "/usr/local/www/owncloud/config/config.php"
+              rm /usr/local/www/owncloud/config/trusted.txt
               echo -e " Done, continuing with the rest of the script"
                ;;
     *)
@@ -373,6 +379,7 @@ echo " "
 #cat "/usr/local/www/owncloud/config/old_config.bak" | \
 #	sed '21r /usr/local/www/owncloud/config/memcache.txt' > \
 #    "/usr/local/www/owncloud/config/config.php"
+#rm /usr/local/www/owncloud/config/memcache.txt
 
 echo " "
 echo -e "${sep}"

@@ -1,5 +1,9 @@
 # Changelog
 
+### Version: 1.0.14 (April 4, 2016)
++ Didn't realize i forgot the emby update version variable so added that
+* Made the backup in both of the Emby updaters optional
+
 ### Version: 1.0.13.1 (April 3, 2016)
 * Forgot to comment out a line which broke the script, oops! Fixed now
 

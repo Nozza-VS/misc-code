@@ -1,14 +1,12 @@
 #!/bin/sh
 
 # Update script for Emby Media Server (AKA MediaBrowser)
-# Version 1.06 (March 31, 2016)
+# Version 1.07 (April 4, 2016)
 # As ports official freebsd ports tree takes ages to accept updates
 # here is a simple script to grab the latest version and upgrade manually.
 
 # Emby version to download
-#embyver="latest" # Uncomment to get the latest
-embyver="3.0.5911"  # Current latest version as of March 10, 2016.
-                    # The current latest BSD package is version 3.0.5781.2_1
+emby_update_ver="3.0.5912"  # May use version number OR "latest"
 
 # Grab the date & time to be used later
 date=$(date +"%Y.%m.%d-%I.%M%p")
@@ -62,7 +60,7 @@ echo " "
 echo -e "${msg} If you need to restart the server, you can with:${nc}"
 echo -e "${cmd}    service emby-server restart${nc}"
 echo " "
-echo -e "${qry} Reminder${msg}: make sure you have modified the 'embyver'${nc}"
+echo -e "${qry} Reminder${msg}: make sure you have modified the 'emby_update_ver'${nc}"
 echo -e "${msg} line at the top of this script to the latest version.${nc}"
 echo " "
 echo -e "${msg} Only continue if you are 100% sure${nc}"
@@ -118,7 +116,7 @@ echo -e "${msg}   Grab the update${nc}"
 echo -e "${sep}"
 echo " "
 
-fetch --no-verify-peer -o /tmp/emby-${embyver}.zip https://github.com/MediaBrowser/Emby/releases/download/${embyver}/Emby.Mono.zip
+fetch --no-verify-peer -o /tmp/emby-${emby_update_ver}.zip https://github.com/MediaBrowser/Emby/releases/download/${emby_update_ver}/Emby.Mono.zip
 
 echo " "
 echo -e "${sep}"
@@ -134,7 +132,7 @@ echo -e "${msg} Now to extract the download and replace old version${nc}"
 echo -e "${sep}"
 echo " "
 
-unzip -o "/tmp/emby-${embyver}.zip" -d /usr/local/lib/emby-server
+unzip -o "/tmp/emby-${emby_update_ver}.zip" -d /usr/local/lib/emby-server
 
 service emby-server start
 

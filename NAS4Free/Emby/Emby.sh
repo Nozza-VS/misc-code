@@ -1,5 +1,5 @@
 #!/bin/sh
-# Emby Script                   Version: 1.0.2 (April 6, 2016)
+# Emby Script                   Version: 1.0.3 (April 6, 2016)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -32,6 +32,7 @@ sep='\033[1;30m-------------------------------------------------------\033[0m'  
 cmd='\033[1;35m'    # Command to be entered
 fin='\033[0;32m'    # Green Text
 inf='\033[0;33m'    # Information Text
+ca='\033[1;30m'     # Currently Unavailable (Dark Grey Text)
 
 # Define our bail out shortcut function anytime there is an error - display
 # the error message, then exit returning 1.
@@ -40,12 +41,92 @@ exerr () { echo -e "$*" >&2 ; exit 1; }
 
 
 ################################################################################
+##### CONTACT
+################################################################################
+
+gethelp ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} Ways of contacting me / Getting help from others:${nc}"
+        echo -e "${sep}"
+        echo " "
+        echo -e "${fin}   ${ul}My Discord Support${fin} (Usually faster responses):${nc}"
+        echo -e "${msg}      https://discord.gg/0bXnhqvo189oM8Cr${nc}"
+        echo -e "${fin}   ${ul}My Email${fin} (Might add this later, Discord is easier though):${nc}"
+        echo -e "${msg}      myemail@domain.com${nc}"
+        echo -e "${fin}   ${ul}Forums:${nc}"
+        echo -e "${msg}      VS Forums:${nc}"
+        echo -e "${url}      forums.vengefulsyndicate.com${nc}"
+        echo " "
+        echo -e "${fin}   Find an issue with the script or have a suggestion?${nc}"
+        echo -e "${msg}   Drop a message using the above or head here:${nc}"
+        echo -e "${url}      https://github.com/Nostalgist92/misc-code/issues"
+        echo " "
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+}
+
+
+
+################################################################################
 ##### INFORMATION / ABOUT
 ################################################################################
 
 #------------------------------------------------------------------------------#
-### ABOUT: EMBY
+### ABOUT
 #------------------------------------------------------------------------------#
+
+about ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} About: Emby Media Server${nc}"
+        echo " "
+        echo -e "${msg} Emby Server is a home media server built on top of other popular open source${nc}"
+        echo -e "${msg} technologies such as Service Stack, jQuery, jQuery  mobile, and Mono.${nc}"
+        echo " "
+        echo -e "${msg} It features a REST-based API with built-in documention to  facilitate client${nc}"
+        echo -e "${msg} development. It also has client libraries for API to enable rapid development.${nc}"
+        echo " "
+        echo -e "${sep}"
+        echo " "
+        echo -e "${inf} About: This Script${nc}"
+        echo -e "${msg} The aim of this script is to provide an as automated as possible${nc}"
+        echo -e "${msg} way of setting up your own Emby Media Server${nc}"
+        echo " "
+        echo -e "${msg} Wish to contribute? Feel free to drop me a message anyhere listed in the${nc}"
+        echo -e "${msg} 'Contact / Get Help' menu.${nc}"
+        echo " "
+        echo -e "${msg} Like my work enough to buy me a pizza? Please do!${nc}"
+        echo -e "${url} https://www.paypal.me/AshleyTownsend${nc}"
+        echo -e "${sep}"
+        echo " "
+
+        echo -e "${msep}"
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+}
 
 
 
@@ -582,12 +663,12 @@ echo " "
 
 mainmenu=""
 
-while [ "$choice" != "q" ]
+while [ "$choice" != "a,h,i,q" ]
 do
         echo -e "${sep}"
         echo " "
         echo -e "${fin} Emby Server Script${nc}"
-        echo -e "${inf}    Script Version: 1.0.2 (April 6, 2016)"
+        echo -e "${inf}    Script Version: 1.0.3 (April 6, 2016)"
         echo " "
         echo -e "${emp} Main Menu"
         echo " "
@@ -596,6 +677,11 @@ do
         echo -e "${fin}   1)${msg} Install${nc}"
         echo -e "${fin}   2)${msg} Update${nc}"
         echo -e "${fin}   3)${msg} Backup${nc}"
+        echo " "
+        echo -e "${ca}  a) About Emby${nc}"
+        echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
+        echo -e "${ca}  h) Get Help${nc}"
+        echo " "
         echo " "
         echo -e "${alt}  q) Quit${nc}"
         echo -e "${sep}"
@@ -612,8 +698,18 @@ do
             '3')
                 confirm.backup.emby
                 ;;
+            'a')
+                about
+                ;;
+            'h')
+                gethelp
+                ;;
+            #'i')
+            #    moreinfo.submenu.emby
+            #    ;;
             'q') echo -e "${alt}        Exiting script!${nc}"
                 echo " "
+                exit
                 ;;
             *)   echo -e "${emp}        Invalid choice, please try again${nc}"
                 ;;

@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script                    Version: 1.0.15 (April 6, 2016)
+# AIO Script                    Version: 1.0.15.1 (April 6, 2016)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -94,10 +94,9 @@ emp='\033[1;31m'    # Emphasis Text
 msg='\033[1;37m'    # Message Text
 url='\033[1;32m'    # URL
 qry='\033[0;36m'    # Query Text
-sep='\033[1;30m----------------------------------------------------------------------\033[0m'
-# ^ Line Separator
 ssep='\033[1;30m#----------------------#\033[0m'    # Small Line Separator
 msep='\033[1;30m#--------------------------------------#\033[0m'    # Medium Line Separator
+sep='\033[1;30m----------------------------------------------------------------------\033[0m'   # Line Separator
 cmd='\033[1;35m'    # Command to be entered
 fin='\033[0;32m'    # Green Text
 inf='\033[0;33m'    # Information Text
@@ -207,11 +206,11 @@ done
 
 
 ################################################################################
-##### INFORMATION / HOW-TO'S / OTHER INSTRUCTIONS
+##### INFORMATION / ABOUT
 ################################################################################
 
 #------------------------------------------------------------------------------#
-### ABOUT: MYSQL
+### ABOUT: THIS SCRIPT
 
 about.thisscript ()
 {
@@ -597,13 +596,17 @@ done
 
 #------------------------------------------------------------------------------#
 ### Clean ports tree
+
+clean.portstree ()
+{
 echo " rm -rf /usr/ports/*/*/work"
+}
 
 
 
-#------------------------------------------------------------------------------#
-### HOW-TO'S
-#------------------------------------------------------------------------------#
+################################################################################
+##### HOW-TO'S
+################################################################################
 
 #------------------------------------------------------------------------------#
 ### OWNCLOUD - HOW-TO: FINISH SETUP
@@ -651,6 +654,43 @@ done
 
 
 
+################################################################################
+##### HOW-TO'S: EMBY
+################################################################################
+
+#------------------------------------------------------------------------------#
+### EMBY - HOW-TO: RESTART THE SERVER
+
+emby.howto.restartserver ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} Emby - How to restart your server${nc}"
+        echo -e "${sep}"
+        echo " "
+        echo -e "${msg} If you need to restart the server, you can with:${nc}"
+        echo -e "${cmd}    service emby-server restart${nc}"
+        echo " "
+
+        echo -e "${msep}"
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+}
+
+################################################################################
+##### HOW-TO'S: THEBRIG
+################################################################################
+
 #------------------------------------------------------------------------------#
 ### THEBRIG - HOW-TO: INSTALL THEBRIG
 #------------------------------------------------------------------------------#
@@ -697,8 +737,6 @@ do
         esac
 done
 }
-
-
 
 #------------------------------------------------------------------------------#
 ### THEBRIG - HOW-TO: CREATE A JAIL
@@ -751,8 +789,6 @@ do
 done
 }
 
-
-
 #------------------------------------------------------------------------------#
 ### THEBRIG - HOW-TO: ENABLE PORTS TREE
 #------------------------------------------------------------------------------#
@@ -781,8 +817,6 @@ do
         esac
 done
 }
-
-
 
 #------------------------------------------------------------------------------#
 ### THEBRIG - ABOUT: RUDIMENTARY CONFIGURATION
@@ -3168,9 +3202,6 @@ echo " "
 echo -e "${emp} CAUTION: Things can go wrong! I highly suggest${nc}"
 echo -e "${emp}          having a backup just in case!${nc}"
 echo " "
-echo -e "${msg} If you need to restart the server, you can with:${nc}"
-echo -e "${cmd}    service emby-server restart${nc}"
-echo " "
 echo -e "${qry} Reminder${msg}: make sure you have modified the 'emby_update_ver'${nc}"
 echo -e "${msg} line at the top of this script to the latest version.${nc}"
 echo -e "${msg}    (Currently set to: ${emby_update_ver})${nc}"
@@ -4428,7 +4459,7 @@ mainmenu=""
 while [ "$choice" != "q,a,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.15 (April 6, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.15.1 (April 6, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "

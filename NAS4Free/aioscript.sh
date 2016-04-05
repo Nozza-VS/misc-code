@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script                    Version: 1.0.15.1 (April 6, 2016)
+# AIO Script                    Version: 1.0.15.2 (April 6, 2016)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -2288,7 +2288,7 @@ echo " "
 update.emby ()
 {
 
-continue ()
+update.emby.continue ()
 {
 while [ "$choice" ]
 do
@@ -2394,7 +2394,7 @@ case "$response" in
               echo -e "${msg} and then press 'Enter'${nc}"
               echo " "
 
-              continue
+              update.emby.continue
 
               cd /usr/ports/graphics/ImageMagick && make deinstall
               make clean && make clean-depends
@@ -2407,7 +2407,7 @@ case "$response" in
               echo -e "${sep}"
               echo " "
 
-              continue
+              update.emby.continue
 
               make install clean
 
@@ -2426,7 +2426,7 @@ case "$response" in
               echo -e "${sep}"
               echo " "
 
-              continue
+              update.emby.continue
 
               cd /usr/ports/multimedia/ffmpeg && make deinstall
               make clean
@@ -2440,7 +2440,7 @@ case "$response" in
               echo -e "${sep}"
               echo " "
 
-              continue
+              update.emby.continue
 
               make install clean
 
@@ -4459,7 +4459,7 @@ mainmenu=""
 while [ "$choice" != "q,a,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.15.1 (April 6, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.15.2 (April 6, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "

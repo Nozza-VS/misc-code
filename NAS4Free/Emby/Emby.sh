@@ -1,13 +1,16 @@
 #!/bin/sh
-# AIO script for Emby Media Server (AKA MediaBrowser)
-# Version 1.0.1 (March 31, 2016)
+# Emby Script                   Version: 1.0.2 (April 6, 2016)
+# By Ashley Townsend (Nozza)    Copyright: Beerware License
+################################################################################
+# While using "nano" to edit this script (nano /aioscript.sh),
+# Use the up, down, left and right arrow keys to navigate. Once done editing,
+# Press "X" while holding "Ctrl", Press "Y" then press "Enter" to save changes
 ################################################################################
 ##### START OF CONFIGURATION SECTION #####
 ######
 # Emby version to download
-#embyver="latest" # Uncomment to get latest, must comment out the next line too.
-embyver="3.0.5911"  # Current latest version as of March 28, 2016.
-                    # The current latest BSD package is version 3.0.5781.2_1
+emby_update_ver="3.0.5912"  # You may use the version number or use "latest"
+                            # Current latest version as of April 6, 2016.
 #####
 ### No need to edit below here ###
 ##### END OF CONFIGURATION SECTION #####
@@ -33,6 +36,58 @@ inf='\033[0;33m'    # Information Text
 # Define our bail out shortcut function anytime there is an error - display
 # the error message, then exit returning 1.
 exerr () { echo -e "$*" >&2 ; exit 1; }
+
+
+
+################################################################################
+##### INFORMATION / ABOUT
+################################################################################
+
+#------------------------------------------------------------------------------#
+### ABOUT: EMBY
+#------------------------------------------------------------------------------#
+
+
+
+################################################################################
+##### HOW-TO'S
+################################################################################
+
+#------------------------------------------------------------------------------#
+### EMBY - HOW-TO: RESTART THE SERVER
+#------------------------------------------------------------------------------#
+
+emby.howto.restartserver
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} Emby - How to restart your server${nc}"
+        echo -e "${sep}"
+        echo " "
+        echo -e "${msg} If you need to restart the server, you can with:${nc}"
+        echo -e "${cmd}    service emby-server restart${nc}"
+        echo " "
+
+        echo -e "${msep}"
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+}
+
+
+
+################################################################################
+##### FIXES
+################################################################################
 
 
 
@@ -76,51 +131,242 @@ echo " "
 echo -e "${sep}"
 echo -e "${msg} Using a web browser, head to ${url}yourjailip:8096${nc}"
 echo -e "${msg} to finish setting up your Emby server${nc}"
+echo -e " "
+echo -e "${msg} You should also recompile ffmpeg+imagemagick${nc}"
+echo -e "${msg} This option can be found in the Emby submenu of this script${nc}"
 echo -e "${sep}"
 echo " "
 }
 
+
+
 ################################################################################
 ##### UPDATER
 ################################################################################
-### USING LATEST VERSION FROM GITHUB
 
 update.emby ()
 {
+
+continue ()
+{
+while [ "$choice" ]
+do
+        echo " "
+        echo -e "${msep}"
+        echo -e "${emp}   Press Enter To Continue${nc}"
+        echo -e "${msep}"
+        echo " "
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+}
+
+remove.old.backups ()
+{
+read -r -p "   Remove old backups? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then make a backup before proceeding
+              rm -r /usr/local/lib/emby-server-backups/*
+              rm -r /var/db/emby-server-backups/*
+              ;;
+    *)
+              # Otherwise continue with backup...
+              echo " "
+              echo -e "${inf} Continuing with backup..${nc}"
+              ;;
+esac
+}
+
+create.emby.backup ()
+{
+# Confirm with the user
+echo -e "${msg} Recommended if you haven't done so already:${nc}"
+read -r -p "   Create a backup before updating? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then make a backup before proceeding
+              echo " "
+              echo -e "${sep}"
+              echo -e "${msg}   Would you like to remove any old backups before creating a new one?${nc}"
+              echo -e "${msg}   This helps reduce the amount of space used by backups.${nc}"
+              echo -e "${sep}"
+              echo " "
+
+              remove.old.backups
+
+              echo " "
+              echo -e "${sep}"
+              echo -e "${msg}   Make sure we have rsync and then use it to create a backup${nc}"
+              echo -e "${sep}"
+              echo " "
+
+              # Using rsync rather than cp so we can see progress actually happen on the backup for large servers.
+              pkg install -y rsync
+
+              # If yes, then create backup
+              echo " "
+              echo -e "${sep}"
+              echo -e "${msg} Running backups${nc}"
+              echo -e "${sep}"
+              echo " "
+
+              echo -e "${emp} Application backup${nc}"
+              mkdir -p /usr/local/lib/emby-server-backups/${date} # Using -p in case you've never run the script before or you have deleted this folder
+              rsync -a --info=progress2 /usr/local/lib/emby-server/ /usr/local/lib/emby-server-backups/${date}
+              echo -e "${fin}    Application backup done..${nc}"
+
+              echo " "
+
+              echo -e "${emp} Server data backup ${inf}(May take a while)${nc}"
+              mkdir -p /var/db/emby-server-backups/${date}
+              rsync -a --info=progress2 /var/db/emby-server/ /var/db/emby-server-backups/${date}
+              echo -e "${fin}    Server backup done.${nc}"
+              ;;
+    *)
+              # Otherwise continue with update...
+              echo " "
+              echo -e "${inf} Skipping backup..${nc}"
+              ;;
+esac
+}
+
+recompile.from.ports ()
+{
+# Confirm with the user
+echo -e "${msg} These steps could take some time${nc}"
+read -r -p "   Would you like to recompile these now? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then make a backup before proceeding
+              echo " "
+              echo -e "${sep}"
+              echo -e "${msg} First, lets do ImageMagick${nc}"
+              echo -e "${msg} When the options pop up, disable (By pressing space when its highlighted):${nc}"
+              echo -e "${inf}    16BIT_PIXEL   ${msg}(to increase thumbnail generation performance)${nc}"
+              echo -e "${msg} and then press 'Enter'${nc}"
+              echo " "
+
+              continue
+
+              cd /usr/ports/graphics/ImageMagick && make deinstall
+              make clean && make clean-depends
+              make config
+
+              echo " "
+              echo -e "${sep}"
+              echo -e "${msg} Press 'OK'/'Enter' if any box that follows.${nc}"
+              echo -e "${msg}    (There shouldn't be any that pop up)${nc}"
+              echo -e "${sep}"
+              echo " "
+
+              continue
+
+              make install clean
+
+              echo " "
+              echo -e "${sep}"
+              echo -e "${msg} Great, now ffmpeg${nc}"
+              echo -e "${msg} When the options pop up, enable (By pressing space when its highlighted):${nc}"
+
+              echo -e "${inf}    ASS     ${msg}(required for subtitle rendering)${nc}"
+              echo -e "${inf}    LAME    ${msg}(required for mp3 audio transcoding -${nc}"
+              echo -e "${inf}            ${msg}disabled by default due to mp3 licensing restrictions)${nc}"
+              echo -e "${inf}    OPUS    ${msg}(required for opus audio codec support)${nc}"
+              echo -e "${inf}    X265    ${msg}(required for H.265 video codec support${nc}"
+              echo -e "${msg} Then press 'OK' for every box that follows.${nc}"
+              echo -e "${msg} This one may take a while, please be patient${nc}"
+              echo -e "${sep}"
+              echo " "
+
+              continue
+
+              cd /usr/ports/multimedia/ffmpeg && make deinstall
+              make clean
+              make clean-depends
+              make config
+
+              echo " "
+              echo -e "${sep}"
+              echo -e "${msg} Press 'OK'/'Enter' for every box that follows.${nc}"
+              echo -e "${msg}    (There will be several that pop up)${nc}"
+              echo -e "${sep}"
+              echo " "
+
+              continue
+
+              make install clean
+
+              echo " "
+              echo -e "${sep}"
+              echo -e "${msg} Finished with the recompiling!${nc}"
+              echo -e "${sep}"
+              echo " "
+
+              ;;
+    *)
+              # Otherwise continue with update...
+              echo " "
+              echo -e "${inf} Skipping for now.. (You can do this later via the Emby menu)${nc}"
+              ;;
+esac
+}
+
 echo " "
 echo -e "${sep}"
-echo -e "${msg}   Let's start with a backup.${nc}"
-echo -e "${msg}   First, make sure we have rsync and then${nc}"
-echo -e "${msg}   we will use it to create a backup${nc}"
+echo -e "${msg}   Emby Updater${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Shall we create a backup before updating?${nc}"
 echo -e "${sep}"
 echo " "
 
-# Using rsync rather than cp so we can see progress actually happen on the backup for large servers.
-pkg install -y rsync
+create.emby.backup
 
 echo " "
 echo -e "${sep}"
-echo " "
-
-echo -e "${emp} Application backup${nc}"
-mkdir -p /usr/local/lib/emby-server-backups/${date} # Using -p in case you've never run the script before or you have deleted this folder
-rsync -a --info=progress2 /usr/local/lib/emby-server/ /usr/local/lib/emby-server-backups/${date}
-echo -e "${fin}    Application backup done..${nc}"
-
-echo " "
-
-echo -e "${emp} Server data backup ${inf}(May take a while)${nc}"
-mkdir -p /var/db/emby-server-backups/${date}
-rsync -a --info=progress2 /var/db/emby-server/ /var/db/emby-server-backups/${date}
-echo -e "${fin}    Server backup done.${nc}"
-
-echo " "
-echo -e "${sep}"
-echo -e "${msg}   Grab the update${nc}"
+echo -e "${msg}   Update packages${nc}"
 echo -e "${sep}"
 echo " "
 
-fetch --no-verify-peer -o /tmp/emby-${embyver}.zip https://github.com/MediaBrowser/Emby/releases/download/${embyver}/Emby.Mono.zip
+pkg update
+pkg upgrade -y
+pkg install -y emby-server # In case it gets deinstalled
+
+echo " "
+
+echo -e "${msg} Package updates done${nc}"
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Recompile ffmpeg and ImageMagick${nc}"
+echo " "
+echo -e "${msg} This is optional but to get the most out of your Emby Media Server${nc}"
+echo -e "${msg} you will need to do this. (Can also be done at a later time)${nc}"
+echo -e "${msg}    This can be done either later via Emby menus or now.${nc}"
+echo -e "${msg}    Additional information can also be found in the menu.${nc}"
+echo -e "${msg} You will also need the 'ports tree' enabled for this to work.${nc}"
+echo -e "${sep}"
+echo " "
+
+recompile.from.ports
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Grab the update from github${nc}"
+echo -e "${sep}"
+echo " "
+
+fetch --no-verify-peer -o /tmp/emby-${emby_update_ver}.zip https://github.com/MediaBrowser/Emby/releases/download/${emby_update_ver}/Emby.Mono.zip
 
 echo " "
 echo -e "${sep}"
@@ -136,7 +382,7 @@ echo -e "${msg} Now to extract the download and replace old version${nc}"
 echo -e "${sep}"
 echo " "
 
-unzip -o "/tmp/emby-${embyver}.zip" -d /usr/local/lib/emby-server
+unzip -o "/tmp/emby-${emby_update_ver}.zip" -d /usr/local/lib/emby-server
 
 echo " "
 echo -e "${sep}"
@@ -150,100 +396,31 @@ echo " "
 echo -e "${sep}"
 echo -e "${msg} That should be it!${nc}"
 echo -e "${msg} Now head to your Emby dashboard to ensure it's up to date.${nc}"
-echo -e "${msg} (Refresh the page if you already have Emby open)${nc}"
+echo -e "${msg}    (Refresh the page if you already have Emby open)${nc}"
 echo " "
-echo " "
-echo " "
-echo -e "${msg} If something went wrong you can do the following to restore the old version:${nc}"
+echo -e "${msg} If something went wrong you can do this to restore the old app version:${nc}"
+echo -e "${cmd}   service emby-server stop${nc}"
 echo -e "${cmd}   rm -r /usr/local/lib/emby-server${nc}"
 echo -e "${cmd}   mv /usr/local/lib/emby-server-backups/${date} /usr/local/lib/emby-server${nc}"
+echo -e "${cmd}   service emby-server start${nc}"
 echo " "
 echo -e "${msg} And use this to restore your server database/settings:${nc}"
+echo -e "${cmd}   service emby-server stop${nc}"
 echo -e "${cmd}   rm -r /var/db/emby-server${nc}"
 echo -e "${cmd}   mv /var/db/emby-server-backups/${date} /var/db/emby-server${nc}"
+echo -e "${cmd}   service emby-server start${nc}"
 echo -e "${sep}"
-echo " "
 echo -e "${msg} You can get in touch with me any of the ways listed here:${nc}"
 echo -e "${url} http://vengefulsyndicate.com/about-us${nc}"
 echo -e "${msg}      Happy Streaming!${nc}"
-echo " "
 echo -e "${sep}"
 echo " "
+
+continue
+
 }
 
-#------------------------------------------------------------------------------#
-### SAFE UPDATE (USING PACKAGES)
-#------------------------------------------------------------------------------#
 
-update.emby.safe ()
-{
-echo " "
-echo -e "${sep}"
-echo -e "${msg}   Emby Updater (Safe but slow updates)${nc}"
-echo -e "${sep}"
-echo " "
-echo " "
-echo " "
-echo -e "${sep}"
-echo -e "${msg}   Let's start with a backup.${nc}"
-echo -e "${msg}   First, make sure we have rsync and then${nc}"
-echo -e "${msg}   we will use it to create a backup${nc}"
-echo -e "${sep}"
-echo " "
-
-# Using rsync rather than cp so we can see progress actually happen on the backup for large servers.
-pkg install -y rsync
-
-echo " "
-echo -e "${sep}"
-echo -e "${msg} Create backups${nc}" # TODO: Give user option to backup or not
-echo -e "${sep}"
-echo " "
-
-echo -e "${emp} Application backup${nc}"
-mkdir -p /usr/local/lib/emby-server-backups/${date} # Using -p in case you've never run the script before or you have deleted this folder
-rsync -a --info=progress2 /usr/local/lib/emby-server/ /usr/local/lib/emby-server-backups/${date}
-echo -e "${fin}    Application backup done..${nc}"
-
-echo " "
-
-echo -e "${emp} Server data backup ${inf}(May take a while)${nc}"
-mkdir -p /var/db/emby-server-backups/${date}
-rsync -a --info=progress2 /var/db/emby-server/ /var/db/emby-server-backups/${date}
-echo -e "${fin}    Server backup done.${nc}"
-
-echo " "
-echo -e "${sep}"
-echo -e "${msg}   Check for & grab updates (if any)${nc}"
-echo -e "${sep}"
-echo " "
-
-pkg update
-pkg upgrade emby-server
-
-service emby-server restart
-
-echo " "
-echo -e "${sep}"
-echo -e "${msg} That should be it!${nc}"
-echo -e "${msg} NOTE: When viewing your Emby dashboard,${nc}"
-echo -e "${msg}    it may still say there is an update.${nc}"
-echo " "
-echo -e "${msg} This should be ignored unless you wish to use${nc}"
-echo -e "${msg} the other update method.${nc}"
-echo " "
-echo " "
-echo " "
-echo -e "${msg} If something went wrong you can do the following to restore the old version:${nc}"
-echo -e "${cmd}   rm -r /usr/local/lib/emby-server${nc}"
-echo -e "${cmd}   mv /usr/local/lib/emby-server-backups/${date} /usr/local/lib/emby-server${nc}"
-echo " "
-echo -e "${msg} And use this to restore your server database/settings:${nc}"
-echo -e "${cmd}   rm -r /var/db/emby-server${nc}"
-echo -e "${cmd}   mv /var/db/emby-server-backups/${date} /var/db/emby-server${nc}"
-echo -e "${sep}"
-echo " "
-}
 
 ################################################################################
 ##### BACKUP
@@ -293,10 +470,16 @@ echo -e "${cmd}   mv /var/db/emby-server-backups/${date} /var/db/emby-server${nc
 echo -e "${sep}"
 echo " "
 }
+
+
+
 ################################################################################
 ##### CONFIRMATIONS
 ################################################################################
+
+#------------------------------------------------------------------------------#
 ### INSTALL CONFIRMATION
+#------------------------------------------------------------------------------#
 
 confirm.emby.install ()
 {
@@ -326,7 +509,7 @@ esac
 ### BACKUP CONFIRMATIONS
 #------------------------------------------------------------------------------#
 
-confirm.emby.backup ()
+confirm.backup.emby ()
 {
 echo " "
 echo -e "${sep}"
@@ -344,7 +527,7 @@ read -r -p "   Confirm Backup of Emby?? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              update.emby
+              backup.emby
                ;;
     *)
               # Otherwise exit...
@@ -358,37 +541,7 @@ esac
 ### UPDATE CONFIRMATIONS
 #------------------------------------------------------------------------------#
 
-confirm.emby.update.safe ()
-{
-echo " "
-echo -e "${sep}"
-echo -e "${msg}   Emby Server updater (Safe method)${nc}"
-echo -e "${sep}"
-echo " "
-echo -e "${emp} NOTE: This update method will not always be the very${nc}"
-echo -e "${emp} latest version as BSD packages are updated slower${nc}"
-echo -e "${emp} but this method won't break anything.${nc}"
-echo " "
-echo -e "${msg} Only continue if you are 100% sure${nc}"
-echo -e "${inf} (Will also do a backup)${nc}"
-# Confirm with the user
-read -r -p "   Confirm Update of Emby Media Server? [y/N] " response
-case "$response" in
-    [yY][eE][sS]|[yY])
-              # If yes, then continue
-              update.emby.safe
-               ;;
-    *)
-              # Otherwise exit...
-              echo " "
-              return
-              ;;
-esac
-echo " "
-echo " "
-}
-
-confirm.emby.update.git ()
+confirm.update.emby ()
 {
 echo " "
 echo -e "${sep}"
@@ -434,16 +587,15 @@ do
         echo -e "${sep}"
         echo " "
         echo -e "${fin} Emby Server Script${nc}"
-        echo -e "${inf}    Script Version: 1.0.1 (March 31, 2016)"
+        echo -e "${inf}    Script Version: 1.0.2 (April 6, 2016)"
         echo " "
         echo -e "${emp} Main Menu"
         echo " "
         echo -e "${qry} Please make a selection!"
         echo " "
         echo -e "${fin}   1)${msg} Install${nc}"
-        echo -e "${fin}   2)${msg} Update via Packages ${inf}(Safe)${nc}"
-        echo -e "${fin}   3)${msg} Update via GitHub ${inf}(More Up To Date)${nc}"
-        echo -e "${fin}   4)${msg} Backup${nc}"
+        echo -e "${fin}   2)${msg} Update${nc}"
+        echo -e "${fin}   3)${msg} Backup${nc}"
         echo " "
         echo -e "${alt}  q) Quit${nc}"
         echo -e "${sep}"
@@ -452,16 +604,13 @@ do
 
         case $choice in
             '1')
-                confirm.emby.install
+                confirm.install.emby
                 ;;
             '2')
-                confirm.emby.update.safe
+                confirm.update.emby
                 ;;
             '3')
-                confirm.emby.update.git
-                ;;
-            '4')
-                confirm.emby.backup
+                confirm.backup.emby
                 ;;
             'q') echo -e "${alt}        Exiting script!${nc}"
                 echo " "

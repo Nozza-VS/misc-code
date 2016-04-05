@@ -453,7 +453,7 @@ a.lnkMediaFolder.sidebarLink.selectedMediaFolder:visited {
 ::-webkit-scrollbar-thumb {
     -webkit-border-radius: 2px;
     border-radius: 2px;
-    background: #888888;
+    background: #990000;
 }
 
 /* ------ 4.0 : Dark Theme (Can be removed) ------ */
@@ -815,11 +815,57 @@ img[src*="css/images/mblogoicon.png"] {
     height: 175px;
 }
 
-/* END */
+/* --- x.x : Modify the backgrounds for poster card views --- */
+div.cardBox.visualCardBox {
+background-color: rgba(0, 0, 0,0.33) !important;
+}
 
+/* --- x.x : Active Devices: Fancy up the boxes --- */
+div.card.activeSession {
+border-radius: 3px;
+border-width: 3px;
+border-color: #000;
+background: rgba(0, 0, 0,0.10) !important;
+}
 
+/* --- x.x : Active Devices: No more white username box --- */
+div.card.activeSession > div  > div:nth-child(2) {
+border-radius: 3px;
+border-style: groove;
+border-width: 1px;
+border-color: #000;
+background: rgba(0, 0, 0,0.10) !important;
+}
 
-/* --- To Do List --- */
-/* Dashboard Active Device Blocks */
-/* Dashboard Progress Bar Playback */
-/* Pop-up's Blue Labels */
+/* --- x.x : Increase Home Page folder size --- */
+
+div[data-itemtype=CollectionFolder] {
+width: 16.5%;
+}
+div[data-itemtype=Channel] {
+width: 16.5%;
+}
+
+/* Played Indicator Size+Color+Shadow+Border */
+.playedIndicator {
+font-size: 15px;
+border-radius: 3px;
+background: rgba(153, 0, 0,0.9);
+height: 18px;
+width: 30px;
+top: 3px;
+right: 3px;
+border-style: groove;
+border-width: 1px;
+border-color: #660000;
+-webkit-box-shadow: 0px 0px 1px 1px rgba(0,0,0,0.9);
+-moz-box-shadow: 0px 0px 1px 1px rgba(0,0,0,0.9);
+box-shadow: 0px 0px 1px 1px rgba(0,0,0,0.9);
+}
+
+/* Now Playing bar fix */
+.nowPlayingBar {
+    border-top: rgba(2,2,2,.94) !important;
+}
+iron-autogrow-textarea#input.paper-input-input.style-scope.paper-textarea.x-scope.iron-autogrow-textarea-0 {
+height: 300px !important;}

@@ -1,5 +1,20 @@
 # Changelog
 
+### Version: 1.0.15 (April 6, 2016)
++ Added command to delete a couple temp txt files made for owncloud
+* Fixed typo
+- Removed 'safe' emby updater as it has the same effect as the git method
+* Emby update from git method is now just emby update
+* Updated Emby updater
+   + Added notifier for what version Emby is set to update to
+   + Added recompiling options for ffmpeg & imagemagick
+   + Made the recompile ffmpeg/imagemagick optional
+   + Added notice to emby updater about recompiling from ports
+   - Removed a couple unnecessary lines
+   + Added option to delete old backups, if any, to free up space
+   + Updated menus
+
+
 ### Version: 1.0.14 (April 4, 2016)
 + Didn't realize i forgot the emby update version variable so added that
 * Made the backup in both of the Emby updaters optional

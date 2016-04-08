@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script                    Version: 1.0.15.2 (April 6, 2016)
+# AIO Script                    Version: 1.0.16 (April 9, 2016)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -45,7 +45,10 @@ jail_ip="192.168.1.200"     # ! No need to change this for OwnCloud installs !
 ################################################################################
 ###! EMBY CONFIG !###
 emby_update_ver="3.0.5912"  # You may use the version number or use "latest"
-
+################################################################################
+###! SABNZBD CONFIG !###
+sab_ver="1.0.0"  # You may use the version number or use "latest"
+################################################################################
 ###! THEBRIG CONFIG !###
 # Define where to install TheBrig
 thebriginstalldir="/mnt/Storage/System/Jails"
@@ -574,6 +577,35 @@ do
         echo " "
         echo -e "${msg} NZBGet is written in C++ and is known for its extraordinary performance and${nc}"
         echo -e "${msg} efficiency.${nc}"
+        echo -e "${sep}"
+        echo " "
+
+        echo -e "${msep}"
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+
+}
+
+#------------------------------------------------------------------------------#
+### ABOUT: SABNZBD
+
+about.sabnzbd ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} About: SABnzbd${nc}"
+        echo " "
+        echo -e "${msg} ${nc}"
         echo -e "${sep}"
         echo " "
 
@@ -2055,6 +2087,62 @@ echo " "
 }
 
 #------------------------------------------------------------------------------#
+### SABNZBD INSTALL
+
+install.sabnzbd ()
+{
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Welcome to the SABnzbd installer!${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Let's get right to it and download the required packages${nc}"
+echo -e "${sep}"
+echo " "
+
+pkg install -y python27 py27-sqlite3 py27-yenc py27-cheetah py27-openssl py27-feedparser py27-utils unrar unzip par2cmdline
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Now let's grab SABnzbd itself${nc}"
+echo -e "${sep}"
+echo " "
+
+cd tmp
+fetch "http://downloads.sourceforge.net/project/sabnzbdplus/sabnzbdplus/sabnzbd-${sab_ver}/SABnzbd-${sab_ver}-src.tar.gz"
+tar -xzf SABnzbd-${sab_ver}-src.tar.gz -C /usr/local
+rm SABnzbd-${sab_ver}-src.tar.gz
+mv SABnzbd-${sab_ver} Sabnzbd
+mv Sabnzbd /usr/local/
+
+ln -s /usr/local/bin/python /usr/bin/python
+# nano /usr/local/SABnzbd/SABnzbd.py
+# On the first line, change #!/usr/bin/python to #!/usr/local/bin/python
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Fetch startup script${nc}"
+echo -e "${sep}"
+echo " "
+
+fetch --no-verify-peer -o /usr/local/etc/rc.d/headphones "https://raw.githubusercontent.com/Nostalgist92/misc-code/master/NAS4Free/SABnzbd/init-script"
+chmod 755 /etc/rc.d/sabnzbd
+echo 'sabnzbd_enable="YES"' >> /etc/rc.conf
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Start it up${nc}"
+echo -e "${sep}"
+echo " "
+
+/etc/rc.d/sabnzbd start
+
+}
+
+#------------------------------------------------------------------------------#
 ### WEB SERVER INSTALL
 
 install.webserver ()
@@ -2410,6 +2498,7 @@ case "$response" in
               update.emby.continue
 
               make install clean
+              #make -DBATCH install clean
 
               echo " "
               echo -e "${sep}"
@@ -2443,6 +2532,7 @@ case "$response" in
               update.emby.continue
 
               make install clean
+              #make -DBATCH install clean
 
               echo " "
               echo -e "${sep}"
@@ -2710,6 +2800,17 @@ pkg upgrade nzbget
 
 }
 
+#------------------------------------------------------------------------------#
+### SABNZBD UPDATE
+
+update.sabnzbd ()
+{
+
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+echo " "
+
+}
+
 
 
 ################################################################################
@@ -2838,6 +2939,17 @@ echo " "
 ### NZBGET BACKUP
 
 backup.nzbget ()
+{
+
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+echo " "
+
+}
+
+#------------------------------------------------------------------------------#
+### SABNZBD BACKUP
+
+backup.sabnzbd ()
 {
 
 echo -e "${emp} This part of the script is unfinished currently :(${nc}"
@@ -3115,6 +3227,26 @@ esac
 }
 
 #------------------------------------------------------------------------------#
+### SABNZBD CONFIRM INSTALL
+
+confirm.install.sabnzbd ()
+{
+# Confirm with the user
+read -r -p "   Confirm Installation of SABnzbd? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              install.sabnzbd
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              return
+              ;;
+esac
+}
+
+#------------------------------------------------------------------------------#
 ### WEB SERVER CONFIRM INSTALL
 
 confirm.install.webserver ()
@@ -3310,6 +3442,17 @@ echo " "
 ### NZBGET CONFIRM UPDATE
 
 confirm.update.nzbget ()
+{
+
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+echo " "
+
+}
+
+#------------------------------------------------------------------------------#
+### SABNZBD CONFIRM UPDATE
+
+confirm.update.sabnzbd ()
 {
 
 echo -e "${emp} This part of the script is unfinished currently :(${nc}"
@@ -3950,6 +4093,7 @@ do
         echo " "
         echo -e "${ca}   1)${ca} Deluge (Torrenting) (Currently Unavailable)${nc}"
         echo -e "${fin}   2)${msg} NZBGet (Usenet Downloader)${nc}"
+        echo -e "${fin}   3)${msg} SABnzbd (Usenet Downloader)${nc}"
         echo " "
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
         echo -e "${inf}  h) Get Help${nc}"
@@ -3967,6 +4111,9 @@ do
             #    ;;
             '2')
                 nzbget.submenu
+                ;;
+            '3')
+                sabnzbd.submenu
                 ;;
             'i')
                 moreinfo.submenu.thebrig
@@ -4056,7 +4203,7 @@ do
         echo " "
         echo -e "${fin}   1)${msg} Install${nc}"
         echo -e "${fin}   2)${msg} Update${nc}"
-        echo -e "${fin}   3)${msg} Backup (Currently Unavailable)${nc}"
+        echo -e "${ca}   3)${msg} Backup (Currently Unavailable)${nc}"
         echo " "
         echo -e "${inf}  a) About NZBGet${nc}"
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
@@ -4090,6 +4237,64 @@ do
                 ;;
             #'i')
             #    moreinfo.submenu.nzbget
+            #    ;;
+            'b') return
+                ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
+                ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### SABnzbd SUBMENU
+
+sabnzbd.submenu ()
+{
+while [ "$choice" != "a,h,i,m,q" ]
+do
+        echo -e "${sep}"
+        echo -e "${fin} SABnzbd Options${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:${nc}"
+        echo " "
+        echo -e "${fin}   1)${msg} Install${nc}"
+        echo -e "${ca}   2)${ca} Update (Currently Unavailable)${nc}"
+        echo -e "${ca}   3)${ca} Backup (Currently Unavailable)${nc}"
+        echo " "
+        echo -e "${ca}  a) About SABnzbd (Currently Unavailable)${nc}"
+        echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
+        echo -e "${inf}  h) Get Help${nc}"
+        echo " "
+        echo -e "${emp}  b) Back${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+        echo " "
+
+        case $choice in
+            '1') echo -e "${inf} Installing..${nc}"
+                echo " "
+                confirm.install.sabnzbd
+                ;;
+            #'2') echo -e "${inf} Running Update..${nc}"
+            #    echo " "
+            #    confirm.update.sabnzbd
+            #    ;;
+            #'3') echo -e "${inf} Backup..${nc}"
+            #    echo " "
+            #    backup.sabnzbd
+            #    ;;
+            #'a')
+            #    about.sabnzbd
+            #    ;;
+            'h')
+                gethelp
+                ;;
+            #'i')
+            #    moreinfo.submenu.sabnzbd
             #    ;;
             'b') return
                 ;;
@@ -4459,7 +4664,7 @@ mainmenu=""
 while [ "$choice" != "q,a,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.15.2 (April 6, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.16 (April 9, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
@@ -4546,4 +4751,3 @@ done
 # FUTURE: If this script has no issues then i may remove standalone scripts from github
 # FUTURE: IF & when jail creation via shell is possible for thebrig, will add that option to script.
 # FUTUTE: Add "Sickbeard"?
-# FUTURE: Add "SABnzbd"

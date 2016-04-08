@@ -1,5 +1,19 @@
 # Changelog
 
+### Version: 1.0.16 (April 9, 2016)
++ Added SABnzbd
+   + Installer
+   + Menus
+* Updated Emby updater - will use -DBATCH for ports to make it more automated
+* Updated a couple more menus to show the options are currently unavailable
+
+### Version: 1.0.15.2 (April 6, 2016)
+* Fixed a couple more issues that caused problems with the script
+
+### Version: 1.0.15.1 (April 6, 2016)
++ Added Emby How-To: restarting the emby server
+* Fixed issue with script that caused it to not work
+
 ### Version: 1.0.15 (April 6, 2016)
 + Added command to delete a couple temp txt files made for owncloud
 * Fixed typo

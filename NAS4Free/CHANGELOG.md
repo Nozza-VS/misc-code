@@ -1,5 +1,14 @@
 # Changelog
 
+### Version: 1.0.17 (April 10, 2016)
+* Updated SABnzbd installer
+   * Reworked packages (split in to 3 commands) as they weren't all installing in the 1 command
+   + Added information about editing sabnzbd.py
+   + Added information on where to go to complete setup
+   * Fixed incorrect sabnzbd download URL
+   * Fixed incorrect paths in script
++ Added commands to make certain files executable as needed
+
 ### Version: 1.0.16 (April 9, 2016)
 + Added SABnzbd
    + Installer

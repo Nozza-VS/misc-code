@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script                    Version: 1.0.16 (April 9, 2016)
+# AIO Script                    Version: 1.0.17 (April 10, 2016)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -1650,6 +1650,7 @@ echo -e "${sep}"
 echo " "
 
 cp CouchPotatoServer/init/freebsd /usr/local/etc/rc.d/couchpotato
+chmod +x /usr/local/etc/rc.d/couchpotato
 chmod 555 /usr/local/etc/rc.d/couchpotato
 
 echo " "
@@ -1729,6 +1730,7 @@ echo " "
 fetch --no-verify-peer -o /usr/local/etc/rc.d/headphones "https://raw.githubusercontent.com/Nostalgist92/misc-code/master/NAS4Free/HeadPhones/init-script"
 #Make startup script executable
 chmod 555 /usr/local/etc/rc.d/headphones
+chmod +x /usr/local/etc/rc.d/headphones
 # Potentially need to modify the line:
 #command_args = "- f -p $ {python headphones_pid} $ {} headphones_dir /Headphones.py $ {} headphones_flags --quiet --nolaunch"
 # To:
@@ -2103,7 +2105,9 @@ echo -e "${msg}   Let's get right to it and download the required packages${nc}"
 echo -e "${sep}"
 echo " "
 
-pkg install -y python27 py27-sqlite3 py27-yenc py27-cheetah py27-openssl py27-feedparser py27-utils unrar unzip par2cmdline
+pkg install -y python27 py27-sqlite3
+pkg install -y py27-yenc py27-cheetah py27-openssl py27-feedparser py27-utils
+pkg install -y unrar unzip par2cmdline nano
 
 echo " "
 echo -e "${sep}"
@@ -2112,15 +2116,12 @@ echo -e "${sep}"
 echo " "
 
 cd tmp
-fetch "http://downloads.sourceforge.net/project/sabnzbdplus/sabnzbdplus/sabnzbd-${sab_ver}/SABnzbd-${sab_ver}-src.tar.gz"
-tar -xzf SABnzbd-${sab_ver}-src.tar.gz -C /usr/local
+fetch "http://downloads.sourceforge.net/project/sabnzbdplus/sabnzbdplus/${sab_ver}/SABnzbd-${sab_ver}-src.tar.gz"
+tar xfz SABnzbd-${sab_ver}-src.tar.gz -C /usr/local
 rm SABnzbd-${sab_ver}-src.tar.gz
-mv SABnzbd-${sab_ver} Sabnzbd
-mv Sabnzbd /usr/local/
+mv /usr/local/SABnzbd-${sab_ver} /usr/local/Sabnzbd
 
-ln -s /usr/local/bin/python /usr/bin/python
-# nano /usr/local/SABnzbd/SABnzbd.py
-# On the first line, change #!/usr/bin/python to #!/usr/local/bin/python
+#ln -s /usr/local/bin/python /usr/bin/python
 
 echo " "
 echo -e "${sep}"
@@ -2128,9 +2129,22 @@ echo -e "${msg} Fetch startup script${nc}"
 echo -e "${sep}"
 echo " "
 
-fetch --no-verify-peer -o /usr/local/etc/rc.d/headphones "https://raw.githubusercontent.com/Nostalgist92/misc-code/master/NAS4Free/SABnzbd/init-script"
-chmod 755 /etc/rc.d/sabnzbd
+fetch --no-verify-peer -o /usr/local/etc/rc.d/sabnzbd "https://raw.githubusercontent.com/Nostalgist92/misc-code/master/NAS4Free/SABnzbd/init-script"
+chmod 755 /usr/local/etc/rc.d/sabnzbd
+chmod +x /usr/local/etc/rc.d/sabnzbd
 echo 'sabnzbd_enable="YES"' >> /etc/rc.conf
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Before we are able to run SABnzbd, we need to modify a file${nc}"
+echo -e "${msg} Using nano, change the first line (/usr/bin/python)${nc}"
+echo -e "${msg} to match the following:${nc}"
+echo -e "${cmd}    #!/usr/local/bin/python2.7${nc}"
+echo -e "${sep}"
+echo " "
+
+nano /usr/local/Sabnzbd/SABnzbd.py
+# On the first line, change #!/usr/bin/python to #!/usr/local/bin/python
 
 echo " "
 echo -e "${sep}"
@@ -2138,7 +2152,14 @@ echo -e "${msg} Start it up${nc}"
 echo -e "${sep}"
 echo " "
 
-/etc/rc.d/sabnzbd start
+/usr/local/etc/rc.d/sabnzbd start
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Done! Head to: ${url}yourjailip:8080${nc}"
+echo -e "${msg} to finish the setup!${nc}"
+echo -e "${sep}"
+echo " "
 
 }
 
@@ -4664,7 +4685,7 @@ mainmenu=""
 while [ "$choice" != "q,a,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.16 (April 9, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.17 (April 10, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
@@ -4725,9 +4746,10 @@ do
             'h')
                 gethelp
                 ;;
-            'q') echo " "
-                echo -e "${alt}        Quitting, Bye!${nc}"
+            'q')
+                echo -e "${alt}     Quitting, Bye!${nc}"
                 echo  " "
+                echo -e "${ssep}"
                 exit
                 ;;
             *)   echo -e "${alt}        Invalid choice, please try again${nc}"

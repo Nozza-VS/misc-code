@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script                    Version: 1.0.17 (April 10, 2016)
+# AIO Script                    Version: 1.0.18 (April 11, 2016)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -356,7 +356,12 @@ do
         echo -e "${sep}"
         echo -e "${inf} About: Pydio${nc}"
         echo " "
-        echo "${msg} Pydio file sharing & sync includes applications for web, desktop and mobile assuring that your end users can easily manage their critical documents everywhere. Pydio is hosted exclusively on your private server or cloud so you can rest assured that files are securely managed under company control.${nc}"
+        echo -e "${msg} Pydio (formely AjaXplorer) is a mature open source software solution for${nc}"
+        echo -e "${msg} file sharing and synchronization. With intuitive user interfaces${nc}"
+        echo -e "${msg} (web/mobile/desktop), Pydio provides enterprise-grade features to gain back${nc}"
+        echo -e "${msg} control and privacy of your data. Pydio is hosted exclusively on your private${nc}"
+        echo -e "${msg} server or cloud so you can rest assured that files are securely managed under your control.${nc}"
+        echo -e "${msg} your control.${nc}"
         echo -e "${sep}"
         echo " "
 
@@ -605,7 +610,10 @@ do
         echo -e "${sep}"
         echo -e "${inf} About: SABnzbd${nc}"
         echo " "
-        echo -e "${msg} ${nc}"
+        echo -e "${msg} SABnzbd makes Usenet as simple and streamlined as possible by automating${nc}"
+        echo -e "${msg} everything we can. All you have to do is add an .nzb. SABnzbd takes over from${nc}"
+        echo -e "${msg} there, where it will be automatically downloaded, verified, repaired, extracted${nc}"
+        echo -e "${msg} and filed away with zero human interaction.${nc}"
         echo -e "${sep}"
         echo " "
 
@@ -649,10 +657,10 @@ owncloud.howto.finishsetup ()
 while [ "$choice" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} OwnCloud - How to finalize setup"
+        echo -e "${inf} OwnCloud - How to finalize setup${nc}"
         echo -e "${sep}"
         echo " "
-        echo -e "${emp} Follow these instructions carefully"
+        echo -e "${emp} Follow these instructions carefully${nc}"
         echo " "
         echo -e "${msg} In a web browser, head to: ${url}https://$cloud_server_ip:$cloud_server_port${nc}"
         echo " "
@@ -732,7 +740,7 @@ thebrig.howto.installthebrig ()
 while [ "$choice" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} TheBrig - How to install TheBrig"
+        echo -e "${inf} TheBrig - How to install TheBrig manually${nc}"
         echo -e "${sep}"
         echo " "
         # Create directory
@@ -779,7 +787,7 @@ thebrig.howto.createajail ()
 while [ "$choice" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} TheBrig - How to create a jail"
+        echo -e "${inf} TheBrig - How to create a jail${nc}"
         echo -e "${sep}"
         echo " "
         echo -e "${emp} This assumes you have installed TheBrig already and${nc}"
@@ -805,6 +813,47 @@ do
         echo -e "${msg} '${inf}base${msg}' & '${inf}lib32${msg}'${nc}"
         echo " "
         echo -e "${msg} Now press '${inf}Add${msg}' at the bottom and that should be it!${nc}"
+        echo " "
+
+        echo -e "${msep}"
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### THEBRIG - HOW-TO: MOUNT YOUR STORAGE IN JAIL WITH FSTAB
+#------------------------------------------------------------------------------#
+
+thebrig.howto.mountviafstab ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} TheBrig - How to mount any storage folder in a jail using fstab${nc}"
+        echo -e "${sep}"
+        echo " "
+        echo -e "${msg} First, you need to create a folder in the jail matching the name of the folder to mount${nc}"
+        echo -e "${msg} Example: mkdir /mnt/Storage/Jails/JailName/mnt/MEDIA${nc}"
+        echo -e "${msg} Now, head to your NAS webgui and go to '${inf}Extensions${msg}' -> '${inf}TheBrig.${nc}"
+        echo -e "${msg} Click the settings icon for the jail you wish to have your folder mounted in.${nc}"
+        echo -e "${msg} Now click the '${inf}More${msg}' button near the bottom.${nc}"
+        echo -e "${msg} You should be presented with a lot more options.${nc}"
+        echo -e "${msg} Look for '${inf}Fstab for current jail${msg}'${nc}"
+        echo -e "${msg} An example of what to set in here is:${nc}"
+        echo -e "${msg} /mnt/Storage/Media /mnt/Jails/JailName/mnt/MEDIA nullfs rw 0 0${nc}"
+        echo -e "${msg} /mnt/Storage/Media = The folder you want mounted${nc}"
+        echo -e "${msg} /mnt/Jails/JailName/mnt/MEDIA = The jail folder to mount in${nc}"
+        echo -e "${msg} 'rw 0 0' at the end = the jail may write to the folder${nc}"
+        echo -e "${msg} 'ro 0 0' at the end = the jail may NOT write to the folder${nc}"
         echo " "
 
         echo -e "${msep}"
@@ -1529,6 +1578,24 @@ echo -e "${url} https://discord.gg/0bXnhqvo189oM8Cr${nc}"
 echo -e "${sep}"
 echo " "
 
+}
+
+#------------------------------------------------------------------------------#
+### PYDIO INSTALL
+
+install.pydio ()
+{
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Pydio Install Script${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Let's start with installing the prerequisites${nc}"
+echo -e "${sep}"
+echo " "
 }
 
 #------------------------------------------------------------------------------#
@@ -2392,6 +2459,14 @@ echo " "
 }
 
 #------------------------------------------------------------------------------#
+### PYDIO UPDATE
+
+update.pydio ()
+{
+
+}
+
+#------------------------------------------------------------------------------#
 ### EMBY SERVER UPDATE
 
 update.emby ()
@@ -2401,11 +2476,9 @@ update.emby.continue ()
 {
 while [ "$choice" ]
 do
-        echo " "
         echo -e "${msep}"
         echo -e "${emp}   Press Enter To Continue${nc}"
         echo -e "${msep}"
-        echo " "
 
         read choice
 
@@ -2524,8 +2597,13 @@ case "$response" in
               echo " "
               echo -e "${sep}"
               echo -e "${msg} Great, now ffmpeg${nc}"
-              echo -e "${msg} When the options pop up, enable (By pressing space when its highlighted):${nc}"
+              echo -e "${sep}"
+              echo " "
 
+              cd /usr/ports/multimedia/ffmpeg && make deinstall
+
+              echo -e "${sep}"
+              echo -e "${msg} When the options pop up, enable (By pressing space when its highlighted):${nc}"
               echo -e "${inf}    ASS     ${msg}(required for subtitle rendering)${nc}"
               echo -e "${inf}    LAME    ${msg}(required for mp3 audio transcoding -${nc}"
               echo -e "${inf}            ${msg}disabled by default due to mp3 licensing restrictions)${nc}"
@@ -2538,22 +2616,20 @@ case "$response" in
 
               update.emby.continue
 
-              cd /usr/ports/multimedia/ffmpeg && make deinstall
               make clean
               make clean-depends
               make config
 
               echo " "
               echo -e "${sep}"
-              echo -e "${msg} Press 'OK'/'Enter' for every box that follows.${nc}"
-              echo -e "${msg}    (There will be several that pop up)${nc}"
+              echo -e "${msg} Press 'OK'/'Enter' for any box that follows.${nc}"
               echo -e "${sep}"
               echo " "
 
               update.emby.continue
 
-              make install clean
-              #make -DBATCH install clean
+              #make install clean
+              make -DBATCH install clean
 
               echo " "
               echo -e "${sep}"
@@ -2668,7 +2744,7 @@ echo -e "${msg}      Happy Streaming!${nc}"
 echo -e "${sep}"
 echo " "
 
-continue
+update.emby.continue
 
 }
 
@@ -2852,6 +2928,15 @@ echo " "
 ### OWNCLOUD BACKUP
 
 backup.owncloud ()
+{
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+echo " "
+}
+
+#------------------------------------------------------------------------------#
+### PYDIO BACKUP
+
+backup.pydio ()
 {
 echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
@@ -3078,6 +3163,26 @@ case "$response" in
               # Otherwise exit...
               echo " "
               echo -e "${sep}"
+              return
+              ;;
+esac
+}
+
+#------------------------------------------------------------------------------#
+### PYDIO CONFIRM INSTALL
+
+confirm.install.pydio ()
+{
+# Confirm with the user
+read -r -p "   Confirm Installation of Pydio? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              install.pydio
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
               return
               ;;
 esac
@@ -3333,6 +3438,26 @@ case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
               update.owncloud
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              return
+              ;;
+esac
+}
+
+#------------------------------------------------------------------------------#
+### PYDIO CONFIRM UPDATE
+
+confirm.update.pydio ()
+{
+# Confirm with the user
+read -r -p "   Confirm Update of Pydio? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              update.pydio
                ;;
     *)
               # Otherwise exit...
@@ -3703,7 +3828,7 @@ do
         echo -e "${fin}   2)${msg} Update${nc}"
         echo -e "${fin}   3)${msg} Backup${nc}"
         echo " "
-        echo -e "${ca}  a) About Pydio (Currently Unavailable)${nc}"
+        echo -e "${inf}  a) About Pydio${nc}"
         echo -e "${inf}  i) More Info / How-To's${nc}"
         echo -e "${inf}  h) Get Help${nc}"
         echo " "
@@ -4136,9 +4261,9 @@ do
             '3')
                 sabnzbd.submenu
                 ;;
-            'i')
-                moreinfo.submenu.thebrig
-                ;;
+            #'i')
+            #    moreinfo.submenu.thebrig
+            #    ;;
             'h')
                 gethelp
                 ;;
@@ -4284,7 +4409,7 @@ do
         echo -e "${ca}   2)${ca} Update (Currently Unavailable)${nc}"
         echo -e "${ca}   3)${ca} Backup (Currently Unavailable)${nc}"
         echo " "
-        echo -e "${ca}  a) About SABnzbd (Currently Unavailable)${nc}"
+        echo -e "${fin}  a) About SABnzbd${nc}"
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
         echo -e "${inf}  h) Get Help${nc}"
         echo " "
@@ -4308,9 +4433,9 @@ do
             #    echo " "
             #    backup.sabnzbd
             #    ;;
-            #'a')
-            #    about.sabnzbd
-            #    ;;
+            'a')
+                about.sabnzbd
+                ;;
             'h')
                 gethelp
                 ;;
@@ -4542,6 +4667,7 @@ do
         echo -e "${msg} How to...${nc}"
         echo -e "${fin}   2)${msg} Create a jail${nc}"
         echo -e "${fin}   3)${msg} Enable the 'Ports Tree'${nc}"
+        echo -e "${fin}   4)${msg} Mount a folder in the jail via fstab${nc}"
         echo " "
         echo -e "${emp}   b) Back${nc}"
 
@@ -4551,11 +4677,17 @@ do
         echo " "
 
         case $choice in
-            '1') info.thebrig.rudimentaryconfig
+            '1')
+                info.thebrig.rudimentaryconfig
                 ;;
-            '2') thebrig.howto.createajail
+            '2')
+                thebrig.howto.createajail
                 ;;
-            '3') thebrig.howto.enableportstree
+            '3')
+                thebrig.howto.enableportstree
+                ;;
+            '4')
+                thebrig.howto.mountviafstab
                 ;;
             'b') return
                 ;;
@@ -4685,7 +4817,7 @@ mainmenu=""
 while [ "$choice" != "q,a,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.17 (April 10, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.18 (April 11, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
@@ -4758,7 +4890,6 @@ do
         esac
 done
 
-# MED-TODO: Add a How-To for mounting your storage via fstab or thebrig jail dataset option
 # LOW-TODO: Finish adding "Calibre"
 # MED-TODO: Finish "Deluge" scripts (Lots of issues with it)
 # LOW-TODO: Finish adding "Munin"

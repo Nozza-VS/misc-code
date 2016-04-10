@@ -1,5 +1,11 @@
 # Changelog
 
+### Version: 1.0.18 (April 10, 2016)
++ Added About: SABnzbd
+* Updated About: Pydio
++ Added TheBrig How-To: mounting storage in jails via fstab
+* Modified emby updater to make ports tree reconfig a bit more automated
+
 ### Version: 1.0.17 (April 10, 2016)
 * Updated SABnzbd installer
    * Reworked packages (split in to 3 commands) as they weren't all installing in the 1 command

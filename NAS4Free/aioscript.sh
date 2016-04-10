@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script                    Version: 1.0.18 (April 11, 2016)
+# AIO Script                    Version: 1.0.19 (April 11, 2016)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -44,10 +44,16 @@ jail_ip="192.168.1.200"     # ! No need to change this for OwnCloud installs !
                             # installed OwnCloud previously.
 ################################################################################
 ###! EMBY CONFIG !###
-emby_update_ver="3.0.5912"  # You may use the version number or use "latest"
+emby_update_ver="3.0.5913"  # You can find release numbers here:
+                            # https://github.com/MediaBrowser/Emby/releases
 ################################################################################
 ###! SABNZBD CONFIG !###
-sab_ver="1.0.0"  # You may use the version number or use "latest"
+sab_ver="1.0.0"             # You can find release numbers here:
+                            # https://github.com/sabnzbd/sabnzbd/releases
+################################################################################
+###! SUBSONIC CONFIG !###
+subsonic_ver="5.3"          # You can find release numbers here:
+                            # sourceforge.net/projects/subsonic/files/subsonic
 ################################################################################
 ###! THEBRIG CONFIG !###
 # Define where to install TheBrig
@@ -409,6 +415,80 @@ do
                  ;;
         esac
 done
+}
+
+#------------------------------------------------------------------------------#
+### ABOUT: PLEX MEDIA SERVER
+
+about.plex ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} About: Plex Media Server${nc}"
+        echo " "
+        echo -e "${msg} Plex organizes all of your personal media so you can enjoy it,${nc}"
+        echo -e "${msg} no matter where you are.${nc}"
+        echo " "
+        echo -e "${msg} Plex's front-end media player, Plex Media Player (formerly Plex Home Theater),${nc}"
+        echo -e "${msg} allows the user to manage and play audiobooks, music, photos, podcasts, and${nc}"
+        echo -e "${msg} videos from a local or remote computer running Plex Media Server. Additionally,${nc}"
+        echo -e "${msg} the integrated Plex Online service provides the user with a growing list of${nc}"
+        echo -e "${msg} community-driven plugins for online content such as Netflix, Hulu, etc.${nc}"
+        echo -e "${sep}"
+        echo " "
+
+        echo -e "${msep}"
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### ABOUT: SUBSONIC
+
+about.subsonic ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} About: Subsonic${nc}"
+        echo " "
+        echo -e "${msg} Subsonic is a free, web-based media streamer, providing ubiqutious access${nc}"
+        echo -e "${msg} to your music. Use it to share your music with friends, or to listen to your${nc}"
+        echo -e "${msg} own music while at work. You can stream to multiple players simultaneously,${nc}"
+        echo -e "${msg} for instance to one player in your kitchen and another in your living room.${nc}"
+        echo " "
+        echo -e "${msg} Subsonic is designed to handle very large music collections${nc}"
+        echo -e "${msg} (hundreds of gigabytes). Although optimized for MP3 streaming, it works for any${nc}"
+        echo -e "${msg} audio or video format that can stream over HTTP, for instance AAC and OGG.${nc}"
+        echo -e "${msg} By using transcoder plug-ins, Subsonic supports on-the-fly conversion and${nc}"
+        echo -e "${msg} streaming of virtually any audio format, including WMA, FLAC, APE, Musepack,${nc}"
+        echo -e "${msg} WavPack and Shorten.${nc}"
+        echo -e "${sep}"
+        echo " "
+
+        echo -e "${msep}"
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+
 }
 
 #------------------------------------------------------------------------------#
@@ -882,7 +962,14 @@ do
         echo -e "${inf} TheBrig - How to enable the ports tree in jails:"
         echo -e "${sep}"
         echo " "
-        echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+        echo -e "${msg} Head to your NAS webgui and go to '${inf}Extensions${msg}' -> '${inf}TheBrig.${nc}"
+        echo -e "${msg} From here, you want to click '${inf}Updates${msg}' and then '${inf}Central Ports.${nc}"
+        echo -e "${msg} First thing to do here is click '${inf}Fetch & Update${msg}'${nc}"
+        echo -e "${msg} After it has done, tick the box next to the name of the jail you wish${nc}"
+        echo -e "${msg} to enable the ports tree in. Finally, click '${inf}Save${msg}'.${nc}"
+        echo -e "${msg} Optionally you may also tick the '${inf}Cronjob${msg}' box and click '${inf}Save${msg}'.${nc}"
+        echo -e "${msg} This won't automatically apply the updates but it will make it so in future,${nc}"
+        echo -e "${msg} You may come back to this page and simply click '${inf}Update${msg}'${nc}"
         echo " "
 
         echo -e "${msep}"
@@ -2350,6 +2437,69 @@ echo -e "${sep}"
 echo " "
 }
 
+#------------------------------------------------------------------------------#
+### SUBSONIC INSTALL
+
+install.subsonic ()
+{
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Welcome to the Subsonic installer!${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Let's get started with some packages${nc}"
+echo -e "${sep}"
+echo " "
+
+pkg install -y xtrans xproto xextproto javavmwrapper flac openjdk7
+pkg install -y ffmpeg # With LAME enabled
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Create folders for Subsonic${nc}"
+echo -e "${sep}"
+echo " "
+
+mkdir -p /var/subsonic/transcode
+mkdir /var/subsonic/standalone
+cp /usr/local/bin/lame /var/subsonic/transcode/
+cp /usr/local/bin/flac /var/subsonic/transcode/
+cp /usr/local/bin/ffmpeg /var/subsonic/transcode/
+cd /tmp/
+# Download Subsonic from sourceforge & extract
+fetch http://heanet.dl.sourceforge.net/project/subsonic/subsonic/5.3/subsonic-5.3-standalone.tar.gz
+tar xvzf /tmp/subsonic-5.3-standalone.tar.gz -C /var/subsonic/standalone
+chmod 777 *.*
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Now let's make sure subsonic starts.${nc}"
+echo -e "${msg} You can manually do this with:${nc}"
+echo -e "${cmd}    sh /var/subsonic/standalone/subsonic.sh${nc}"
+echo -e "${msg} For now, this script will do it automatically.${nc}"
+echo -e "${sep}"
+echo " "
+
+sh /var/subsonic/standalone/subsonic.sh
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} If subsonic started as it should you can connect to it via the browser at the${nc}"
+echo -e "${msg} following adress: Jail-IP:4040, default username is admin, and password admin.${nc}"
+echo -e "${sep}"
+echo " "
+
+echo " "
+echo -e "${sep}"
+echo " That should be it!"
+echo " Enjoy your Subsonic server!"
+echo -e "${sep}"
+echo " "
+}
+
 
 
 ################################################################################
@@ -2902,10 +3052,70 @@ pkg upgrade nzbget
 
 update.sabnzbd ()
 {
-
-echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Welcome to the SABnzbd updater!${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Let's start with updating packages if needed${nc}"
+echo -e "${sep}"
 echo " "
 
+pkg update
+pkg updgrade
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Now let's grab the update of SABnzbd${nc}"
+echo -e "${msg} Currently set to grab:${inf} ${sab_ver} ${nc}"
+echo -e "${msg} You can modify the 'sab_ver' variable near the top of the script${nc}"
+echo -e "${msg} to change the version that is downloaded.${nc}"
+echo -e "${sep}"
+echo " "
+
+cd tmp
+fetch "http://downloads.sourceforge.net/project/sabnzbdplus/sabnzbdplus/${sab_ver}/SABnzbd-${sab_ver}-src.tar.gz"
+tar xfz SABnzbd-${sab_ver}-src.tar.gz -C /usr/local
+rm SABnzbd-${sab_ver}-src.tar.gz
+mv /usr/local/SABnzbd-${sab_ver} /usr/local/Sabnzbd
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Before we are able to run SABnzbd, we need to modify a file${nc}"
+echo -e "${msg} Using nano, change the first line (/usr/bin/python)${nc}"
+echo -e "${msg} to match the following:${nc}"
+echo -e "${cmd}    #!/usr/local/bin/python2.7${nc}"
+echo -e "${sep}"
+echo " "
+
+nano /usr/local/Sabnzbd/SABnzbd.py
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Start it up${nc}"
+echo -e "${sep}"
+echo " "
+
+/usr/local/etc/rc.d/sabnzbd start
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Done! Head to: ${url}yourjailip:8080${nc}"
+echo -e "${msg} to visit your SABnzbd!${nc}"
+echo -e "${sep}"
+echo " "
+}
+
+#------------------------------------------------------------------------------#
+### SUBSONIC UPDATE
+
+update.subsonic ()
+{
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+echo " "
 }
 
 
@@ -3072,6 +3282,15 @@ backup.webserver ()
 echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
 
+}
+
+#------------------------------------------------------------------------------#
+### SUBSONIC BACKUP
+
+backup.subsonic ()
+{
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+echo " "
 }
 
 
@@ -3392,6 +3611,26 @@ case "$response" in
 esac
 }
 
+#------------------------------------------------------------------------------#
+### SUBSONIC CONFIRM INSTALL
+
+confirm.install.subsonic ()
+{
+# Confirm with the user
+read -r -p "   Confirm Installation of Subsonic? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              install.subsonic
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              return
+              ;;
+esac
+}
+
 
 
 #------------------------------------------------------------------------------#
@@ -3482,7 +3721,7 @@ echo -e "${emp}          having a backup just in case!${nc}"
 echo " "
 echo -e "${qry} Reminder${msg}: make sure you have modified the 'emby_update_ver'${nc}"
 echo -e "${msg} line at the top of this script to the latest version.${nc}"
-echo -e "${msg}    (Currently set to: ${emby_update_ver})${nc}"
+echo -e "${msg}    ( Currently set to:${inf} ${emby_update_ver} ${msg})${nc}"
 echo " "
 echo -e "${msg} Only continue if you are 100% sure${nc}"
 # Confirm with the user
@@ -3600,10 +3839,19 @@ echo " "
 
 confirm.update.sabnzbd ()
 {
-
-echo -e "${emp} This part of the script is unfinished currently :(${nc}"
-echo " "
-
+# Confirm with the user
+read -r -p "   Confirm Update of Sabnzbd? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              update.sabnzbd
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              return
+              ;;
+esac
 }
 
 #------------------------------------------------------------------------------#
@@ -3617,6 +3865,26 @@ case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
               update.webserver
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              return
+              ;;
+esac
+}
+
+#------------------------------------------------------------------------------#
+### SUBSONIC CONFIRM UPDATE
+
+confirm.update.subsonic ()
+{
+# Confirm with the user
+read -r -p "   Confirm Update of Subsonic? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              update.subsonic
                ;;
     *)
               # Otherwise exit...
@@ -3763,7 +4031,7 @@ do
         echo -e "${fin}   4)${msg} Fix Known Errors${nc}"
         echo -e "${fin}   5)${msg} Other${nc}"
         echo " "
-        echo -e "${ca}  a) About OwnCloud (Currently Unavailable)${nc}"
+        echo -e "${inf}  a) About OwnCloud${nc}"
         echo -e "${inf}  i) More Info / How-To's${nc}"
         echo -e "${inf}  h) Get Help${nc}"
         echo " "
@@ -3884,7 +4152,8 @@ do
         echo -e "${qry} Choose one: Media Streaming with...${nc}"
         echo " "
         echo -e "${fin}   1)${msg} Emby Media Server${nc}"
-        echo -e "${fin}   2)${msg} Plex Media Server${nc}"
+        echo -e "${ca}   2)${ca} Plex Media Server (Currently Unavailable)${nc}"
+        echo -e "${ca}   3)${ca} Subsonic (Currently Unavailable)${nc}"
         echo " "
         echo -e "${ca}  a) About Media Streaming (Currently Unavailable)${nc}"
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
@@ -3905,6 +4174,9 @@ do
             #'2') echo -e "${inf} Taking you to the Plex menu..${nc}"
             #    echo " "
             #    plex.submenu
+            #    ;;
+            #'3')
+            #    subsonic.submenu
             #    ;;
             #'a')
             #    about.streaming
@@ -3975,6 +4247,122 @@ do
                 ;;
             #'i')
             #    moreinfo.submenu.emby
+            #    ;;
+            'm') return
+                ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
+                ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### PLEX SERVER SUBMENU
+
+plex.submenu ()
+{
+while [ "$choice" != "a,h,i,m,q" ]
+do
+        echo -e "${sep}"
+        echo -e "${fin} Plex Options${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:${nc}"
+        echo " "
+        echo -e "${fin}   1)${msg} Install${nc}"
+        echo -e "${fin}   2)${msg} Update${nc}"
+        echo -e "${fin}   3)${msg} Backup${nc}"
+        echo " "
+        echo -e "${ca}  a) About Plex${nc}"
+        echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
+        echo -e "${ca}  h) Get Help${nc}"
+        echo " "
+        echo -e "${emp}  m) Main Menu${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+        echo " "
+
+        case $choice in
+            '1') echo -e "${inf} Installing..${nc}"
+                echo " "
+                confirm.install.plex
+                ;;
+            '2') echo -e "${inf} Running Update..${nc}"
+                echo " "
+                confirm.update.plex
+                ;;
+            '3') echo -e "${inf} Backup..${nc}"
+                echo " "
+                backup.plex
+                ;;
+            'a')
+                about.plex
+                ;;
+            'h')
+                gethelp
+                ;;
+            #'i')
+            #    moreinfo.submenu.plex
+            #    ;;
+            'm') return
+                ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
+                ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### SUBSONIC SUBMENU
+
+subsonic.submenu ()
+{
+while [ "$choice" != "a,h,i,m,q" ]
+do
+        echo -e "${sep}"
+        echo -e "${fin} Subsonic Options${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:${nc}"
+        echo " "
+        echo -e "${fin}   1)${msg} Install${nc}"
+        echo -e "${fin}   2)${msg} Update${nc}"
+        echo -e "${fin}   3)${msg} Backup${nc}"
+        echo " "
+        echo -e "${ca}  a) About Subsonic${nc}"
+        echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
+        echo -e "${ca}  h) Get Help${nc}"
+        echo " "
+        echo -e "${emp}  m) Main Menu${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+        echo " "
+
+        case $choice in
+            '1') echo -e "${inf} Installing..${nc}"
+                echo " "
+                confirm.install.subsonic
+                ;;
+            '2') echo -e "${inf} Running Update..${nc}"
+                echo " "
+                confirm.update.subsonic
+                ;;
+            '3') echo -e "${inf} Backup..${nc}"
+                echo " "
+                backup.subsonic
+                ;;
+            'a')
+                about.subsonic
+                ;;
+            'h')
+                gethelp
+                ;;
+            #'i')
+            #    moreinfo.submenu.subsonic
             #    ;;
             'm') return
                 ;;
@@ -4817,15 +5205,16 @@ mainmenu=""
 while [ "$choice" != "q,a,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.18 (April 11, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.19 (April 11, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
-        echo -e "${qry} Please make a selection! ${nc}(It's best to run 1-8 INSIDE of a jail)"
+        echo -e "${qry} Please make a selection! ${nc}(It's best to run 1-7 INSIDE of a jail)"
         echo " "
         echo -e "${fin}   1)${msg} MySQL + phpMyAdmin${nc}"
         echo -e "${fin}   2)${msg} Web Server / Cloud Storage / Game Servers (${lbt}WordPress${msg}/${lbt}OwnCloud${msg}/${lbt}Pydio${msg} etc.)${nc}"
         echo -e "${fin}   3)${msg} Emby Server ${bld}(Media Streaming)${nc}"
+        #echo -e "${fin}   3)${msg} Media Streaming Servers (${lbt}Emby${msg}/${lbt}Plex${msg}/${lbt}Subsonic${msg} etc.)${nc}"
         echo -e "${fin}   4)${msg} Sonarr${nc}"
         echo -e "${fin}   5)${msg} CouchPotato${nc}"
         echo -e "${fin}   6)${msg} HeadPhones${nc}"
@@ -4839,6 +5228,7 @@ do
         echo " "
         echo -e "${alt}   q) Quit${nc}"
 
+        echo " "
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
         echo -e "${ssep}"
@@ -4854,6 +5244,9 @@ do
             '3')
                 emby.submenu
                 ;;
+            #'3')
+            #    streaming.submenu
+            #    ;;
             '4')
                 sonarr.submenu
                 ;;
@@ -4899,7 +5292,6 @@ done
 # FUTURE: Add "Pydio"
 # FUTURE: Add "Serviio"
 # FUTURE: Add "SqueezeBox"
-# FUTURE: Add "Subsonic"
 # FUTURE: Add "UMS"
 # FUTURE: If this script has no issues then i may remove standalone scripts from github
 # FUTURE: IF & when jail creation via shell is possible for thebrig, will add that option to script.

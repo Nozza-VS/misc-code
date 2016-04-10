@@ -1,6 +1,19 @@
 # Changelog
 
-### Version: 1.0.18 (April 10, 2016)
+### Version: 1.0.19 (April 11, 2016)
++ Updated a couple configs to show user how to find latest version numbers
++ Added Subsonic (Unfinished)
+   + Installer (Unfinished)
+   + Menus
+   + About
+* Updated TheBrig How-To: Enable the ports tree in jails
++ Added SABnzbd updater (Unfinished)
+* Updated a few Plex Media Server items
+   + About
+   + Menus
++ Added a couple things for future changes to menu
+
+### Version: 1.0.18 (April 11, 2016)
 + Added About: SABnzbd
 * Updated About: Pydio
 + Added TheBrig How-To: mounting storage in jails via fstab

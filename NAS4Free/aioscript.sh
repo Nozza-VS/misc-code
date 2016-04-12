@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script                    Version: 1.0.19 (April 11, 2016)
+# AIO Script                    Version: 1.0.19.1 (April 12, 2016)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -131,8 +131,8 @@ do
         echo " "
         echo -e "${fin}   ${ul}My Discord Support${fin} (Usually faster responses):${nc}"
         echo -e "${msg}      https://discord.gg/0bXnhqvo189oM8Cr${nc}"
-        echo -e "${fin}   ${ul}My Email${fin} (Might add this later, Discord is easier though):${nc}"
-        echo -e "${msg}      myemail@domain.com${nc}"
+        echo -e "${fin}   ${ul}My Email${fin} (Discord is easier):${nc}"
+        echo -e "${msg}      support@vengefulsyndicate.com${nc}"
         echo -e "${fin}   ${ul}Forums:${nc}"
         echo -e "${msg}      NAS4Free Forums - OwnCloud:${nc}"
         echo -e "${url}      http://forums.nas4free.org/viewtopic.php?f=79&t=9383${nc}"
@@ -5205,7 +5205,7 @@ mainmenu=""
 while [ "$choice" != "q,a,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.19 (April 11, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.19.1 (April 12, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
@@ -5213,8 +5213,7 @@ do
         echo " "
         echo -e "${fin}   1)${msg} MySQL + phpMyAdmin${nc}"
         echo -e "${fin}   2)${msg} Web Server / Cloud Storage / Game Servers (${lbt}WordPress${msg}/${lbt}OwnCloud${msg}/${lbt}Pydio${msg} etc.)${nc}"
-        echo -e "${fin}   3)${msg} Emby Server ${bld}(Media Streaming)${nc}"
-        #echo -e "${fin}   3)${msg} Media Streaming Servers (${lbt}Emby${msg}/${lbt}Plex${msg}/${lbt}Subsonic${msg} etc.)${nc}"
+        echo -e "${fin}   3)${msg} Media Streaming Servers (${lbt}Emby${msg}/${lbt}Plex${msg}/${lbt}Subsonic${msg} etc.)${nc}"
         echo -e "${fin}   4)${msg} Sonarr${nc}"
         echo -e "${fin}   5)${msg} CouchPotato${nc}"
         echo -e "${fin}   6)${msg} HeadPhones${nc}"
@@ -5242,11 +5241,8 @@ do
                 selfhosting.submenu
                 ;;
             '3')
-                emby.submenu
+                streaming.submenu
                 ;;
-            #'3')
-            #    streaming.submenu
-            #    ;;
             '4')
                 sonarr.submenu
                 ;;

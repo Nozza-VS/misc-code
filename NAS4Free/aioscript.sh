@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script                    Version: 1.0.19.1 (April 12, 2016)
+# AIO Script                    Version: 1.0.20 (April 13, 2016)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -712,6 +712,35 @@ done
 
 }
 
+#------------------------------------------------------------------------------#
+### ABOUT: TEAMSPEAK 3
+
+about.teamspeak3 ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} About: Teamspeak 3${nc}"
+        echo " "
+        echo -e "${msg} ${nc}"
+        echo -e "${sep}"
+        echo " "
+
+        echo -e "${msep}"
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+
+}
+
 
 
 #------------------------------------------------------------------------------#
@@ -1051,6 +1080,35 @@ do
         echo -e "${cmd}    make install clean${nc}"
         echo -e "${msg} Once it is done, restart the emby server${nc}"
         echo -e "${cmd}    service emby-server restart${nc}"
+        echo " "
+
+        echo -e "${msep}"
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### TEAMSPEAK 3 SERVER - HOW-TO: Set up the server bot
+#------------------------------------------------------------------------------#
+
+teamspeak3.howto.setupbot ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} Emby - How to set up the server bot:"
+        echo -e "${sep}"
+        echo " "
+        echo -e "${msg} ${nc}"
         echo " "
 
         echo -e "${msep}"
@@ -2500,6 +2558,22 @@ echo -e "${sep}"
 echo " "
 }
 
+#------------------------------------------------------------------------------#
+### TEAMSPEAK 3 SERVER INSTALL
+
+install.teamspeak3 ()
+{
+
+}
+
+#------------------------------------------------------------------------------#
+### TEAMSPEAK 3 SERVER BOT INSTALL
+
+install.teamspeak3bot ()
+{
+
+}
+
 
 
 ################################################################################
@@ -3118,6 +3192,24 @@ echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
 }
 
+#------------------------------------------------------------------------------#
+### TEAMSPEAK 3 SERVER UPDATE
+
+update.teamspeak3 ()
+{
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+echo " "
+}
+
+#------------------------------------------------------------------------------#
+### TEAMSPEAK 3 SERVER BOT UPDATE
+
+update.teamspeak3bot ()
+{
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+echo " "
+}
+
 
 
 ################################################################################
@@ -3288,6 +3380,24 @@ echo " "
 ### SUBSONIC BACKUP
 
 backup.subsonic ()
+{
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+echo " "
+}
+
+#------------------------------------------------------------------------------#
+### TEAMSPEAK 3 SERVER BACKUP
+
+backup.teamspeak3 ()
+{
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+echo " "
+}
+
+#------------------------------------------------------------------------------#
+### TEAMSPEAK 3 SERVER BOT BACKUP
+
+backup.teamspeak3bot ()
 {
 echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
@@ -3631,6 +3741,46 @@ case "$response" in
 esac
 }
 
+#------------------------------------------------------------------------------#
+### TEAMSPEAK 3 SERVER CONFIRM INSTALL
+
+confirm.install.teamspeak3 ()
+{
+# Confirm with the user
+read -r -p "   Confirm Installation of Teamspeak 3? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              install.teamspeak3
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              return
+              ;;
+esac
+}
+
+#------------------------------------------------------------------------------#
+### TEAMSPEAK 3 SERVER BOT CONFIRM INSTALL
+
+confirm.install.teamspeak3bot ()
+{
+# Confirm with the user
+read -r -p "   Confirm Installation of Teamspeak 3 Server Bot? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              install.teamspeak3bot
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              return
+              ;;
+esac
+}
+
 
 
 #------------------------------------------------------------------------------#
@@ -3885,6 +4035,46 @@ case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
               update.subsonic
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              return
+              ;;
+esac
+}
+
+#------------------------------------------------------------------------------#
+### TEAMSPEAK 3 SERVER CONFIRM UPDATE
+
+confirm.update.teamspeak3 ()
+{
+# Confirm with the user
+read -r -p "   Confirm Update of Teamspeak 3 Server? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              update.teamspeak3
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              return
+              ;;
+esac
+}
+
+#------------------------------------------------------------------------------#
+### TEAMSPEAK 3 SERVER BOT CONFIRM UPDATE
+
+confirm.update.teamspeak3bot ()
+{
+# Confirm with the user
+read -r -p "   Confirm Update of Teamspeak 3 Server Bot? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              update.teamspeak3bot
                ;;
     *)
               # Otherwise exit...
@@ -4157,7 +4347,7 @@ do
         echo " "
         echo -e "${ca}  a) About Media Streaming (Currently Unavailable)${nc}"
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
-        echo -e "${ca}  h) Get Help${nc}"
+        echo -e "${inf}  h) Get Help${nc}"
         echo " "
         echo -e "${emp}  m) Main Menu${nc}"
 
@@ -4201,7 +4391,7 @@ done
 
 emby.submenu ()
 {
-while [ "$choice" != "a,h,i,m,q" ]
+while [ "$choice" != "a,h,i,b,q" ]
 do
         echo -e "${sep}"
         echo -e "${fin} Emby Options${nc}"
@@ -4219,7 +4409,7 @@ do
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
         echo -e "${ca}  h) Get Help${nc}"
         echo " "
-        echo -e "${emp}  m) Main Menu${nc}"
+        echo -e "${emp}  b) Back${nc}"
 
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
@@ -4248,7 +4438,7 @@ do
             #'i')
             #    moreinfo.submenu.emby
             #    ;;
-            'm') return
+            'b') return
                 ;;
             *)   echo -e "${alt}        Invalid choice, please try again${nc}"
                 echo " "
@@ -4262,7 +4452,7 @@ done
 
 plex.submenu ()
 {
-while [ "$choice" != "a,h,i,m,q" ]
+while [ "$choice" != "a,h,i,b,q" ]
 do
         echo -e "${sep}"
         echo -e "${fin} Plex Options${nc}"
@@ -4277,7 +4467,7 @@ do
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
         echo -e "${ca}  h) Get Help${nc}"
         echo " "
-        echo -e "${emp}  m) Main Menu${nc}"
+        echo -e "${emp}  b) Back${nc}"
 
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
@@ -4306,7 +4496,7 @@ do
             #'i')
             #    moreinfo.submenu.plex
             #    ;;
-            'm') return
+            'b') return
                 ;;
             *)   echo -e "${alt}        Invalid choice, please try again${nc}"
                 echo " "
@@ -4320,7 +4510,7 @@ done
 
 subsonic.submenu ()
 {
-while [ "$choice" != "a,h,i,m,q" ]
+while [ "$choice" != "a,h,i,b,q" ]
 do
         echo -e "${sep}"
         echo -e "${fin} Subsonic Options${nc}"
@@ -4335,7 +4525,7 @@ do
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
         echo -e "${ca}  h) Get Help${nc}"
         echo " "
-        echo -e "${emp}  m) Main Menu${nc}"
+        echo -e "${emp}  b) Back${nc}"
 
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
@@ -4364,6 +4554,64 @@ do
             #'i')
             #    moreinfo.submenu.subsonic
             #    ;;
+            'b') return
+                ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
+                ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### SEARCH TOOLS / DOWNLOAD AUTOMATION SUBMENU
+
+searchtools.submenu ()
+{
+while [ "$choice" != "a,h,i,m,q" ]
+do
+        echo -e "${sep}"
+        echo -e "${fin} Automation Options${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Automate your downloads with:${nc}"
+        echo " "
+        echo -e "${fin}   1)${msg} Sonarr (TV & Anime)${nc}"
+        echo -e "${fin}   2)${msg} CouchPotato (Movies)${nc}"
+        echo -e "${fin}   3)${msg} HeadPhones (Music)${nc}"
+        echo " "
+        echo -e "${ca}  a) About Automation (Currently Unavailable)${nc}"
+        echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
+        echo -e "${inf}  h) Get Help${nc}"
+        echo " "
+        echo -e "${emp}  m) Main Menu${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+        echo " "
+
+        case $choice in
+            '1') echo -e "${inf} Taking you to the Sonarr menu..${nc}"
+                echo " "
+                sonarr.submenu
+                ;;
+            '2') echo -e "${inf} Taking you to the CouchPotato menu..${nc}"
+                echo " "
+                couchpotato.submenu
+                ;;
+            '3') echo -e "${inf} Taking you to the HeadPhones menu..${nc}"
+                echo " "
+                headphones.submenu
+                ;;
+            #'a')
+            #    about.searchtools
+            #    ;;
+            'h')
+                gethelp
+                ;;
+            #'i')
+            #    moreinfo.submenu.searchtools
+            #    ;;
             'm') return
                 ;;
             *)   echo -e "${alt}        Invalid choice, please try again${nc}"
@@ -4378,7 +4626,7 @@ done
 
 sonarr.submenu ()
 {
-while [ "$choice" != "a,h,i,m,q" ]
+while [ "$choice" != "a,h,i,b,q" ]
 do
         echo -e "${sep}"
         echo -e "${fin} Sonarr Options${nc}"
@@ -4393,7 +4641,7 @@ do
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
         echo -e "${ca}  h) Get Help${nc}"
         echo " "
-        echo -e "${emp}   m) Main Menu${nc}"
+        echo -e "${emp}   b) Back${nc}"
 
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
@@ -4421,7 +4669,7 @@ do
             #'i')
             #    moreinfo.submenu.sonarr
             #    ;;
-            'm') return
+            'b') return
                 ;;
             *)   echo -e "${alt}        Invalid choice, please try again${nc}"
                 echo " "
@@ -4435,7 +4683,7 @@ done
 
 couchpotato.submenu ()
 {
-while [ "$choice" != "a,h,i,m,q" ]
+while [ "$choice" != "a,h,i,b,q" ]
 do
         echo -e "${sep}"
         echo -e "${fin} CouchPotato Options${nc}"
@@ -4443,14 +4691,14 @@ do
         echo -e "${qry} Choose one:${nc}"
         echo " "
         echo -e "${fin}   1)${msg} Install${nc}"
-        echo -e "${fin}   2)${msg} Update${nc}"
-        echo -e "${fin}   3)${msg} Backup${nc}"
+        echo -e "${ca}   2)${ca} Update (Currently Unavailable)${nc}"
+        echo -e "${ca}   3)${ca} Backup (Currently Unavailable)${nc}"
         echo " "
         echo -e "${inf}  a) About CouchPotato${nc}"
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
-        echo -e "${ca}  h) Get Help${nc}"
+        echo -e "${inf}  h) Get Help${nc}"
         echo " "
-        echo -e "${emp}   m) Main Menu${nc}"
+        echo -e "${emp}   b) Back${nc}"
 
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
@@ -4479,7 +4727,7 @@ do
             #'i')
             #    moreinfo.submenu.couchpotato
             #    ;;
-            'm')
+            'b')
                 return
                 ;;
             *)   echo -e "${alt}        Invalid choice, please try again${nc}"
@@ -4494,7 +4742,7 @@ done
 
 headphones.submenu ()
 {
-while [ "$choice" != "a,h,i,m,q" ]
+while [ "$choice" != "a,h,i,b,q" ]
 do
         echo -e "${sep}"
         echo -e "${fin} HeadPhones Options${nc}"
@@ -4509,7 +4757,7 @@ do
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
         echo -e "${inf}  h) Get Help${nc}"
         echo " "
-        echo -e "${emp}  m) Main Menu${nc}"
+        echo -e "${emp}  b) Back${nc}"
 
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
@@ -4538,7 +4786,7 @@ do
             #'i')
             #    moreinfo.submenu.headphones
             #    ;;
-            'm') return
+            'b') return
                 ;;
             *)   echo -e "${alt}        Invalid choice, please try again${nc}"
                 echo " "
@@ -4854,6 +5102,7 @@ do
         echo -e "${ca}   1)${ca} Web Server (Currently Unavailable)${nc}"
         echo -e "${fin}   2)${msg} Cloud Storage (${lbt}OwnCloud${nc} / ${lbt}Pydio${nc})${nc}"
         echo -e "${ca}   3)${ca} Game Server(s) (Currently Unavailable)${nc}"
+        echo -e "${ca}   4)${ca} Teamspeak 3 Server (Currently Unavailable)${nc}"
         echo " "
         echo -e "${ca}  a) About Self Hosting (Currently Unavailable)${nc}"
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
@@ -4875,9 +5124,11 @@ do
                 echo " "
                 cloud.submenu
                 ;;
-            #'3') echo -e "${inf} Backup..${nc}"
-            #    echo " "
+            #'3')
             #    gameservers.submenu
+            #    ;;
+            #'4')
+            #    teamspeak3.submenu
             #    ;;
             #'a')
             #    about.selhosting
@@ -4952,6 +5203,74 @@ do
             'i')
                 moreinfo.submenu.webserver
                 ;;
+            'b') return
+                ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
+                ;;
+        esac
+done
+}
+
+### TEAMSPEAK SERVER SUBMENU
+
+teamspeak3.submenu ()
+{
+while [ "$choice" != "a,h,i,b,q" ]
+do
+        echo -e "${sep}"
+        echo -e "${fin} Teamspeak 3 Server Options${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:${nc}"
+        echo " "
+        echo -e "${fin}   1)${msg} Install${nc}"
+        echo -e "${ca}   2)${ca} Update${nc}"
+        echo -e "${ca}   3)${ca} Backup${nc}"
+        echo " "
+        echo -e "${ca}   4)${ca} Install JTS3ServerMod [Server Bot] (Currently Unavailable)${nc}" # (Use above install first)
+        echo -e "${ca}   5)${ca} Update JTS3ServerMod [Server Bot] (Currently Unavailable)${nc}" # (Use above install first)
+        echo " "
+        echo -e "${ca}  a) About Teamspeak${nc}"
+        echo -e "${ca}  i) More Info / How-To's${nc}"
+        echo -e "${inf}  h) Get Help${nc}"
+        echo " "
+        echo -e "${emp}  b) Back${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+        echo " "
+
+        case $choice in
+            '1') echo -e "${inf} Installing..${nc}"
+                echo " "
+                confirm.install.teamspeak3
+                ;;
+            '2') echo -e "${inf} Running Update..${nc}"
+                echo " "
+                confirm.update.teamspeak3
+                ;;
+            '3') echo -e "${inf} Backup..${nc}"
+                echo " "
+                backup.teamspeak3
+                ;;
+            #'4') echo -e "${inf} Installing..${nc}"
+            #    echo " "
+            #    confirm.install.teamspeak3bot
+            #    ;;
+            #'5') echo -e "${inf} Updating..${nc}"
+            #    echo " "
+            #    confirm.update.teamspeak3bot
+            #    ;;
+            #'a')
+            #    about.teamspeak3
+            #    ;;
+            'h')
+                gethelp
+                ;;
+            #'i')
+            #    moreinfo.submenu.teamspeak3
+            #    ;;
             'b') return
                 ;;
             *)   echo -e "${alt}        Invalid choice, please try again${nc}"
@@ -5205,19 +5524,18 @@ mainmenu=""
 while [ "$choice" != "q,a,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.19.1 (April 12, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.20 (April 13, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
-        echo -e "${qry} Please make a selection! ${nc}(It's best to run 1-7 INSIDE of a jail)"
+        echo -e "${qry} Please make a selection! ${nc}(It's best to run 1-5 INSIDE of a jail)"
         echo " "
-        echo -e "${fin}   1)${msg} MySQL + phpMyAdmin${nc}"
-        echo -e "${fin}   2)${msg} Web Server / Cloud Storage / Game Servers (${lbt}WordPress${msg}/${lbt}OwnCloud${msg}/${lbt}Pydio${msg} etc.)${nc}"
-        echo -e "${fin}   3)${msg} Media Streaming Servers (${lbt}Emby${msg}/${lbt}Plex${msg}/${lbt}Subsonic${msg} etc.)${nc}"
-        echo -e "${fin}   4)${msg} Sonarr${nc}"
-        echo -e "${fin}   5)${msg} CouchPotato${nc}"
-        echo -e "${fin}   6)${msg} HeadPhones${nc}"
-        echo -e "${fin}   7)${msg} Download Tools (NZBGet / Deluge)${nc}"
+        echo -e "${fin}   1)${url} MySQL + phpMyAdmin${nc}"
+        echo -e "${fin}   2)${url} Host Your Own: ${msg}Web Server / Cloud Storage / Game Server / + More${nc}"
+        echo -e "         (WordPress / OwnCloud / Pydio / Teamspeak etc.)"
+        echo -e "${fin}   3)${url} Media Streaming Servers ${nc}(Emby / Plex / Subsonic etc.)"
+        echo -e "${fin}   4)${url} Sonarr ${nc}(TV & Anime) / ${url}CouchPotato ${nc}(Movies) / ${url}HeadPhones ${nc}(Music)"
+        echo -e "${fin}   5)${url} Download Tools ${nc}(NZBGet - Usenet / Deluge - Torrents)${nc}"
         echo " "
         echo -e "${cmd}   j)${msg} TheBrig${nc}"
         echo " "
@@ -5244,15 +5562,9 @@ do
                 streaming.submenu
                 ;;
             '4')
-                sonarr.submenu
+                searchtools.submenu
                 ;;
             '5')
-                couchpotato.submenu
-                ;;
-            '6')
-                headphones.submenu
-                ;;
-            '7')
                 downloadtools.submenu
                 ;;
             'a')
@@ -5279,9 +5591,18 @@ do
         esac
 done
 
-# LOW-TODO: Finish adding "Calibre"
+
+
+################################################################################
+##### To-Do's / Future Changes / etc.
+################################################################################
+
+# MED-TODO: Add Teamspeak 3 Server & JTS3ServerMod (Server Bot)
 # MED-TODO: Finish "Deluge" scripts (Lots of issues with it)
+
+# LOW-TODO: Finish adding "Calibre"
 # LOW-TODO: Finish adding "Munin"
+
 # FUTURE: Add "Mail Server"
 # FUTURE: Add "Plex"    - Maybe utilize ezPlex Portable Addon by JoseMR? (With permission of course)
 #                       If not, use ports tree or whatever, will decide later.

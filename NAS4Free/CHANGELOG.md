@@ -1,5 +1,16 @@
 # Changelog
 
+### Version: 1.0.20 (April 13, 2016)
+* Modified menus a bunch
+   + Added new submenu for download automation tools
++ Started adding Teamspeak
+   + Menus
+   + Menus for Server Bot
+
+### Version: 1.0.19.1 (April 12, 2016)
+* Updated support email
+* Modified menu
+
 ### Version: 1.0.19 (April 11, 2016)
 + Updated a couple configs to show user how to find latest version numbers
 + Added Subsonic (Unfinished)

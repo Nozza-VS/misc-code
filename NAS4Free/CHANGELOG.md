@@ -1,5 +1,9 @@
 # Changelog
 
+### Version: 1.0.21 (April 18, 2016)
+* Changed Emby version to latest (3.0.5930)
+* Updated Teamspeak & Bot a bit more (Still Unfinished)
+
 ### Version: 1.0.20 (April 13, 2016)
 * Modified menus a bunch
    + Added new submenu for download automation tools

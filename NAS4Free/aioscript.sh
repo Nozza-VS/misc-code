@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script                    Version: 1.0.20 (April 13, 2016)
+# AIO Script                    Version: 1.0.21 (April 18, 2016)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -44,8 +44,10 @@ jail_ip="192.168.1.200"     # ! No need to change this for OwnCloud installs !
                             # installed OwnCloud previously.
 ################################################################################
 ###! EMBY CONFIG !###
-emby_update_ver="3.0.5913"  # You can find release numbers here:
+emby_update_ver="3.0.5930"  # You can find release numbers here:
                             # https://github.com/MediaBrowser/Emby/releases
+                            # To use the beta: "3.0.5939-beta"
+                            # To use the dev: "3.0.5950.41655-dev"
 ################################################################################
 ###! SABNZBD CONFIG !###
 sab_ver="1.0.0"             # You can find release numbers here:
@@ -2564,13 +2566,134 @@ echo " "
 install.teamspeak3 ()
 {
 
+#Update the pkg management system first
+pkg update
+pkg upgrade
+
+cd /usr/ports/audio/teamspeak3-server
+make install clean; rehash
+
+# Tell user to accept defaults
+# Tell user to press A when license shows
+
+# fetch scripts from github
+# teamspeak3-server init script
+# ts3server.sh
+
+echo 'teamspeak_enable="YES"' >> /etc/rc.conf
+
+# Start server
+service teamspeak start
+
+# Instruct user to check log files for admin token
+cat /var/log/teamspeak/ts3server_*_1.log
+
+# mention port forwarding
+# Forward the following ports to your jails IP
+# TCP: 10011,30033
+# UDP: 9987
+
 }
 
 #------------------------------------------------------------------------------#
-### TEAMSPEAK 3 SERVER BOT INSTALL
+### TEAMSPEAK 3 SERVER BOT HOSTING EDITION INSTALL (MUCH HARDER TO SET UP)
 
 install.teamspeak3bot ()
 {
+
+# Update the pkg management system first
+pkg update
+pkg upgrade
+
+# Install packages
+pkg install -y screen openjdk8 wget
+
+# download server bot
+wget -r -l1 -np -A "JTS3ServerMod_*.zip" http://www.stefan1200.de/downloads/
+
+# fetch start script from github
+# ts3serverbot.sh
+
+# make it executable
+
+# run it
+
+# Instruct user how to make it run at jail startup
+
+}
+
+#------------------------------------------------------------------------------#
+### TEAMSPEAK 3 SERVER BOT HOSTING EDITION INSTALL
+
+install.teamspeak3bothosting ()
+{
+
+# Update the pkg management system first
+pkg update
+pkg upgrade
+
+# Install packages, may not need ALL of these but grabbing them anyway
+pkg install -y openjdk8 wget apache24 phpmyadmin mysql56-server php56-mysql php56-mysqli mod_php56 php56-extensions php56-sockets php56-session
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Packages installed - now configuring MySQL${nc}"
+echo -e "${sep}"
+echo " "
+
+echo 'mysql_enable="YES"' >> /etc/rc.conf
+echo '[mysqld]' >> /var/db/mysql/my.cnf
+echo 'skip-networking' >> /var/db/mysql/my.cnf
+
+# Start MySQL Server
+/usr/local/etc/rc.d/mysql-server start
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Securing the install. Default root password is blank,${nc}"
+echo -e "${msg} you want to provide a strong root password, remove the${nc}"
+echo -e "${msg} anonymous accounts, disallow remote root access,${nc}"
+echo -e "${msg} remove the test database, and reload privilege tables${nc}"
+echo -e "${sep}"
+echo " "
+
+mysql_secure_installation
+
+# Copy php ini
+cp /usr/local/etc/php.ini-development /usr/local/etc/php.ini
+
+# Enable apache server at startup
+echo 'apache24_enable="YES"' >> /etc/rc.conf
+
+# Modify web server
+# First, we will configure Apache to load index.php files by default by adding the following lines:
+# Configure apache: /usr/local/etc/apache24/httpd.conf
+# Modify this line: DirectoryIndex index.html (Line 278)
+# To show as: DirectoryIndex index.html index.php
+# Restart apache to update changes
+
+# Next, we will configure Apache to process requested PHP files with the PHP processor.
+echo '<FilesMatch "\.php$">' >> /usr/local/etc/apache24/httpd.conf
+echo '    SetHandler application/x-httpd-php' >> /usr/local/etc/apache24/httpd.conf
+echo '</FilesMatch>' >> /usr/local/etc/apache24/httpd.conf
+echo '<FilesMatch "\.phps$">' >> /usr/local/etc/apache24/httpd.conf
+echo '    SetHandler application/x-httpd-php-source' >> /usr/local/etc/apache24/httpd.conf
+echo '</FilesMatch>' >> /usr/local/etc/apache24/httpd.conf
+
+# Start web server
+service apache24 start
+
+# Download server bot
+wget -r -l1 -np -A "JTS3ServerMod_HostingEdition_*.zip" http://www.stefan1200.de/downloads/ -O /tmp/JTS3ServerMod_HostingEdition.zip
+unzip -o "/tmp/JTS3ServerMod_HostingEdition.zip"
+mv /tmp/JTS3ServerMod_HostingEdition /usr/local/share/teamspeak-bot
+cp -R /usr/local/share/teamspeak-bot/webinterface/* /usr/local/www/apache24/data
+rm /usr/local/www/apache24/data/index.html
+#chmod /usr/local/www/apache24/data
+#chown /usr/local/www/apache24/data
+
+# create database
+echo "create database ts3" | mysql -u root
 
 }
 
@@ -5524,7 +5647,7 @@ mainmenu=""
 while [ "$choice" != "q,a,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.20 (April 13, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.21 (April 18, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
@@ -5597,7 +5720,7 @@ done
 ##### To-Do's / Future Changes / etc.
 ################################################################################
 
-# MED-TODO: Add Teamspeak 3 Server & JTS3ServerMod (Server Bot)
+# MED-TODO: Finish adding Teamspeak 3 Server & JTS3ServerMod (Server Bot)
 # MED-TODO: Finish "Deluge" scripts (Lots of issues with it)
 
 # LOW-TODO: Finish adding "Calibre"
@@ -5613,3 +5736,16 @@ done
 # FUTURE: If this script has no issues then i may remove standalone scripts from github
 # FUTURE: IF & when jail creation via shell is possible for thebrig, will add that option to script.
 # FUTUTE: Add "Sickbeard"?
+# FUTURE: Add "Monit" (Free) & "M/Monit" (Free Trial but requires purchase)
+# "M/Monit" is NOT required to be able to use "Monit"
+    #pkg install monit
+    #echo 'monit_enable="YES"' >> /etc/rc.conf
+    #cp /usr/local/etc/monitrc.sample /usr/local/etc/monitrc
+    #chmod 600 /usr/local/etc/monitrc
+    #service monit start
+# FUTURE: Add "Jabber" Server (Or Prosody as i'm pretty sure that is easier to set up)
+    #pkg install ejabberd
+    #echo 'ejabberd_enable="YES"' >> /etc/rc.conf
+    #cp /usr/local/etc/ejabberd/ejabberd.yml.example /usr/local/etc/ejabberd/ejabberd.yml
+    #chown 543:543 /usr/local/etc/ejabberd/ejabberd.yml
+    #service ejabberd start

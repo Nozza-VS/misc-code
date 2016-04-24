@@ -423,8 +423,8 @@ div.mainDrawer {background: #181818;}
 .sidebarDivider {background: #303030 !important;}
 .adminDrawerPanel .sidebarHeader {color: #CCCCCC !important;}
 span.sidebarLinkText {color: #EDEDED !important;}
-a.sidebarLink:hover {background: #4D4D4D !important;}
-.adminDrawerPanel .sidebarLinkIcon {color: #EDEDED !important;}
+a.sidebarLink:hover {background: #770000 !important;}
+.adminDrawerPanel .sidebarLinkIcon {color: #990000 !important;}
 
 /* ------ 5.0 : Manual Fixes ------ */
 

@@ -1,17 +1,18 @@
-/* Emby version : 3.0.5911.0 and later */
+/* Emby version : 3.0.5930 and later */
 
 /* Color HEX codes */
 
 /* Color (RED) : #990000 & (153,0,0)
 /* Dark Color  : #660000
 /* Gray 1      : #404040              (Button backgrounds)
-/* Gray 2      : #4D4D4D              (Sidelink hover)
-/* Dark Gray 1 : #1E1E1E              (Side Panel background)
+/* Gray 2      : #4D4D4D              (Sidelink panel hover)
+/* Dark Gray 1 : #181818              (Side Panel background)
 /* Dark Gray 2 : #303030              (Divider line)
-/* Dark Gray 3 : #181818              (Background)
-/* Dark Gray 4 : #282828              (Panel background)
-/* Black 1     : #080808 & (08,08,08)
-/* Black 2     : #101010              (Pop-up window)
+/* Dark Gray 3 : #101010              (Background)
+/* Dark Gray 4 : #202020              (Panel background)
+/* Black 1     : #010101
+/* Black 2     : #090909              (Pop-up window)
+/* Black 3     : (02,02,02)           (Top & bottom menu bar)
 /* White 1     : #CCCCCC              (Default text)
 /* White 2     : #656565              (Field description)
 /* White 3     : #EDEDED              (Gray button title)
@@ -52,7 +53,7 @@
 /* --- 3.2 : Details --- */
 /* Corrections */
 /* Report Manager Page */
-/* Metadata Editor Page */
+/* Metadata Editor Page & Side Panel */
 /* Scrollbars */
 
 /* ------ 4.0 : Dark Theme (Can be removed) ------ */
@@ -86,23 +87,22 @@ background-color: #990000 !important;
 border-color: #990000;}
 .paper-radio-button-0[checked] #offRadio.paper-radio-button {
     border-color: #990000;}
-.paper-radio-button-0 #onRadio.paper-radio-button {
+.paper-radio-button-0 #onRadio.paper-radio-button, paper-toggle-button #toggleButton, paper-toggle-button[checked] #toggleBar {
     background-color: #990000;}
 /* Circles */
-.blue.x-scope.paper-fab-0, .red.x-scope.paper-fab-0, .green.x-scope.paper-fab-0, .orange.x-scope.paper-fab-0, paper-fab.btnPlay.detailFloatingButton.x-scope.paper-fab-0, .scheduledTaskPaperIconItem[data-status='Idle'] paper-fab, paper-icon-item.btnLogout.x-scope.paper-icon-item-0 paper-fab.x-scope.paper-fab-0, div.devicesList paper-fab.x-scope.paper-fab-0, paper-fab.btnCloseDialog.x-scope.paper-fab-0, paper-fab.btnOpenUploadMenu.subdued.x-scope.paper-fab-0, paper-fab.btnBrowseAllImages.subdued.x-scope.paper-fab-0, paper-fab.btnOpenUploadMenu.subdued.x-scope.paper-fab-0, paper-fab.btnCancelVoiceInput.x-scope.paper-fab-0, paper-fab.btnNewCollection.bottomFab.x-scope.paper-fab-0, div.btnNotificationsInner.levelNormal, div.paperList.folderList paper-fab.x-scope.paper-fab-0 {
+.blue.x-scope.paper-fab-0, .red.x-scope.paper-fab-0, .green.x-scope.paper-fab-0, .orange.x-scope.paper-fab-0, paper-fab.btnPlay.detailFloatingButton.x-scope.paper-fab-0, .scheduledTaskPaperIconItem[data-status='Idle'] paper-fab, paper-icon-item.btnLogout.x-scope.paper-icon-item-0 paper-fab.x-scope.paper-fab-0, div.devicesList paper-fab.x-scope.paper-fab-0, paper-fab.btnCloseDialog.x-scope.paper-fab-0, paper-fab.btnOpenUploadMenu.subdued.x-scope.paper-fab-0, paper-fab.btnBrowseAllImages.subdued.x-scope.paper-fab-0, paper-fab.btnOpenUploadMenu.subdued.x-scope.paper-fab-0, paper-fab.btnCancelVoiceInput.x-scope.paper-fab-0, paper-fab.btnNewCollection.bottomFab.x-scope.paper-fab-0, div.btnNotificationsInner.levelNormal, div.paperList.folderList paper-fab.x-scope.paper-fab-0, paper-fab.btnCancelSupporterInfo.x-scope.paper-fab-0, div.adminSection paper-fab.x-scope.paper-fab-0 {
 background-color: #990000 !important;
 color: #FFFFFF !important;}
-.ui-body-b paper-fab.subdued[elevation="1"], .ui-body-b paper-fab.subdued[elevation="4"] {
-    background: #990000 !important;}
-.scheduledTaskPaperIconItem[data-status="Running"] paper-fab, paper-fab.btnCancelSupporterInfo.x-scope.paper-fab-0 {
-background-color: #660000;}
+.ui-body-b paper-fab.subdued[elevation="1"], .ui-body-b paper-fab.subdued[elevation="4"] {background: #990000 !important;}
+.scheduledTaskPaperIconItem[data-status="Running"] paper-fab {background-color: #660000 !important;}
 /* Icons & Menu Bars */
 .btnUserItemRatingOn {color: #990000 !important;}
 .viewMenuBar paper-icon-button, paper-icon-button.btnCast.headerButton.headerButtonRight.x-scope.paper-icon-button-0.btnActiveCast, paper-icon-button.nowPlayingCastIcon.x-scope.paper-icon-button-0.btnActiveCast, paper-icon-button.nowPlayingCastIcon.x-scope.paper-icon-button-0, paper-icon-button.mediaButton.toggleRepeatButton.x-scope.paper-icon-button-0.repeatActive, paper-icon-button.btnCancel.x-scope.paper-icon-button-0, div.videoAdvancedControls paper-icon-button.mediaButton.x-scope.paper-icon-button-0, paper-icon-button.btnExitRemoteControl.x-scope.paper-icon-button-0, paper-icon-button.btnNextPage.x-scope.paper-icon-button-0, paper-icon-button.btnPreviousPage.x-scope.paper-icon-button-0, 
-paper-button.accent, paper-icon-button.btnUp.x-scope.paper-icon-button-0, paper-icon-button.btnDown.x-scope.paper-icon-button-0, .ui-body-a .emby-collapsible-button, paper-icon-button.btnViewItemDown.btnViewItemMove.x-scope.paper-icon-button-0, paper-icon-button.btnViewItemUp.btnViewItemMove.x-scope.paper-icon-button-0 {color: #990000 !important;}
+paper-button.accent, paper-icon-button.btnUp.x-scope.paper-icon-button-0, paper-icon-button.btnDown.x-scope.paper-icon-button-0, .ui-body-a .emby-collapsible-button, paper-icon-button.btnViewItemDown.btnViewItemMove.x-scope.paper-icon-button-0, paper-icon-button.btnViewItemUp.btnViewItemMove.x-scope.paper-icon-button-0 {
+color: #990000 !important;}
 /* Rectangles & Others */
 paper-button#btnShutdown.subdued.x-scope.paper-button-0, paper-button.subdued.btnRestartContainer.x-scope.paper-button-0 {
-background: #101010 !important;
+background: #090909 !important;
 color: #990000;}
 paper-button[raised].accent, paper-button[raised].submit, paper-button[raised].more, paper-button[raised].secondary, button[data-theme='b']:not([data-role='none']):not(.clearButton), div.supporterPromotion paper-button.block.x-scope.paper-button-0 {
     background: #990000 !important;
@@ -112,11 +112,22 @@ div[data-role="controlgroup"] a.ui-btn-active, .selectionCommandsPanel {
     color: #FFFFFF !important;}
 a.cardContent.mediaItem:visited {color: #990000 !important;}
 .itemSelectionPanel {border: 1px solid #990000 !important;}
+paper-tabs paper-ripple {color: #990000 !important;}
+div#tabsContent.horizontal.layout.style-scope.paper-tabs a.clearLink.paperTabLink:hover {
+font-weight: bold !important;
+    color: #990000 !important;}
+.dashboardDocument .viewMenuBar #selectionBar {
+    background: #990000 !important;}
 
 /* --- 1.2 : Details --- */
 /* Icons & Indicators */
-.playedIndicator {background-color: #990000;}
-.missingPosterRibbon {background: rgba(153,0,0,.8);}
+.playedIndicator {background-color: #990000 !important;}
+p#pUpToDate svg.style-scope.iron-icon {
+    background-color: #990000 !important;
+    border-radius: .25em;
+    color: #fff;
+    margin-right: .0em;}
+.missingPosterRibbon {background: rgba(232,17,35,.8);}
 /* Glow lights */
 a[data-role='button']:focus, button:not([data-role='none']):not(.clearButton):focus {
 	-webkit-box-shadow: 0 0 12px #990000;
@@ -145,20 +156,24 @@ div.readOnlyContent h2, form.playbackConfigurationForm h2 {color: #990000 !impor
 div#divRunningTasks span, paper-icon-item.scheduledTaskPaperIconItem.x-scope.paper-icon-item-0 span {color: #990000 !important;}
 /* Pop-up Windows */
 dialog.dialog.scrollY.opened paper-button.btnCancel.x-scope.paper-button-0, dialog.dialog.scrollY.opened 
-paper-button.btnConfirm.x-scope.paper-button-0, paper-button.actionSheetMenuItem.x-scope.paper-button-0, .promptDialogContent paper-button {color: #990000;}
+paper-button.btnConfirm.x-scope.paper-button-0, paper-button.actionSheetMenuItem.x-scope.paper-button-0, .promptDialogContent paper-button {color: #990000 !important;}
 paper-button.actionSheetMenuItem.x-scope.paper-button-0:hover {
-    color: #101010;
+    color: #090909 !important;
     background-color: #990000;}
-select, .paper-dialog-0 .buttons {color: #990000 !important;}
+select, .paper-dialog-0 .buttons, div.promptDialogContent a {color: #990000 !important;}
+dialog.dialog.scrollY.ui-body-a.background-theme-a.adminAppsMenu.centeredDialog.opened a.adminAppsButton {color: #990000 !important;}
 /* Metadata Editor Page & Side Panel */
 div.jstree-wholerow.jstree-wholerow-clicked {
     background: #990000 !important;
     color: #FFFFFF !important;}
-paper-button.btnHeaderSave.accent.x-scope.paper-button-0 {
-    color: #990000 !important;}
-a.lnkMediaFolder.sidebarLink.selectedMediaFolder:visited, .darkDrawer .sidebarLink.selectedSidebarLink, .darkDrawer .selectedMediaFolder, a.sidebarLink.selectedSidebarLink:visited {background: #990000 !important;}
+.adminDrawerPanel iron-icon#expandIcon.style-scope.emby-collapsible.x-scope.iron-icon-0 {color: #990000 !important;}
+.adminDrawerPanel .sidebarLink.selectedSidebarLink, a.lnkMediaFolder.sidebarLink.selectedMediaFolder, a.lnkMediaFolder.sidebarLink.selectedMediaFolder span.sectionName, a.lnkMediaFolder.sidebarLink.selectedMediaFolder span.sidebarLinkText {
+    background: #990000 !important;
+color: #FFFFFF !important;}
+.adminDrawerPanel .sidebarLink.selectedSidebarLink:hover, a.sidebarLink.selectedSidebarLink iron-icon.sidebarLinkIcon.x-scope.iron-icon-0, a.lnkMediaFolder.sidebarLink.selectedMediaFolder iron-icon.sidebarLinkIcon.x-scope.iron-icon-0 {color: #FFFFFF !important;}
 /* Lines & Others */
-:focus {outline: #990000 auto 5px;}
+:focus {outline: #990000 5px;}
+input:focus, select:focus {outline: #990000 auto 5px;}
 div.focused-line.style-scope.paper-input-container {
     background-color: #990000 !important;}
 paper-tabs #selectionBar {
@@ -168,9 +183,9 @@ paper-tabs #selectionBar {
 div[data-itemtype="CollectionFolder"] .cardContent,
 div[data-itemtype="UserView"] .cardContent,
 div[data-itemtype="PlaylistsFolder"] .cardContent, div[data-itemtype="Channel"] .cardContent {
-  border: 1px solid rgba(153,0,0,.5);
-  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(153,0,0,.6);
-  box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(153,0,0,.6);}
+  border: 1px solid rgba(232,17,35,.5);
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(232,17,35,.6);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(232,17,35,.6);}
 .galleryImageContainer:hover {
 	-moz-box-shadow: 0 0 0 5px #990000;
 	-webkit-box-shadow: 0 0 0 5px #990000;
@@ -211,10 +226,12 @@ img[src='css/images/editor/missingtrailer.png'] {
 /* --- 3.1 : Buttons --- */
 /* Icons */
 .btnUserItemRating {color: #CCCCCC;}
-paper-fab.btnCommand.subdued.repeatToggleButton.x-scope.paper-fab-0.nowPlayingPageRepeatActive {color: #101010 !important;}
-.scheduledTaskPaperIconItem[data-status="Cancelling"] paper-fab {background-color: #1E1E1E;}
+paper-fab.btnCommand.subdued.repeatToggleButton.x-scope.paper-fab-0.nowPlayingPageRepeatActive {color: #090909 !important;}
+.scheduledTaskPaperIconItem[data-status="Cancelling"] paper-fab {background-color: #181818;}
+.btnNotificationsInner {background-color: #404040 !important;}
 /* --- 3.2 : Details --- */
 /* Corrections */
+iron-autogrow-textarea#input.paper-input-input.style-scope.paper-textarea.x-scope.iron-autogrow-textarea-0 {height: 300px !important;}
 div.readOnlyContent.dashboardHomeRightColumn.firstDashboardHomeRightColumn div.paperList.activityItems paper-fab.x-scope.paper-fab-0 {background-color: transparent !important;
 box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0), 0 1px 5px 0 rgba(0, 0, 0, 0), 0 3px 1px -2px rgba(0, 0, 0, 0);
 color: #990000 !important;}
@@ -228,12 +245,13 @@ paper-icon-button.nextTrackButton.mediaButton.videoTrackControl.x-scope.paper-ic
 paper-icon-button.previousTrackButton.mediaButton.videoTrackControl.x-scope.paper-icon-button-0[disabled], paper-icon-button.btnNextPage.x-scope.paper-icon-button-0[disabled], 
 paper-icon-button.btnPreviousPage.x-scope.paper-icon-button-0[disabled], paper-icon-button.btnUp.x-scope.paper-icon-button-0[disabled], paper-icon-button.btnDown.x-scope.paper-icon-button-0[disabled] {color: #9b9b9b !important;}
 div#footer.footer {
-background-color: rgba(2,2,2,.94) !important;}
-.footerNotification {border-top: #080808 !important;}
+background-color: rgba(02,02,02,.94) !important;}
+.footerNotification {border-top: rgba(02,02,02,.94) !important;}
 h1.pageTitle {font-size: 30px;}
-.nowPlayingBar, .viewMenuBar, .libraryViewNav {background-color: rgba(2,2,2,.94) !important;}
+.nowPlayingBar, .viewMenuBar, .libraryViewNav {background-color: rgba(02,02,02,.94) !important;}
+.nowPlayingBar {border-top: rgba(2,2,2,.94) !important;}
 h1, h1 a {font-size: 22px;}
-div.dialogHeader {background: #101010 !important;}
+div.dialogHeader {background: #090909 !important;}
 div.paperList.itemsListview {
 background: transparent !important;}
 /* Report Manager Page */
@@ -245,22 +263,27 @@ background: transparent !important;
     box-shadow: 0 2px 4px rgba(0,0,0,0);}
 li.ui-li.listItem.ui-li-has-alt.ui-first-child {border-bottom: 1px solid transparent;}
 div#libraryReportManagerPage.page.libraryPage.noSecondaryNavPage.reportsPage.page-view.ui-page.ui-page-theme-b.ui-body-b a.item.ui-btn {
-background: #101010 !important;
-border-color: #101010;
+background: #090909 !important;
+border-color: #090909;
 color: #990000 !important;}
 div#libraryReportManagerPage.page.libraryPage.noSecondaryNavPage.reportsPage.page-view.ui-page.ui-page-theme-b.ui-body-b a.item.ui-btn:hover {
 background: #990000 !important;
 border-color: #990000;
-color: #101010 !important;}
+color: #090909 !important;}
 div#libraryReportManagerPage.page.libraryPage.noSecondaryNavPage.reportsPage.page-view.ui-page.ui-page-theme-b.ui-body-b a.listviewMenuButton.ui-btn.ui-btn-inline {
 background: transparent !important;
 border-color: transparent;
 color: #FFFFFF !important;}
-/* Metadata Editor Page */
+/* Metadata Editor Page & Side Panel */
 .libraryTree .jstree-wholerow-hovered {
     background: #4D4D4D !important;}
 .libraryTree .jstree-default .jstree-hovered {
 	color: #4B0082 !important;}
+a.lnkMediaFolder.sidebarLink iron-icon.sidebarLinkIcon.x-scope.iron-icon-0, a.lnkMediaFolder.sidebarLink span, a.lnkMediaFolder.sidebarLink {color: #EDEDED !important;}
+.adminDrawerPanel #drawer {border-right: transparent;}
+.adminDrawerLogo {
+background: #181818;
+border-bottom: 1px solid #303030 !important;}
 /* Scrollbars */
 ::-webkit-scrollbar-corner {background-color: #3B3B3B;}
 ::-webkit-scrollbar {
@@ -270,7 +293,16 @@ color: #FFFFFF !important;}
 ::-webkit-scrollbar-thumb {
     -webkit-border-radius: 2px;
     border-radius: 2px;
-    background: #990000;}
+    background: #888888;}
+div.mainDrawer::-webkit-scrollbar-corner {background-color: transparent;}
+div.mainDrawer::-webkit-scrollbar {
+    width: 2px;
+    height: 2px;
+    background-color: transparent;}
+div.mainDrawer::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    background: #888888;}
 
 /* ------ 4.0 : Dark Theme (Can be removed) ------ */
 
@@ -279,11 +311,11 @@ color: #FFFFFF !important;}
 div#checkbox.style-scope.paper-checkbox {
     border-color: #CCCCCC;}
 label.ui-btn.ui-corner-all.ui-btn-inherit.ui-btn-icon-left.ui-radio-on, label.ui-btn.ui-corner-all.ui-btn-inherit.ui-btn-icon-left.ui-checkbox-on {
-    background-color: #282828;
+    background-color: #202020;
     color: #FFFFFF !important;
     border: 1px solid #303030;}
 label.ui-btn.ui-corner-all.ui-btn-inherit.ui-btn-icon-left.ui-radio-off, label.ui-btn.ui-corner-all.ui-btn-inherit.ui-btn-icon-left.ui-checkbox-off {
-    background-color: #282828;
+    background-color: #202020;
     color: #EDEDED !important;
     border: 1px solid #303030;}
 .ui-btn.ui-checkbox-off:after, .ui-btn.ui-radio-off:after {background: #000000 !important;}
@@ -296,29 +328,29 @@ paper-button.cancel.block.btnCancel.x-scope.paper-button-0, paper-button.cancel.
 background-color: #404040 !important;
 color: #EDEDED !important;}
 .ui-body-a .emby-collapsible-button {
-    border: 1px solid #282828;
-    background-color: #282828;}
+    border: 1px solid #202020;
+    background-color: #202020;}
 a.ui-collapsible-heading-toggle.ui-btn.ui-icon-plus.ui-btn-icon-left.ui-btn-inherit, a.ui-collapsible-heading-toggle.ui-btn.ui-btn-icon-left.ui-btn-inherit.ui-icon-minus  {
-background-color: #282828 !important;
-border-color: #282828;
+background-color: #202020 !important;
+border-color: #202020;
 color: #EDEDED;}
 
 /* --- 4.2 : Details --- */
 /* Panels & Backgrounds */
-div.ui-page-theme-a.ui-body-a {
-    background: #181818 !important;}
+div.ui-page-theme-a.ui-body-a, .background-theme-b, .noBackdrop, .background-theme-a, div.backdropContainer {
+background-color: #101010;}
 div.paperList, .activeSession:not(.playingSession) .sessionNowPlayingInnerContent, div.cardBox.visualCardBox, div.editorTileFooter {
-  background-color: #282828 !important;
+  background-color: #202020 !important;
   color: #CCCCCC !important;}
 div.card.activeSession > div > div:nth-child(2) {
-background: #282828 !important;
+background: #202020 !important;
 border-top: 1px solid #303030 !important;
 color: #CCCCCC !important;}
 .ui-body-a .emby-collapsible-content, div.ui-collapsible-content.ui-body-inherit, div.directPlayProfiles, div.transcodingProfiles {
-    border: 1px solid #101010;
-    background-color: #101010;}
+    border: 1px solid #090909;
+    background-color: #090909;}
 ul[data-role="listview"] > li[data-role="list-divider"] {
-    background: #282828 !important;}
+    background: #202020 !important;}
 ul[data-role="listview"] , ul[data-role="listview"] > li{
     border-color: #303030 !important;}
 ul[data-role="listview"] a + a {
@@ -326,13 +358,13 @@ ul[data-role="listview"] a + a {
     border-color: #404040;}
 paper-item.lnkPath.lnkDirectory.x-scope.paper-item-0 {
     border-bottom: 1px solid #303030;}
-.directoryPickerHeadline {background: #282828;}
+.directoryPickerHeadline {background: #202020;}
 li.localReaderOption {
-background: #282828 !important;
+background: #202020 !important;
 color: #CCCCCC !important;
 border-color: #303030;}
 div.downloadLanguages.paperList.paperCheckboxList {
-background: #101010 !important;
+background: #090909 !important;
 color: #CCCCCC !important;}
 /* Icons */
 div.divScheduledTasks iron-icon#icon.style-scope.paper-icon-button.x-scope.iron-icon-1, div.notificationList iron-icon#icon.style-scope.paper-icon-button.x-scope.iron-icon-1, div.devicesList iron-icon#icon.style-scope.paper-icon-button.x-scope.iron-icon-1, paper-item.lnkPath.lnkDirectory.x-scope.paper-item-0 iron-icon.x-scope.iron-icon-0, div.cardFooter iron-icon#icon.style-scope.paper-icon-button.x-scope.iron-icon-1, div.editorTileFooter iron-icon#icon.style-scope.paper-icon-button.x-scope.iron-icon-1 {
@@ -349,48 +381,57 @@ color: #CCCCCC !important;}
 div.fieldDescription, label {color: #656565 !important;}
 /* Pop-up Windows */
 .dialog:not(.background-theme-a):not(.background-theme-b), paper-dialog.x-scope.paper-dialog-0 {
-    background-color: #101010 !important;
+    background-color: #090909 !important;
     color: #CCCCCC !important;}
 dialog.dialog.scrollY.fixedSize {
-    background-color: #181818 !important;}
+    background-color: #101010 !important;}
 .ui-page-theme-a .ui-body-inherit, html .ui-body-a .ui-body-inherit {
-    background: #101010 !important;
-    border-color: #080808;
+    background: #090909 !important;
+    border-color: #010101;
     color: #CCCCCC;}
 div.ui-bar-a {
-    background: #101010 !important;
-    border-color: #101010;
+    background: #090909 !important;
+    border-color: #090909;
     color: #FFFFFF;}
 .background-theme-a, .dialog.background-theme-a {
-    background-color: #101010;
+    background-color: #090909;
     color: #CCCCCC;}
+div.externalPlayerPostPlayFlyout.ui-popup.ui-body-a.ui-overlay-shadow.ui-corner-all {
+    background: #090909 !important;
+    color: #CCCCCC;}
+div.externalPlayerPostPlayFlyout.ui-popup.ui-body-a.ui-overlay-shadow.ui-corner-all li {
+    background: #090909 !important;
+    border-color: transparent !important;
+    color: #FFFFFF;}
+.adminAppsMenuRow + .adminAppsMenuRow {border-top: 1px solid #303030;}
 /* Lines & Others */
 .ui-body-a .detailSectionHeader {
     border: 1px solid #303030;
     border-width: 0 0 1px 0;}
 input:not(.paper-input):not(.likePaperText):not([type='checkbox']):not([type='radio']):not([type='file']):not([type='range']) {
-    background: #080808;
+    background: #010101;
     color: #FFFFFF;
     border: 1px solid #303030;}
 div.ui-bar-inherit {background: #303030 !important;}
 select option {
-background: #101010 !important;
+background: #090909 !important;
 color: #FFFFFF !important;}
+
 /* --- 4.3 : Dashboard Left Side Panel --- */
 /* Panels & Backgrounds */
-.ui-page-theme-a .content-secondary {background: #1E1E1E;}
-.sidebarLink:hover {background-color: #4D4D4D;}
-.ui-page-theme-a .sidebarLinkIcon, .sidebarLinkText {
-  color: #EEEEEE !important;}
-div.sidebarDivider {background: #303030 !important;}
-div.sidebarHeader {color: #BBBBBB !important;}
+div.mainDrawer {background: #181818;}
+.sidebarDivider {background: #303030 !important;}
+.adminDrawerPanel .sidebarHeader {color: #CCCCCC !important;}
+span.sidebarLinkText {color: #EDEDED !important;}
+a.sidebarLink:hover {background: #4D4D4D !important;}
+.adminDrawerPanel .sidebarLinkIcon {color: #EDEDED !important;}
 
 /* ------ 5.0 : Manual Fixes ------ */
 
-/* Now Playing bar fix */
-.nowPlayingBar {
-    border-top: rgba(2,2,2,.94) !important;
-}
+
+
+/* ------ 0.0 : Other Changes ------ */
+
 iron-autogrow-textarea#input.paper-input-input.style-scope.paper-textarea.x-scope.iron-autogrow-textarea-0 {
 height: 300px !important;}
 

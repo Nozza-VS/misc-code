@@ -6,7 +6,7 @@ Original link here:
 http://emby.media/community/index.php?/topic/28743-dark-theme-and-colored-highlights 
 */
 
-/* Emby version : 3.0.5930 and later */
+/* Emby version : 3.0.5933 and later */
 
 /* Color HEX codes */
 
@@ -451,7 +451,17 @@ a.sidebarLink:hover {background: #770000 !important;}
 
 /* ------ 5.0 : Manual Fixes ------ */
 
+/* Spinning loading circle */
+.paper-spinner-0 .layer-1.paper-spinner, .paper-spinner-0 .layer-2.paper-spinner, .paper-spinner-0 .layer-3.paper-spinner, .paper-spinner-0 .layer-4.paper-spinner {
+border-color: #770000;} /* ACCENT COLOR HERE */
 
+/* Minor fixes */
+paper-icon-item.localReaderOption.x-scope.paper-icon-item-0 iron-icon#icon.style-scope.paper-icon-button.x-scope.iron-icon-1 {
+color: #770000 !important;} /* ACCENT COLOR HERE */
+
+.dialog .buttons {color: #770000 !important;} /* ACCENT COLOR HERE */ 
+
+div#viewPanel.viewPanel.ui-panel.ui-panel-position-right.ui-panel-display-overlay.ui-body-b.ui-panel-fixed.ui-panel-animate.ui-panel-open {background: #181818;}
 
 /* ------ 0.0 : Other Changes ------ */
 

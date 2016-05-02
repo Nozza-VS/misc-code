@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script                    Version: 1.0.21 (April 18, 2016)
+# AIO Script                    Version: 1.0.22 (May 2, 2016)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -44,10 +44,10 @@ jail_ip="192.168.1.200"     # ! No need to change this for OwnCloud installs !
                             # installed OwnCloud previously.
 ################################################################################
 ###! EMBY CONFIG !###
-emby_update_ver="3.0.5930"  # You can find release numbers here:
+emby_update_ver="3.0.5934"  # You can find release numbers here:
                             # https://github.com/MediaBrowser/Emby/releases
-                            # To use the beta: "3.0.5939-beta"
-                            # To use the dev: "3.0.5950.41655-dev"
+                            # To use the beta: "3.0.5947-beta"
+                            # To use the dev: "3.0.5966.988-dev"
 ################################################################################
 ###! SABNZBD CONFIG !###
 sab_ver="1.0.0"             # You can find release numbers here:
@@ -66,8 +66,9 @@ thebrigbranch="alcatraz"    # Define which version of TheBrig to install
                             # alcatraz - For 9.3 and 10.x FreeBSD versions
 # thebrigversion="3"        # Not needed anymore
 
-###! END OF THEBRIG CONFIG !######################
-### OTHER ########################################
+###! END OF THEBRIG CONFIG !###
+################################################################################
+### OTHER ###
 # Modify this to reflect your storage location
 mystorage="/mnt/Storage"
 ##################################################
@@ -1194,6 +1195,126 @@ echo -e "${sep}"
 echo " "
 
 echo always_populate_raw_post_data = -1 > /usr/local/etc/php.ini
+}
+
+
+
+################################################################################
+##### OTHER
+################################################################################
+
+#------------------------------------------------------------------------------#
+### EMBY - RECOMPILE FROM PORTS
+#------------------------------------------------------------------------------#
+ports.emby.imagemagick ()
+{
+
+ports.emby.imagemagick.continue ()
+{
+
+}
+# Confirm with the user
+echo -e "${msg} These steps could take some time${nc}"
+read -r -p "   Would you like to recompile these now? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              echo " "
+              echo -e "${sep}"
+              echo -e "${msg} First, lets do ImageMagick${nc}"
+              echo -e "${msg} When the options pop up, disable (By pressing space when its highlighted):${nc}"
+              echo -e "${inf}    16BIT_PIXEL   ${msg}(to increase thumbnail generation performance)${nc}"
+              echo -e "${msg} and then press 'Enter'${nc}"
+              echo " "
+
+              #ports.emby.imagemagick.continue
+
+              cd /usr/ports/graphics/ImageMagick && make deinstall
+              make clean && make clean-depends
+              make config
+
+              echo " "
+              echo -e "${sep}"
+              echo -e "${msg} Press 'OK'/'Enter' if any box that follows.${nc}"
+              echo -e "${msg}    (There shouldn't be any that pop up)${nc}"
+              echo -e "${sep}"
+              echo " "
+
+              #ports.emby.imagemagick.continue
+
+              make install clean
+              #make -DBATCH install clean
+
+              echo " "
+              echo -e "${sep}"
+              echo -e "${msg} Finished with the recompiling!${nc}"
+              echo -e "${sep}"
+              echo " "
+              ;;
+esac
+}
+
+ports.emby.ffmpeg ()
+{
+
+ports.emby.ffmpeg.continue ()
+{
+
+}
+
+# Confirm with the user
+echo -e "${msg} These steps could take some time${nc}"
+read -r -p "   Would you like to recompile these now? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              echo " "
+              echo -e "${sep}"
+              echo -e "${msg} Great, now ffmpeg${nc}"
+              echo -e "${sep}"
+              echo " "
+
+              cd /usr/ports/multimedia/ffmpeg && make deinstall
+
+              echo -e "${sep}"
+              echo -e "${msg} When the options pop up, enable (By pressing space when its highlighted):${nc}"
+              echo -e "${inf}    ASS     ${msg}(required for subtitle rendering)${nc}"
+              echo -e "${inf}    LAME    ${msg}(required for mp3 audio transcoding -${nc}"
+              echo -e "${inf}            ${msg}disabled by default due to mp3 licensing restrictions)${nc}"
+              echo -e "${inf}    OPUS    ${msg}(required for opus audio codec support)${nc}"
+              echo -e "${inf}    X265    ${msg}(required for H.265 video codec support${nc}"
+              echo -e "${msg} Then press 'OK' for every box that follows.${nc}"
+              echo -e "${msg} This one may take a while, please be patient${nc}"
+              echo -e "${sep}"
+              echo " "
+
+              #ports.emby.ffmpeg.continue
+
+              make clean
+              make clean-depends
+              make config
+
+              echo " "
+              echo -e "${sep}"
+              echo -e "${msg} Press 'OK'/'Enter' for any box that follows.${nc}"
+              echo -e "${sep}"
+              echo " "
+
+              #ports.emby.ffmpeg.continue
+
+              #make install clean
+              make -DBATCH install clean
+
+              echo " "
+              echo -e "${sep}"
+              echo -e "${msg} Finished with the recompiling!${nc}"
+              echo -e "${sep}"
+              echo " "
+              ;;
+esac
+}
+
+emby.server.improvements ()
+{
+
 }
 
 
@@ -2894,7 +3015,7 @@ case "$response" in
 
               echo " "
 
-              echo -e "${emp} Server data backup ${inf}(May take a while)${nc}"
+              echo -e "${emp} Server data backup ${inf}(May take a while, % may not be accurate)${nc}"
               mkdir -p /var/db/emby-server-backups/${date}
               rsync -a --info=progress2 /var/db/emby-server/ /var/db/emby-server-backups/${date}
               echo -e "${fin}    Server backup done.${nc}"
@@ -2907,6 +3028,7 @@ case "$response" in
 esac
 }
 
+# Split this function in to multiple parts?
 recompile.from.ports ()
 {
 # Confirm with the user
@@ -2923,7 +3045,7 @@ case "$response" in
               echo -e "${msg} and then press 'Enter'${nc}"
               echo " "
 
-              update.emby.continue
+              update.emby.continue #NOTE: Use alternative, not working as intended
 
               cd /usr/ports/graphics/ImageMagick && make deinstall
               make clean && make clean-depends
@@ -2993,6 +3115,23 @@ case "$response" in
 esac
 }
 
+remove.downloaded.files ()
+{
+read -r -p "   Remove downloaded .zip files? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then make a backup before proceeding
+              echo -e "${inf} Deleting files${nc}"
+              rm /tmp/emby-*.zip
+              ;;
+    *)
+              # Otherwise continue with backup...
+              echo " "
+              echo -e "${inf} Not deleting files${nc}"
+              ;;
+esac
+}
+
 echo " "
 echo -e "${sep}"
 echo -e "${msg}   Emby Updater${nc}"
@@ -3009,7 +3148,8 @@ create.emby.backup
 
 echo " "
 echo -e "${sep}"
-echo -e "${msg}   Update packages${nc}"
+echo -e "${msg} Updating packages..${nc}"
+echo -e "${msg} (You may see some things get deinstalled/reinstalled here)${nc}"
 echo -e "${sep}"
 echo " "
 
@@ -3037,7 +3177,7 @@ recompile.from.ports
 
 echo " "
 echo -e "${sep}"
-echo -e "${msg}   Grab the update from github${nc}"
+echo -e "${msg} Grab the update for Emby from github${nc}"
 echo -e "${sep}"
 echo " "
 
@@ -3066,6 +3206,14 @@ echo -e "${sep}"
 echo " "
 
 service emby-server start
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Optional: Remove temporary files that were downloaded?${nc}"
+echo -e "${sep}"
+echo " "
+
+remove.downloaded.files
 
 echo " "
 echo -e "${sep}"
@@ -4548,9 +4696,17 @@ do
                 echo " "
                 confirm.update.emby
                 ;;
-            '3') echo -e "${inf} Backup..${nc}"
+            '3') echo -e "${inf} ..${nc}"
                 echo " "
                 backup.emby
+                ;;
+            '4') echo -e "${inf} ..${nc}"
+                echo " "
+                ports.emby.imagemagick
+                ;;
+            '5') echo -e "${inf} ..${nc}"
+                echo " "
+                ports.emby.ffmpeg
                 ;;
             'a')
                 about.emby
@@ -5647,7 +5803,7 @@ mainmenu=""
 while [ "$choice" != "q,a,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.21 (April 18, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.22 (May 2, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
@@ -5717,6 +5873,19 @@ done
 
 
 ################################################################################
+##### Completed / Almost Complete but fully functional
+################################################################################
+# Emby
+# OwnCloud
+
+
+################################################################################
+##### In Progress
+################################################################################
+# Sooo much stuff
+
+
+################################################################################
 ##### To-Do's / Future Changes / etc.
 ################################################################################
 
@@ -5749,3 +5918,8 @@ done
     #cp /usr/local/etc/ejabberd/ejabberd.yml.example /usr/local/etc/ejabberd/ejabberd.yml
     #chown 543:543 /usr/local/etc/ejabberd/ejabberd.yml
     #service ejabberd start
+
+
+################################################################################
+# By Ashley Townsend (Nozza)    Copyright: Beerware License
+################################################################################

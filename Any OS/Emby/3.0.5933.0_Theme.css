@@ -109,7 +109,7 @@ color: #FFFFFF !important;}
 paper-button.accent, paper-icon-button.btnUp.x-scope.paper-icon-button-0, paper-icon-button.btnDown.x-scope.paper-icon-button-0, .ui-body-a .emby-collapsible-button, paper-icon-button.btnViewItemDown.btnViewItemMove.x-scope.paper-icon-button-0, paper-icon-button.btnViewItemUp.btnViewItemMove.x-scope.paper-icon-button-0 {
 color: #990000 !important;}
 /* Rectangles & Others */
-paper-button#btnShutdown.subdued.x-scope.paper-button-0, paper-button.subdued.btnRestartContainer.x-scope.paper-button-0, paper-button.btnConfirm.x-scope.paper-button-0, paper-button.btnCancel.x-scope.paper-button-0 {
+paper-button#btnShutdown.subdued.x-scope.paper-button-0, paper-button.subdued.btnRestartContainer.x-scope.paper-button-0, paper-button.btnConfirm.x-scope.paper-button-0, paper-button.btnCancel.x-scope.paper-button-0, paper-button.btnDisconnect.x-scope.paper-button-0, paper-button.btnRemoteControl.x-scope.paper-button-0 {
     background: #090909 !important;
     color: #990000;}
 paper-button[raised].accent, paper-button[raised].submit, paper-button[raised].more, paper-button[raised].secondary, button[data-theme='b']:not([data-role='none']):not(.clearButton), div.supporterPromotion paper-button.block.x-scope.paper-button-0 {

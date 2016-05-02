@@ -1,8 +1,19 @@
 # Changelog
 
+### Version: 1.0.22 (May 2, 2016)
+* Emby changes
+   * Updated Emby versions to latest
+   + Recompile ffmpeg/imagemagick from ports option
+   + Add option to delete temp files
++ Added some more notes (Will import in to menus later)
+
+[See the commit here](https://github.com/Nostalgist92/misc-code/commit/6a618177fbdb703369ab908b3b6bc1b46a571839)
+
 ### Version: 1.0.21 (April 18, 2016)
 * Changed Emby version to latest (3.0.5930)
 * Updated Teamspeak & Bot a bit more (Still Unfinished)
+
+[See the commit here](https://github.com/Nostalgist92/misc-code/commit/8568c1a156bc7c72fcfa00fa07d3bfef8f3b89b1)
 
 ### Version: 1.0.20 (April 13, 2016)
 * Modified menus a bunch
@@ -11,9 +22,13 @@
    + Menus
    + Menus for Server Bot
 
+[See the commit here](https://github.com/Nostalgist92/misc-code/commit/f73a575635a658a2493977e77ac671ec279886e6)
+
 ### Version: 1.0.19.1 (April 12, 2016)
 * Updated support email
 * Modified menu
+
+[See the commit here](https://github.com/Nostalgist92/misc-code/commit/daaedc2869c6c41ac1ee2a7dd350056cacdf506f)
 
 ### Version: 1.0.19 (April 11, 2016)
 + Updated a couple configs to show user how to find latest version numbers
@@ -28,11 +43,15 @@
    + Menus
 + Added a couple things for future changes to menu
 
+[See the commit here](https://github.com/Nostalgist92/misc-code/commit/c21047ea6b8b34e1380a5cc1f2eb41dccefe5143)
+
 ### Version: 1.0.18 (April 11, 2016)
 + Added About: SABnzbd
 * Updated About: Pydio
 + Added TheBrig How-To: mounting storage in jails via fstab
 * Modified emby updater to make ports tree reconfig a bit more automated
+
+[See the commit here](https://github.com/Nostalgist92/misc-code/commit/5cd8ffe363eeb33297244f32e5c80ba10f0c07f3)
 
 ### Version: 1.0.17 (April 10, 2016)
 * Updated SABnzbd installer
@@ -43,6 +62,8 @@
    * Fixed incorrect paths in script
 + Added commands to make certain files executable as needed
 
+[See the commit here](https://github.com/Nostalgist92/misc-code/commit/b806afd796587a6a5a97887fd07a5b395bb56843)
+
 ### Version: 1.0.16 (April 9, 2016)
 + Added SABnzbd
    + Installer
@@ -50,12 +71,18 @@
 * Updated Emby updater - will use -DBATCH for ports to make it more automated
 * Updated a couple more menus to show the options are currently unavailable
 
+[See the commit here](https://github.com/Nostalgist92/misc-code/commit/ee775943ddf1802fb9852a374e479b33f66b43bc)
+
 ### Version: 1.0.15.2 (April 6, 2016)
 * Fixed a couple more issues that caused problems with the script
+
+[See the commit here](https://github.com/Nostalgist92/misc-code/commit/31cb2483102777942b0d8be6d327fab9754921aa)
 
 ### Version: 1.0.15.1 (April 6, 2016)
 + Added Emby How-To: restarting the emby server
 * Fixed issue with script that caused it to not work
+
+[See the commit here](https://github.com/Nostalgist92/misc-code/commit/bae12c6f99387fa5201426505f0be39b25f649da)
 
 ### Version: 1.0.15 (April 6, 2016)
 + Added command to delete a couple temp txt files made for owncloud
@@ -71,13 +98,18 @@
    + Added option to delete old backups, if any, to free up space
    + Updated menus
 
+[See the commit here](https://github.com/Nostalgist92/misc-code/commit/3d95a7e2c4c603b0f69a78d8b7ac9f047dc59e87)
 
 ### Version: 1.0.14 (April 4, 2016)
 + Didn't realize i forgot the emby update version variable so added that
 * Made the backup in both of the Emby updaters optional
 
+[See the commit here](https://github.com/Nostalgist92/misc-code/commit/d17d4697d0db66fdfd7fb2d8c1c364f4a852450d)
+
 ### Version: 1.0.13.1 (April 3, 2016)
 * Forgot to comment out a line which broke the script, oops! Fixed now
+
+[See the commit here](https://github.com/Nostalgist92/misc-code/commit/e869d6f15478027cd0975ecf0409830391b8f8be)
 
 ### Version: 1.0.13 (April 3, 2016)
 + Added underline text formatting to make things stand out even more where needed ( bold doesn't seem to work for me anymore, same with italics :(  )
@@ -92,6 +124,8 @@
    + Moved Web Server and Cloud Storage to this menu
 * Change "confirm.*.update" / "confirm.*.install" done, this was mainly for myself as it makes searching for things easier
 
+[See the commit here](https://github.com/Nostalgist92/misc-code/commit/5d8e89683d7765ab5618c6be0b51a4729fde7668)
+
 ### Version: 1.0.12 (April 3, 2016)
 + Added NZBGet installer
    * Still need to add command to get web interface on by default
@@ -102,6 +136,7 @@
 + Added a notice to owncloud installer about potential "untrusted domain" warnings
 + Added missing spacers above "main menu" & "back" menu options
 
+[See the commit here](https://github.com/Nostalgist92/misc-code/commit/7e58cc4ef934afb83c8065d2ee8230346c2d385f)
 
 ### Version: 1.0.11 (April 2, 2016)
 * Fixed an issue in the deluge installer that broke the script
@@ -116,6 +151,8 @@
 + Added "About Pydio" kind of, will revise this later as the description from the website wasnt very "About-ish"
 * Modified main menu to make it smaller
    + Added new submenu for "download tools (nzbget/deluge)" and "self hosted cloud services (owncloud/pydio)"
+   
+[See the commit here](https://github.com/Nostalgist92/misc-code/commit/858f43a04f29dd787b68cd5c2074c2e466f76c69)
 
 ### Version: 1.0.10 (April 2, 2016)
 + Added info about how to navigate inside nano and how to save once done editing
@@ -135,6 +172,8 @@
 * Changed "OWNCLOUD - ENABLE MEMORY CACHING" to need a keypress to go back
 
 I should stop adding things and actually finish what is here already...
+
+[See the commit here](https://github.com/Nostalgist92/misc-code/commit/2cfb57b29dc9965179d3deeeeb8bf4b270026c47)
 
 ### Version: 1.0.9 (April 2, 2016)
 + Fixed a few more typos

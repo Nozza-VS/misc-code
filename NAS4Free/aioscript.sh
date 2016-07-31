@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script                    Version: 1.0.22 (May 2, 2016)
+# AIO Script                    Version: 1.0.24 (August 1, 2016)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -44,7 +44,7 @@ jail_ip="192.168.1.200"     # ! No need to change this for OwnCloud installs !
                             # installed OwnCloud previously.
 ################################################################################
 ###! EMBY CONFIG !###
-emby_update_ver="3.0.5934"  # You can find release numbers here:
+emby_update_ver="3.0.6020"  # You can find release numbers here:
                             # https://github.com/MediaBrowser/Emby/releases
                             # To use the beta: "3.0.5947-beta"
                             # To use the dev: "3.0.5966.988-dev"
@@ -97,7 +97,7 @@ deluge_user_password="MyC0mpL3xPass"
 
 
 #Grab the date & time to be used later
-backupdate=$(date +"%Y.%m.%d-%I.%M%p")
+date=$(date +"%Y.%m.%d-%I.%M%p")
 
 # Add some colour!
 nc='\033[0m'        # Default Text (No Formatting / No Color)
@@ -1206,13 +1206,23 @@ echo always_populate_raw_post_data = -1 > /usr/local/etc/php.ini
 #------------------------------------------------------------------------------#
 ### EMBY - RECOMPILE FROM PORTS
 #------------------------------------------------------------------------------#
-ports.emby.imagemagick ()
+recompile.imagemagick ()
 {
 
-ports.emby.imagemagick.continue ()
+recompile.imagemagick.continue ()
 {
-
+echo -e "${msep}"
+echo -e "${emp}   Press Enter To Continue${nc}"
+echo -e "${msep}"
+read -r -p " " response
+case "$response" in
+    *)
+              # Otherwise continue with backup...
+              ;;
+esac
 }
+
+
 # Confirm with the user
 echo -e "${msg} These steps could take some time${nc}"
 read -r -p "   Would you like to recompile these now? [y/N] " response
@@ -1226,7 +1236,7 @@ case "$response" in
               echo -e "${msg} and then press 'Enter'${nc}"
               echo " "
 
-              #ports.emby.imagemagick.continue
+              recompile.imagemagick.continue
 
               cd /usr/ports/graphics/ImageMagick && make deinstall
               make clean && make clean-depends
@@ -1239,7 +1249,7 @@ case "$response" in
               echo -e "${sep}"
               echo " "
 
-              #ports.emby.imagemagick.continue
+              recompile.imagemagick.continue
 
               make install clean
               #make -DBATCH install clean
@@ -1253,12 +1263,22 @@ case "$response" in
 esac
 }
 
-ports.emby.ffmpeg ()
+
+
+recompile.ffmpeg ()
 {
 
-ports.emby.ffmpeg.continue ()
+recompile.ffmpeg.continue ()
 {
-
+echo -e "${msep}"
+echo -e "${emp}   Press Enter To Continue${nc}"
+echo -e "${msep}"
+read -r -p " " response
+case "$response" in
+    *)
+              # Otherwise continue with backup...
+              ;;
+esac
 }
 
 # Confirm with the user
@@ -1274,6 +1294,7 @@ case "$response" in
 
               cd /usr/ports/multimedia/ffmpeg && make deinstall
 
+              echo " "
               echo -e "${sep}"
               echo -e "${msg} When the options pop up, enable (By pressing space when its highlighted):${nc}"
               echo -e "${inf}    ASS     ${msg}(required for subtitle rendering)${nc}"
@@ -1286,7 +1307,7 @@ case "$response" in
               echo -e "${sep}"
               echo " "
 
-              #ports.emby.ffmpeg.continue
+              recompile.ffmpeg.continue
 
               make clean
               make clean-depends
@@ -1298,7 +1319,7 @@ case "$response" in
               echo -e "${sep}"
               echo " "
 
-              #ports.emby.ffmpeg.continue
+              recompile.ffmpeg.continue
 
               #make install clean
               make -DBATCH install clean
@@ -2872,11 +2893,11 @@ echo " "
 mkdir -p /usr/local/www/.owncloud-backup
 
 # Copy current install to backup directory
-# mv /usr/local/www/owncloud  /usr/local/www/.owncloud-backup/owncloud-${backupdate} # NOTE: May not need this but leaving it in just in case
-cp -R /usr/local/www/owncloud  /usr/local/www/.owncloud-backup/owncloud-${backupdate}
+# mv /usr/local/www/owncloud  /usr/local/www/.owncloud-backup/owncloud-${date} # NOTE: May not need this but leaving it in just in case
+cp -R /usr/local/www/owncloud  /usr/local/www/.owncloud-backup/owncloud-${date}
 
 echo -e "${msg} Backup of current install made in:${nc}"
-echo -e "${qry}     /usr/local/www/.owncloud-backup/owncloud-${nc}\033[1;36m${backupdate}${nc}"
+echo -e "${qry}     /usr/local/www/.owncloud-backup/owncloud-${nc}\033[1;36m${date}${nc}"
 echo -e "${msg} Keep note of this just in case something goes wrong with the update${nc}"
 
 echo " "
@@ -2896,9 +2917,9 @@ chown -R www:www /usr/local/www/
 #echo -e "${sep}"
 #echo " "
 
-# cp -R /usr/local/www/.owncloud-backup/owncloud-${backupdate}/data /usr/local/www/owncloud/
-# cp -R /usr/local/www/.owncloud-backup/owncloud-${backupdate}/themes/* /usr/local/www/owncloud/
-# cp /usr/local/www/.owncloud-backup/owncloud-${backupdate}/config/config.php /usr/local/www/owncloud/config/
+# cp -R /usr/local/www/.owncloud-backup/owncloud-${date}/data /usr/local/www/owncloud/
+# cp -R /usr/local/www/.owncloud-backup/owncloud-${date}/themes/* /usr/local/www/owncloud/
+# cp /usr/local/www/.owncloud-backup/owncloud-${date}/config/config.php /usr/local/www/owncloud/config/
 
 echo " "
 echo -e "${sep}"
@@ -2915,7 +2936,7 @@ echo -e "${msg} Now head to your OwnCloud webpage and make sure everything is wo
 echo " "
 echo -e "${msg} If something went wrong you can do the following to restore the old install:${nc}"
 echo -e "${cmd}   rm -r /usr/local/www/owncloud${nc}"
-echo -e "${cmd}   mv /usr/local/www/.owncloud-backup/owncloud-${backupdate} /usr/local/www/owncloud${nc}"
+echo -e "${cmd}   mv /usr/local/www/.owncloud-backup/owncloud-${date} /usr/local/www/owncloud${nc}"
 echo " "
 echo -e "${msg} After you check to make sure everything is working fine as expected,${nc}"
 echo -e "${msg} You can safely remove backups with this command (May take some time):${nc}"
@@ -2942,20 +2963,15 @@ update.emby ()
 
 update.emby.continue ()
 {
-while [ "$choice" ]
-do
-        echo -e "${msep}"
-        echo -e "${emp}   Press Enter To Continue${nc}"
-        echo -e "${msep}"
-
-        read choice
-
-        case $choice in
-            *)
-                 return
-                 ;;
-        esac
-done
+echo -e "${msep}"
+echo -e "${emp}   Press Enter To Continue${nc}"
+echo -e "${msep}"
+read -r -p " " response
+case "$response" in
+    *)
+              # Otherwise continue with backup...
+              ;;
+esac
 }
 
 remove.old.backups ()
@@ -3045,7 +3061,7 @@ case "$response" in
               echo -e "${msg} and then press 'Enter'${nc}"
               echo " "
 
-              update.emby.continue #NOTE: Use alternative, not working as intended
+              update.emby.continue
 
               cd /usr/ports/graphics/ImageMagick && make deinstall
               make clean && make clean-depends
@@ -3071,6 +3087,7 @@ case "$response" in
 
               cd /usr/ports/multimedia/ffmpeg && make deinstall
 
+              echo " "
               echo -e "${sep}"
               echo -e "${msg} When the options pop up, enable (By pressing space when its highlighted):${nc}"
               echo -e "${inf}    ASS     ${msg}(required for subtitle rendering)${nc}"
@@ -3222,19 +3239,16 @@ echo -e "${msg} Now head to your Emby dashboard to ensure it's up to date.${nc}"
 echo -e "${msg}    (Refresh the page if you already have Emby open)${nc}"
 echo " "
 echo -e "${msg} If something went wrong you can do this to restore the old app version:${nc}"
-echo -e "${cmd}   service emby-server stop${nc}"
 echo -e "${cmd}   rm -r /usr/local/lib/emby-server${nc}"
 echo -e "${cmd}   mv /usr/local/lib/emby-server-backups/${date} /usr/local/lib/emby-server${nc}"
-echo -e "${cmd}   service emby-server start${nc}"
+echo -e "${cmd}   service emby-server restart${nc}"
 echo " "
 echo -e "${msg} And use this to restore your server database/settings:${nc}"
-echo -e "${cmd}   service emby-server stop${nc}"
 echo -e "${cmd}   rm -r /var/db/emby-server${nc}"
 echo -e "${cmd}   mv /var/db/emby-server-backups/${date} /var/db/emby-server${nc}"
-echo -e "${cmd}   service emby-server start${nc}"
+echo -e "${cmd}   service emby-server restart${nc}"
 echo -e "${sep}"
-echo -e "${msg} You can get in touch with me any of the ways listed here:${nc}"
-echo -e "${url} http://vengefulsyndicate.com/about-us${nc}"
+echo -e "${msg} If you have any issues, see the main menu for ways to get help.${nc}"
 echo -e "${msg}      Happy Streaming!${nc}"
 echo -e "${sep}"
 echo " "
@@ -3296,8 +3310,8 @@ echo -e "${sep}"
 echo " "
 
 mkdir /tmp/sonarr_backup
-cp /usr/local/sonarr/nzbdrone.db /tmp/sonarr_backup/nzbdrone.db-${backupdate}
-cp /usr/local/sonarr/config.xml /tmp/sonarr_backup/config.xml-${backupdate}
+cp /usr/local/sonarr/nzbdrone.db /tmp/sonarr_backup/nzbdrone.db-${date}
+cp /usr/local/sonarr/config.xml /tmp/sonarr_backup/config.xml-${date}
 mv /tmp/nzbdrone_update /tmp/sonarr_update
 
 echo " "
@@ -3308,7 +3322,7 @@ echo -e "${sep}"
 echo " "
 
 mkdir /usr/local/share/sonarr.backups
-mv /usr/local/share/sonarr /usr/local/share/sonarr.backups/manualupdate-${backupdate}
+mv /usr/local/share/sonarr /usr/local/share/sonarr.backups/manualupdate-${date}
 mv /tmp/sonarr_update/NzbDrone /usr/local/share/sonarr
 chown -R 351:0 /usr/local/share/sonarr/
 chmod -R 755 /usr/local/share/sonarr/
@@ -4702,11 +4716,11 @@ do
                 ;;
             '4') echo -e "${inf} ..${nc}"
                 echo " "
-                ports.emby.imagemagick
+                recompile.imagemagick
                 ;;
             '5') echo -e "${inf} ..${nc}"
                 echo " "
-                ports.emby.ffmpeg
+                recompile.ffmpeg
                 ;;
             'a')
                 about.emby
@@ -5443,7 +5457,8 @@ do
         echo -e "${fin}   2)${msg} Update${nc}"
         echo -e "${fin}   3)${msg} Backup${nc}"
         echo " "
-        echo -e "${ca}   4)${ca} Install WordPress (Currently Unavailable)${nc}" # (Use above install first)
+        echo -e "${ca}   4)${ca} Install WordPress (Currently Unavailable)${nc}"
+        # (Use above install first)
         echo " "
         echo -e "${inf}  a) About Web Server${nc}"
         echo -e "${inf}  i) More Info / How-To's${nc}"
@@ -5803,7 +5818,7 @@ mainmenu=""
 while [ "$choice" != "q,a,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.22 (May 2, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.24 (August 1, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "

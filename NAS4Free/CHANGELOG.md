@@ -1,5 +1,17 @@
 # Changelog
 
+### Version: 1.0.24 (August 1, 2016)
+* Cleanup
+* Emby changes
+   * Updated Emby versions to latest (3.0.6020)
+   * Recompile ports option now working as intended
+* General
+   * Some minor cleanup
+
+### Version: 1.0.23 (May 26, 2016)
+* Fixed folder not being created for backups
+* Fixed "Press enter to continue" only working once in emby update.
+
 ### Version: 1.0.22 (May 2, 2016)
 * Emby changes
    * Updated Emby versions to latest

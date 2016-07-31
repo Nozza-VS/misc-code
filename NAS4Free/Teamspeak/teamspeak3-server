@@ -1,0 +1,24 @@
+#!/bin/sh
+#
+# PROVIDE: teamspeak3
+# REQUIRE: DAEMON
+# KEYWORD: shutdown
+#
+# Add the following lines to /etc/rc.conf.local or /etc/rc.conf
+# to enable this service:
+#
+# teamspeak3_enable (bool):     Set to NO by default.
+#                               Set it to YES to enable teamspeak3.
+#
+
+. /etc/rc.subr
+
+name="teamspeak3"
+rcvar=`set_rcvar`
+teamspeak3_user="teamspeak"
+command="/usr/local/lib/teamspeak3-server_freebsd-x86/ts3server.sh"
+procname="ts3server_freebsd_x86"
+pidfile="/usr/local/lib/teamspeak3-server_freebsd-x86/ts3server.pid"
+
+load_rc_config $name
+run_rc_command "$1"

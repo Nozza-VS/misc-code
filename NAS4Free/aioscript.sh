@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script                    Version: 1.0.24 (August 1, 2016)
+# AIO Script                    Version: 1.0.26 (August 26, 2016)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -44,7 +44,7 @@ jail_ip="192.168.1.200"     # ! No need to change this for OwnCloud installs !
                             # installed OwnCloud previously.
 ################################################################################
 ###! EMBY CONFIG !###
-emby_update_ver="3.0.6020"  # You can find release numbers here:
+emby_update_ver="3.0.6070"  # You can find release numbers here:
                             # https://github.com/MediaBrowser/Emby/releases
                             # To use the beta: "3.0.5947-beta"
                             # To use the dev: "3.0.5966.988-dev"
@@ -71,6 +71,7 @@ thebrigbranch="alcatraz"    # Define which version of TheBrig to install
 ### OTHER ###
 # Modify this to reflect your storage location
 mystorage="/mnt/Storage"
+myappsdir="/mnt/Storage/Apps"
 ##################################################
 ###! CALIBRE CONFIG !#############################
 # Modify to where you store all of your books.
@@ -1934,6 +1935,28 @@ echo " "
 }
 
 #------------------------------------------------------------------------------#
+### PLEX SERVER INSTALL
+
+install.plex ()
+{
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Plex Install Script${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Let's start with downloading the install script${nc}"
+echo -e "${sep}"
+echo " "
+
+cd $(myappsdir)
+fetch https://raw.githubusercontent.com/JRGTH/nas4free-plex-extension/master/plex-install.sh && chmod +x plex-install.sh && ./plex-install.sh
+
+}
+
+#------------------------------------------------------------------------------#
 ### SONARR INSTALL
 
 install.sonarr ()
@@ -2640,69 +2663,6 @@ echo " "
 }
 
 #------------------------------------------------------------------------------#
-### SUBSONIC INSTALL
-
-install.subsonic ()
-{
-echo " "
-echo -e "${sep}"
-echo -e "${msg}   Welcome to the Subsonic installer!${nc}"
-echo -e "${sep}"
-echo " "
-echo " "
-echo " "
-echo -e "${sep}"
-echo -e "${msg}   Let's get started with some packages${nc}"
-echo -e "${sep}"
-echo " "
-
-pkg install -y xtrans xproto xextproto javavmwrapper flac openjdk7
-pkg install -y ffmpeg # With LAME enabled
-
-echo " "
-echo -e "${sep}"
-echo -e "${msg} Create folders for Subsonic${nc}"
-echo -e "${sep}"
-echo " "
-
-mkdir -p /var/subsonic/transcode
-mkdir /var/subsonic/standalone
-cp /usr/local/bin/lame /var/subsonic/transcode/
-cp /usr/local/bin/flac /var/subsonic/transcode/
-cp /usr/local/bin/ffmpeg /var/subsonic/transcode/
-cd /tmp/
-# Download Subsonic from sourceforge & extract
-fetch http://heanet.dl.sourceforge.net/project/subsonic/subsonic/5.3/subsonic-5.3-standalone.tar.gz
-tar xvzf /tmp/subsonic-5.3-standalone.tar.gz -C /var/subsonic/standalone
-chmod 777 *.*
-
-echo " "
-echo -e "${sep}"
-echo -e "${msg} Now let's make sure subsonic starts.${nc}"
-echo -e "${msg} You can manually do this with:${nc}"
-echo -e "${cmd}    sh /var/subsonic/standalone/subsonic.sh${nc}"
-echo -e "${msg} For now, this script will do it automatically.${nc}"
-echo -e "${sep}"
-echo " "
-
-sh /var/subsonic/standalone/subsonic.sh
-
-echo " "
-echo -e "${sep}"
-echo -e "${msg} If subsonic started as it should you can connect to it via the browser at the${nc}"
-echo -e "${msg} following adress: Jail-IP:4040, default username is admin, and password admin.${nc}"
-echo -e "${sep}"
-echo " "
-
-echo " "
-echo -e "${sep}"
-echo " That should be it!"
-echo " Enjoy your Subsonic server!"
-echo -e "${sep}"
-echo " "
-}
-
-#------------------------------------------------------------------------------#
 ### TEAMSPEAK 3 SERVER INSTALL
 
 install.teamspeak3 ()
@@ -2851,8 +2811,19 @@ echo "create database ts3" | mysql -u root
 
 update.mysql ()
 {
-echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+echo -e "${emp} This part of the script isn't entirely finished but should${nc}"
+echo -e "${emp} still work as intended.${nc}"
 echo " "
+
+service apache24 stop
+/usr/local/etc/rc.d/mysql-server stop
+
+pkg update
+pkg upgrade mysql56-server mod_php56 php56-mysql php56-mysqli phpmyadmin apache24
+
+/usr/local/etc/rc.d/mysql-server start
+service apache24 start
+
 }
 
 #------------------------------------------------------------------------------#
@@ -3258,6 +3229,38 @@ update.emby.continue
 }
 
 #------------------------------------------------------------------------------#
+### PLEX UPDATE
+
+update.plex ()
+{
+
+echo " "
+echo -e "${sep}"
+echo "   Plex Media Server Updater"
+echo -e "${sep}"
+echo " "
+
+echo " "
+echo -e "${sep}"
+echo "   Let's start with downloading the update script and running it"
+echo -e "${sep}"
+echo " "
+
+cd $(myappsdir)
+fetch https://raw.githubusercontent.com/JRGTH/nas4free-plex-extension/master/plex/plexinit && chmod +x plexinit && ./plexinit
+
+}
+
+#------------------------------------------------------------------------------#
+### SUBSONIC UPDATE
+
+update.subsonic ()
+{
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
+echo " "
+}
+
+#------------------------------------------------------------------------------#
 ### SONARR UPDATE
 
 update.sonarr ()
@@ -3465,15 +3468,6 @@ echo -e "${sep}"
 echo -e "${msg} Done! Head to: ${url}yourjailip:8080${nc}"
 echo -e "${msg} to visit your SABnzbd!${nc}"
 echo -e "${sep}"
-echo " "
-}
-
-#------------------------------------------------------------------------------#
-### SUBSONIC UPDATE
-
-update.subsonic ()
-{
-echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
 }
 
@@ -4389,7 +4383,7 @@ do
         echo -e "${qry} Choose one:${nc}"
         echo " "
         echo -e "${fin}   1)${msg} Install${nc}"
-        echo -e "${ca}   2)${ca} Update (Currently Unavailable)${nc}"
+        echo -e "${fin}   2)${msg} Update${nc}"
         echo -e "${ca}   3)${ca} Backup (Currently Unavailable)${nc}"
         echo " "
         echo -e "${inf}  a) About MySQL${nc}"
@@ -4408,10 +4402,10 @@ do
                 echo " "
                 confirm.install.mysql
                 ;;
-            #'2') echo -e "${inf} Running Update..${nc}"
-            #    echo " "
-            #    confirm.update.mysql
-            #    ;;
+            '2') echo -e "${inf} Running Update..${nc}"
+                echo " "
+                confirm.update.mysql
+                ;;
             #'3') echo -e "${inf} Backup..${nc}"
             #    echo " "
             #    backup.mysql
@@ -4799,6 +4793,69 @@ done
 }
 
 #------------------------------------------------------------------------------#
+### SUBSONIC INSTALL
+
+install.subsonic ()
+{
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Welcome to the Subsonic installer!${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Let's get started with some packages${nc}"
+echo -e "${sep}"
+echo " "
+
+pkg install -y xtrans xproto xextproto javavmwrapper flac openjdk7
+pkg install -y ffmpeg # With LAME enabled
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Create folders for Subsonic${nc}"
+echo -e "${sep}"
+echo " "
+
+mkdir -p /var/subsonic/transcode
+mkdir /var/subsonic/standalone
+cp /usr/local/bin/lame /var/subsonic/transcode/
+cp /usr/local/bin/flac /var/subsonic/transcode/
+cp /usr/local/bin/ffmpeg /var/subsonic/transcode/
+cd /tmp/
+# Download Subsonic from sourceforge & extract
+fetch http://heanet.dl.sourceforge.net/project/subsonic/subsonic/5.3/subsonic-5.3-standalone.tar.gz
+tar xvzf /tmp/subsonic-5.3-standalone.tar.gz -C /var/subsonic/standalone
+chmod 777 *.*
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Now let's make sure subsonic starts.${nc}"
+echo -e "${msg} You can manually do this with:${nc}"
+echo -e "${cmd}    sh /var/subsonic/standalone/subsonic.sh${nc}"
+echo -e "${msg} For now, this script will do it automatically.${nc}"
+echo -e "${sep}"
+echo " "
+
+sh /var/subsonic/standalone/subsonic.sh
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} If subsonic started as it should you can connect to it via the browser at the${nc}"
+echo -e "${msg} following adress: Jail-IP:4040, default username is admin, and password admin.${nc}"
+echo -e "${sep}"
+echo " "
+
+echo " "
+echo -e "${sep}"
+echo " That should be it!"
+echo " Enjoy your Subsonic server!"
+echo -e "${sep}"
+echo " "
+}
+
+#------------------------------------------------------------------------------#
 ### SUBSONIC SUBMENU
 
 subsonic.submenu ()
@@ -5145,6 +5202,64 @@ do
             'i')
                 moreinfo.submenu.thebrig
                 ;;
+            'm') return
+                ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
+                ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### THEBRIG SUBMENU
+
+obi.submenu ()
+{
+while [ "$choice" != "a,e,h,i,m" ]
+do
+        echo -e "${sep}"
+        echo -e "${fin} TheBrig Options${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:${nc}"
+        echo " "
+        echo -e "${ca}   1)${ca} Install (Currently Unavailable)${nc}"
+        echo -e "${ca}   2)${ca} Update (Currently Unavailable)${nc}"
+        echo -e "${ca}   3)${ca} Backup (Currently Unavailable)${nc}"
+        echo " "
+        echo -e "${ca}  a)${ca} About OneButtonInstaller${nc}"
+        echo -e "${ca}  i)${ca} More Info / How-To's${nc}"
+        echo -e "${inf}  h) Get Help${nc}"
+        echo " "
+        echo -e "${emp}  m) Main Menu${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+        echo " "
+
+        case $choice in
+            #'1') echo -e "${inf} Installing..${nc}"
+            #    echo " "
+            #    confirm.install.obi
+            #    ;;
+            #'2') echo -e "${inf} Running Update..${nc}"
+            #    echo " "
+            #    confirm.update.obi
+            #    ;;
+            #'3') echo -e "${inf} Backup..${nc}"
+            #    echo " "
+            #    backup.obi
+            #    ;;
+            #'a')
+            #    about.obi
+            #    ;;
+            'h')
+                gethelp
+                ;;
+            #'i')
+            #    moreinfo.submenu.obi
+            #    ;;
             'm') return
                 ;;
             *)   echo -e "${alt}        Invalid choice, please try again${nc}"
@@ -5818,7 +5933,7 @@ mainmenu=""
 while [ "$choice" != "q,a,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.24 (August 1, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.26 (August 26, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
@@ -5832,6 +5947,7 @@ do
         echo -e "${fin}   5)${url} Download Tools ${nc}(NZBGet - Usenet / Deluge - Torrents)${nc}"
         echo " "
         echo -e "${cmd}   j)${msg} TheBrig${nc}"
+        echo -e "${cmd}   o)${msg} OneButtonInstaller${nc}"
         echo " "
         echo -e "${inf}  a) About This Script${nc}"
         echo -e "${inf}  h) Contact / Get Help${nc}"
@@ -5839,7 +5955,6 @@ do
         echo " "
         echo -e "${alt}   q) Quit${nc}"
 
-        echo " "
         echo -e "${ssep}"
         read -r -p "     Your choice: " choice
         echo -e "${ssep}"
@@ -5866,6 +5981,9 @@ do
                 ;;
             'j')
                 thebrig.submenu
+                ;;
+            'o')
+                obi.submenu
                 ;;
             'i')
                 moreinfo.combined.submenu
@@ -5911,8 +6029,18 @@ done
 # LOW-TODO: Finish adding "Munin"
 
 # FUTURE: Add "Mail Server"
-# FUTURE: Add "Plex"    - Maybe utilize ezPlex Portable Addon by JoseMR? (With permission of course)
-#                       If not, use ports tree or whatever, will decide later.
+# FUTURE: Add "Plex"
+    # Maybe utilize ezPlex Portable Addon by JoseMR? (With permission of course)
+
+        # INSTALL
+        # cd $(myappsdir)
+        # fetch https://raw.githubusercontent.com/JRGTH/nas4free-plex-extension/master/plex-install.sh && chmod +x plex-install.sh && ./plex-install.sh
+
+        # UPDATE
+        # fetch https://raw.githubusercontent.com/JRGTH/nas4free-plex-extension/master/plex/plexinit && chmod +x plexinit && ./plexinit
+
+    # Or make use of OneButtonInstaller by "Crest"
+    # If not, use ports tree or whatever, will decide later.
 # FUTURE: Add "Pydio"
 # FUTURE: Add "Serviio"
 # FUTURE: Add "SqueezeBox"
@@ -5933,6 +6061,9 @@ done
     #cp /usr/local/etc/ejabberd/ejabberd.yml.example /usr/local/etc/ejabberd/ejabberd.yml
     #chown 543:543 /usr/local/etc/ejabberd/ejabberd.yml
     #service ejabberd start
+# FUTURE: Add OneButtonInstaller
+    # http://www.nas4free.org/forums/viewtopic.php?f=71&t=11189
+    # fetch https://raw.github.com/crestAT/nas4free-onebuttoninstaller/master/OBI.php && mkdir -p ext/OBI && echo '<a href="OBI.php">OneButtonInstaller</a>' > ext/OBI/menu.inc && echo -e "\nDONE"
 
 
 ################################################################################

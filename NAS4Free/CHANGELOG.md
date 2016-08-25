@@ -1,5 +1,21 @@
 # Changelog
 
+### Version: 1.0.26 (August 26, 2016)
+* MySQL
+    * Made update option available 
+* Plex Server
+    + Started on installer. Currently untested from within this script.
+    + Started on updater. Currently untested from within this script.
+* Subsonic
+    * Changed the section it was in the script.
+* OneButtonInstaller
+    + Added OBI menus. Just placeholders for now.
+
+### Version: 1.0.25 (August 21, 2016)
+* Emby changes
+   * Updated Emby version to latest (3.0.6070)
++ More To-Do list stuff
+
 ### Version: 1.0.24 (August 1, 2016)
 * Cleanup
 * Emby changes

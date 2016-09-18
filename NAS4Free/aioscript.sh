@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script                    Version: 1.0.26 (August 26, 2016)
+# AIO Script                    Version: 1.0.27 (September 18, 2016)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -44,7 +44,7 @@ jail_ip="192.168.1.200"     # ! No need to change this for OwnCloud installs !
                             # installed OwnCloud previously.
 ################################################################################
 ###! EMBY CONFIG !###
-emby_update_ver="3.0.6070"  # You can find release numbers here:
+emby_update_ver="3.0.7200"  # You can find release numbers here:
                             # https://github.com/MediaBrowser/Emby/releases
                             # To use the beta: "3.0.5947-beta"
                             # To use the dev: "3.0.5966.988-dev"
@@ -4142,15 +4142,19 @@ confirm.update.emby ()
 {
 echo " "
 echo -e "${sep}"
-echo -e "${msg}   Emby Server updater (Latest method)${nc}"
+echo -e "${msg}   Emby Server Updater${nc}"
 echo -e "${sep}"
 echo " "
 echo -e "${emp} CAUTION: Things can go wrong! I highly suggest${nc}"
 echo -e "${emp}          having a backup just in case!${nc}"
+echo -e "${inf}          (Script will offer to create one)${nc}"
 echo " "
-echo -e "${qry} Reminder${msg}: make sure you have modified the 'emby_update_ver'${nc}"
+echo -e "${qry} Reminder${msg}: make sure you have modified the '${inf}emby_update_ver${msg}'${nc}"
 echo -e "${msg} line at the top of this script to the latest version.${nc}"
 echo -e "${msg}    ( Currently set to:${inf} ${emby_update_ver} ${msg})${nc}"
+echo " "
+echo -e "${msg} You can find the latest version number here:${nc}"
+echo -e "${url} https://github.com/MediaBrowser/Emby/releases${url}"
 echo " "
 echo -e "${msg} Only continue if you are 100% sure${nc}"
 # Confirm with the user
@@ -5933,7 +5937,7 @@ mainmenu=""
 while [ "$choice" != "q,a,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.26 (August 26, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.27 (September 18, 2016) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "

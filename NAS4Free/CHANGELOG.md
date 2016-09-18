@@ -1,5 +1,10 @@
 # Changelog
 
+### Version: 1.0.27 (September 18, 2016)
+* Emby
+    * Updated version to .7200
+    * Tweaked confirmation with a bit more info
+
 ### Version: 1.0.26 (August 26, 2016)
 * MySQL
     * Made update option available 

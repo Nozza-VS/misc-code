@@ -1,5 +1,5 @@
 #!/bin/sh
-# NextCloud Script               Version: 1.01 (January 7, 2017)
+# NextCloud Script               Version: 1.02 (January 8, 2017)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -81,7 +81,7 @@ echo -e "${emp} Make sure you click 'Storage & database'${nc}"
 echo " "
 echo -e "${msg} Database user = ${qry}root${nc} | Database password = ${nc}"
 echo -e "${msg} the ${qry}mysql password${msg} you chose earlier during the script.${nc}"
-echo -e "${msg} Database name = your choice (just ${qry}nextcloud${msg} is fine)${nc}"
+echo -e "${msg} Database name = ${database_name} ${nc}"
 echo " "
 echo " Once the page reloads,"
 read -r -p "   do you have a 'untrusted domain' error? [y/N] " response
@@ -154,6 +154,7 @@ echo -e " "
 echo -e "      #1: ${msg}Is this your jails IP? ${qry}$server_ip${nc}"
 echo -e "      #2: ${msg}Is this the port you want to use? ${qry}$server_port${nc}"
 echo -e "      #3: ${msg}Is this the NextCloud version you want to install? ${qry}$nextcloud_version${nc}"
+echo -e "      #4: ${msg}Is this the NextCloud database name you want to use? ${qry}$database_name${nc}"
 echo -e " "
 echo -e "${emp} If #1 or #2 are incorrect you will encounter issues!${nc}"
 confirm

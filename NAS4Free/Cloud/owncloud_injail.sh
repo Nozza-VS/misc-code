@@ -11,10 +11,10 @@
 #   In order to use this script, the following variables must be defined by the user:
 #
 #   server_port:  This value is used to specify which port Owncloud will be
-#                 listening to. This is necessary because some installations of 
+#                 listening to. This is necessary because some installations of
 #                 N4F have had trouble with the administrative webgui showing up,
 #                 even when browsing to the jail's IP.
-#     
+#
 #   server_ip:    This value is used to specify which ip address Owncloud will be
 #                 listening to. This is necessary because it keeps the jail from
 #                 listening on all ip's
@@ -38,7 +38,7 @@ owncloud_version="9.0.0"
 
 
 ###
-#	This is a simple script to automate the installation of OwnCloud within a 
+#	This is a simple script to automate the installation of OwnCloud within a
 #	jailed environment.
 #   Maintainer: Nostalgist92 as Matthew Kempe's old script hadn't been updated
 #   for NAS4Free 10.x (This should work fine for 9.x versions if you have the
@@ -47,12 +47,12 @@ owncloud_version="9.0.0"
 
 
 
-confirm () 
+confirm ()
 {
 # Confirm with the user
 read -r -p "   Continue? [y/N] " response
 case "$response" in
-    [yY][eE][sS]|[yY]) 
+    [yY][eE][sS]|[yY])
               # If yes, then continue
               echo -e "${url} Great! Moving on..${nc}"
                ;;
@@ -120,7 +120,7 @@ cmd='\033[1;35m'    # Command to be entered
 
 
 
-# define our bail out shortcut function anytime there is an error - display 
+# define our bail out shortcut function anytime there is an error - display
 # the error message, then exit returning 1.
 exerr () { echo -e "$*" >&2 ; exit 1; }
 
@@ -138,7 +138,7 @@ echo -e "${msg}   Welcome to the ownCloud installer!${nc}"
 echo -e "${sep}"
 echo " "
 echo " "
-echo " " 
+echo " "
 echo -e "${sep}"
 echo -e "${msg}   Let's start with double checking some things${nc}"
 echo -e "${sep}"
@@ -159,7 +159,7 @@ confirm
 echo " "
 echo -e "${url} Awesome, now we are ready to get on with it!${nc}"
 
-echo " " 
+echo " "
 echo -e "${sep}"
 echo -e "${msg}   Let's get to installing some stuff!!${nc}"
 echo -e "${sep}"
@@ -168,23 +168,23 @@ echo " "
 # Install packages
 pkg install -y lighttpd php56-openssl php56-ctype php56-curl php56-dom php56-fileinfo php56-filter php56-gd php56-hash php56-iconv php56-json php56-mbstring php56-mysql php56-pdo php56-pdo_mysql php56-pdo_sqlite php56-session php56-simplexml php56-sqlite3 php56-xml php56-xmlrpc php56-xmlwriter php56-xmlreader php56-gettext php56-mcrypt php56-zip php56-zlib php56-posix mp3info mysql56-server pecl-apcu
 
-echo " " 
+echo " "
 echo -e "${sep}"
 echo -e "${msg} Packages installed - now configuring MySQL${nc}"
 echo -e "${sep}"
 echo " "
 
 echo 'mysql_enable="YES"' >> /etc/rc.conf
-echo '[mysqld]' >> /var/db/mysql/my.cnf 
+echo '[mysqld]' >> /var/db/mysql/my.cnf
 echo 'skip-networking' >> /var/db/mysql/my.cnf
 
 # Start MySQL Server
 /usr/local/etc/rc.d/mysql-server start
 
-echo " " 
+echo " "
 echo -e "${sep}"
 echo -e "${msg} Securing the install. Default root password is blank,${nc}"
-echo -e "${msg} you want to provide a strong root password, remove the${nc}" 
+echo -e "${msg} you want to provide a strong root password, remove the${nc}"
 echo -e "${msg} anonymous accounts, disallow remote root access,${nc}"
 echo -e "${msg} remove the test database, and reload privilege tables${nc}"
 echo -e "${sep}"
@@ -192,7 +192,7 @@ echo " "
 
 mysql_secure_installation
 
-echo " " 
+echo " "
 echo -e "${sep}"
 echo -e "${msg} Done hardening MySQL - Performing key operations now${nc}"
 echo -e "${sep}"
@@ -201,7 +201,7 @@ echo " "
 cd ~
 openssl genrsa -des3 -out server.key 1024
 
-echo " " 
+echo " "
 echo -e "${sep}"
 echo -e "${msg} Removing password from key${nc}"
 echo -e "${sep}"
@@ -209,7 +209,7 @@ echo " "
 
 openssl rsa -in server.key -out no.pwd.server.key
 
-echo " " 
+echo " "
 echo -e "${sep}"
 echo -e "${msg} Creating cert request. The Common Name should match${nc}"
 echo -e "${msg} the URL you want to use${nc}"
@@ -218,7 +218,7 @@ echo " "
 
 openssl req -new -key no.pwd.server.key -out server.csr
 
-echo " " 
+echo " "
 echo -e "${sep}"
 echo -e "${msg} Creating cert & pem file & moving to proper location${nc}"
 echo -e "${sep}"
@@ -231,15 +231,15 @@ cp server.crt /usr/local/etc/lighttpd/ssl
 chown -R www:www /usr/local/etc/lighttpd/ssl/
 chmod 0600 server.pem
 
-echo " " 
+echo " "
 echo -e "${sep}"
 echo -e "${msg} Creating backup of lighttpd config${nc}"
 echo -e "${sep}"
-echo " " 
+echo " "
 
 cp /usr/local/etc/lighttpd/lighttpd.conf /usr/local/etc/lighttpd/old_config.bak
 
-echo " " 
+echo " "
 echo -e "${sep}"
 echo -e "${msg} Modifying lighttpd.conf file${nc}"
 echo -e "${sep}"
@@ -254,7 +254,7 @@ cat "/usr/local/etc/lighttpd/old_config.bak" | \
 	sed -r '/^server.port/s|(.*)|server.port = '"${server_port}"'|' > \
 	"/usr/local/etc/lighttpd/lighttpd.conf"
 
-echo " " 
+echo " "
 echo -e "${sep}"
 echo -e "${msg} Adding stuff to lighttpd.conf file${nc}"
 echo -e "${sep}"
@@ -278,7 +278,7 @@ echo '$HTTP["scheme"] == "https" {' >> /usr/local/etc/lighttpd/lighttpd.conf
 echo '    setenv.add-response-header  = ( "Strict-Transport-Security" => "max-age=15768000")' >> /usr/local/etc/lighttpd/lighttpd.conf
 echo '}' >> /usr/local/etc/lighttpd/lighttpd.conf
 
-echo " " 
+echo " "
 echo -e "${sep}"
 echo -e "${msg} Enabling the fastcgi module${nc}"
 echo -e "${sep}"
@@ -289,7 +289,7 @@ cat "/usr/local/etc/lighttpd/old_modules.bak" | \
 	sed -r '/^#include "conf.d\/fastcgi.conf"/s|#||' > \
 	"/usr/local/etc/lighttpd/modules.conf"
 
-echo " " 
+echo " "
 echo -e "${sep}"
 echo -e "${msg} Adding stuff to fastcgi.conf file${nc}"
 echo -e "${sep}"
@@ -310,7 +310,7 @@ echo '"idle-timeout" => 20' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
 echo '))' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
 echo ' )' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
 
-echo " " 
+echo " "
 echo -e "${sep}"
 echo -e "${msg} Obtaining corrected MIME.conf file for lighttpd to use${nc}"
 echo -e "${sep}"
@@ -341,7 +341,7 @@ fetch "https://download.owncloud.org/community/owncloud-${owncloud_version}.tar.
 tar xf "owncloud-${owncloud_version}.tar.bz2" -C /usr/local/www
 chown -R www:www /usr/local/www/
 
-echo " " 
+echo " "
 echo -e "${sep}"
 echo -e "${msg} Adding lighttpd to rc.conf${nc}"
 echo -e "${sep}"
@@ -349,7 +349,7 @@ echo " "
 
 echo 'lighttpd_enable="YES"' >> /etc/rc.conf
 
-echo " " 
+echo " "
 echo -e "${sep}"
 echo -e "${msg}  Done, lighttpd should start up automatically!${nc}"
 echo -e "${sep}"
@@ -389,7 +389,7 @@ echo " "
 
 cloud.trusteddomain.fix
 
-echo " " 
+echo " "
 echo -e "${sep}"
 echo -e "${msg} It looks like we finished here!!! NICE${nc}"
 echo -e "${msg} Now you can head to ${url}https://$server_ip:$server_port${nc}"
@@ -402,7 +402,7 @@ echo -e "${msg} This is entirely optional. Head to this file:${nc}"
 echo -e "\033[1;36m    /usr/local/www/owncloud/config/config.php${nc} ${msg}and add:${nc}"
 echo -e "\033[1;33m    'memcache.local' => '\OC\Memcache\APCu',${nc}"
 echo -e "${msg} right above the last line.${nc}"
-echo -e "${msg} Once you've edited this file, restart the server with:${nc}" 
+echo -e "${msg} Once you've edited this file, restart the server with:${nc}"
 echo -e "${cmd}   /usr/local/etc/rc.d/lighttpd restart${nc}"
 echo " "
 echo " "

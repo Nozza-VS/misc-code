@@ -1,5 +1,5 @@
 #!/bin/sh
-# NextCloud Script               Version: 1.02 (January 8, 2017)
+# NextCloud Script               Version: 1.03 (January 14, 2017)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -79,9 +79,9 @@ echo -e "${msg} Admin username & password = whatever you choose${nc}"
 echo " "
 echo -e "${emp} Make sure you click 'Storage & database'${nc}"
 echo " "
-echo -e "${msg} Database user = ${qry}root${nc} | Database password = ${nc}"
+echo -e "${msg} Database user = ${qry}root${nc} | ${msg} Database password = ${nc}"
 echo -e "${msg} the ${qry}mysql password${msg} you chose earlier during the script.${nc}"
-echo -e "${msg} Database name = ${database_name} ${nc}"
+echo -e "${msg} Database name =${qry} ${database_name} ${nc}"
 echo " "
 echo " Once the page reloads,"
 read -r -p "   do you have a 'untrusted domain' error? [y/N] " response
@@ -168,7 +168,7 @@ echo -e "${sep}"
 echo " "
 
 # Install packages
-pkg install -y lighttpd php70-openssl php70-ctype php70-curl php70-dom php70-fileinfo php70-filter php70-gd php70-hash php70-iconv php70-json php70-mbstring php70-pdo php70-pdo_mysql php70-pdo_sqlite php70-session php70-simplexml php70-sqlite3 php70-xml php70-xmlrpc php70-xmlwriter php70-xmlreader php70-gettext php70-mcrypt php70-zip php70-zlib php70-posix mp3info mysql56-server pecl-apcu
+pkg install -y lighttpd php70-openssl php70-ctype php70-curl php70-dom php70-fileinfo php70-filter php70-gd php70-hash php70-iconv php70-json php70-mbstring php70-pdo php70-pdo_mysql php70-pdo_sqlite php70-session php70-simplexml php70-sqlite3 php70-xml php70-xmlrpc php70-xmlwriter php70-xmlreader php70-gettext php70-mcrypt php70-zip php70-zlib php70-posix php70-APCu mp3info mysql56-server pecl-apcu
 
 echo " "
 echo -e "${sep}"

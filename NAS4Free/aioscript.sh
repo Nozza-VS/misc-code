@@ -2666,7 +2666,7 @@ echo -e "${msg} On this page choose where to install it to and hit 'Save'.${nc}"
 echo -e "${msg} Now your done and ready to easily install things such as TheBrig!${nc}"
 echo -e "${sep}"
 echo " "
-
+}
 
 
 #------------------------------------------------------------------------------#

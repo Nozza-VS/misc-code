@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script                    Version: 1.0.28 (January 15, 2017)
+# AIO Script                    Version: 1.0.29 (January 15, 2017)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -20,21 +20,19 @@
 #                       will listen to. This is needed to keep the jail from
 #            listening on all ip's
 #
-#   owncloud_version:   The version of ownCloud you wish to install. You can set
-#            this with "latest" but it isn't recommended as owncloud updates may
-#            require an updated script. Has been tested on v8.x.x up to v9.0.0.
-#
-###! OWNCLOUD INSTALLER CONFIG ! IMPORTANT ! DO NOT IGNORE ! ###################
+###! OWNCLOUD / NEXTCLOUD INSTALLER CONFIG ! IMPORTANT ! DO NOT IGNORE ! #######
 
 cloud_server_port="81"
 cloud_server_ip="192.168.1.200"
-cloud_database_name="nextcloud"
-owncloud_version="9.0.0"
-nextcloud_version="11.0.0"
+cloud_database_name="nextcloud" # Only needed for nextcloud, owncloud can ignore
+owncloud_version="9.0.0"      # The version of ownCloud you wish to install.
+                        # You can set this to "latest" but it isn't recommended
+                        # as owncloud updates may require an updated script.
+nextcloud_version="11.0.0"    # Same as owncloud_version but for nextcloud.
 
-###! END OF OWNCLOUD INSTALLER CONFIG ! IMPORTANT ! DO NOT IGNORE ! ###
+##! END OF OWNCLOUD / NEXTCLOUD INSTALLER CONFIG ! IMPORTANT ! DO NOT IGNORE ! ##
 ###! No need to edit below here unless the script asks you to !###
-##### OWNCLOUD UPDATER CONFIG #####
+##### OWNCLOUD / NEXTCLOUD UPDATER CONFIG #####
 owncloud_update="latest"    # This can be safely ignored unless you are planning
                     # on using the updater in this script (not recommended)
                     # It's best to leave it alone and let owncloud update itself
@@ -46,10 +44,10 @@ jail_ip="192.168.1.200"     # ! No need to change this for OwnCloud installs !
                             # installed OwnCloud previously.
 ################################################################################
 ###! EMBY CONFIG !###
-emby_update_ver="3.1.2"  # You can find release numbers here:
+emby_def_update_ver="3.1.2" # You can find release numbers here:
                             # https://github.com/MediaBrowser/Emby/releases
-                            # To use the beta: "3.0.5947-beta"
-                            # To use the dev: "3.0.5966.988-dev"
+                            # Example, To use the beta: "3.0.5947-beta"
+                            # Example, To use the dev: "3.0.5966.988-dev"
 ################################################################################
 ###! SABNZBD CONFIG !###
 sab_ver="1.0.0"             # You can find release numbers here:
@@ -388,6 +386,62 @@ do
         echo " "
         echo -e "${msg} ownCloud’s open architecture is extensible via a simple but powerful API for${nc}"
         echo -e "${msg} applications and plugins and it works with any storage.${nc}"
+        echo -e "${sep}"
+        echo " "
+
+        echo -e "${msep}"
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### ABOUT: NEXTCLOUD
+
+about.nextcloud ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} About: NextCloud${nc}"
+        echo " "
+        echo -e "${emp} 'About: NextCloud' hasn't been added to this script yet :(${nc}"
+        echo -e "${sep}"
+        echo " "
+
+        echo -e "${msep}"
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### ABOUT: NEXTCLOUD / OWNCLOUD DIFFERENCES
+
+about.cloud.differences ()
+{
+while [ "$choice" ]
+do
+        echo -e "${sep}"
+        echo -e "${inf} About: Difference between NextCloud & ownCloud${nc}"
+        echo " "
+        echo -e "${emp} This info hasn't been added to this script yet :(${nc}"
         echo -e "${sep}"
         echo " "
 
@@ -1694,6 +1748,7 @@ echo -e "${msg}   Let's get to installing some stuff!!${nc}"
 echo -e "${sep}"
 echo " "
 
+echo "If you get a question regarding package management tool, answer yes"
 # Install packages
 pkg install -y lighttpd php56-openssl php56-ctype php56-curl php56-dom php56-fileinfo php56-filter php56-gd php56-hash php56-iconv php56-json php56-mbstring php56-mysql php56-pdo php56-pdo_mysql php56-pdo_sqlite php56-session php56-simplexml php56-sqlite3 php56-xml php56-xmlrpc php56-xmlwriter php56-xmlreader php56-gettext php56-mcrypt php56-zip php56-zlib php56-posix mp3info mysql56-server pecl-apcu
 
@@ -1949,7 +2004,7 @@ cloud.trusteddomain.fix ()
 # Confirm with the user
 echo " "
 echo -e "${emp} Please finish the nextcloud setup before continuing${nc}"
-echo -e "${msg} Head to ${url}https://$server_ip:$server_port ${msg}to do this.${nc}"
+echo -e "${msg} Head to ${url}https://$cloud_server_ip:$cloud_server_port ${msg}to do this.${nc}"
 echo -e "${msg} Fill out the page you are presented with and hit finish${nc}"
 echo " "
 echo -e "${msg} Admin username & password = whatever you choose${nc}"
@@ -1958,7 +2013,7 @@ echo -e "${emp} Make sure you click 'Storage & database'${nc}"
 echo " "
 echo -e "${msg} Database user = ${qry}root${nc} | ${msg} Database password = ${nc}"
 echo -e "${msg} the ${qry}mysql password${msg} you chose earlier during the script.${nc}"
-echo -e "${msg} Database name =${qry} ${database_name} ${nc}"
+echo -e "${msg} Database name =${qry} ${cloud_database_name} ${nc}"
 echo " "
 echo " Once the page reloads,"
 read -r -p "   do you have a 'untrusted domain' error? [y/N] " response
@@ -1969,7 +2024,7 @@ case "$response" in
               echo -e "${url} Doing some last second changes to fix that..${nc}"
               echo " "
               # Prevent "Trusted Domain" error
-              echo "    '${server_ip}'," >> /usr/local/www/nextcloud/config/trusted.txt
+              echo "    '${cloud_server_ip}'," >> /usr/local/www/nextcloud/config/trusted.txt
               cp /usr/local/www/nextcloud/config/config.php /usr/local/www/nextcloud/config/old_config.bak
               cat "/usr/local/www/nextcloud/config/old_config.bak" | \
                 sed '8r /usr/local/www/nextcloud/config/trusted.txt' > \
@@ -2022,8 +2077,8 @@ echo -e "${msg} Creating database for nextcloud${nc}"
 echo -e "${sep}"
 echo " "
 
-mysql -u root -e "create database ${database_name}";
-echo -e "${msg} Database was created: ${database_name}.${nc}"
+mysql -u root -e "create database ${cloud_database_name}";
+echo -e "${msg} Database was created: ${cloud_database_name}.${nc}"
 
 echo " "
 echo -e "${sep}"
@@ -2093,9 +2148,9 @@ cat "/usr/local/etc/lighttpd/old_config.bak" | \
 	sed -r '/^var.server_root/s|"(.*)"|"/usr/local/www/nextcloud"|' | \
 	sed -r '/^server.use-ipv6/s|"(.*)"|"disable"|' | \
 	sed -r '/^server.document-root/s|"(.*)"|"/usr/local/www/nextcloud"|' | \
-	sed -r '/^#server.bind/s|(.*)|server.bind = "'"${server_ip}"'"|' | \
-	sed -r '/^\$SERVER\["socket"\]/s|"0.0.0.0:80"|"'"${server_ip}"':'"${server_port}"'"|' | \
-	sed -r '/^server.port/s|(.*)|server.port = '"${server_port}"'|' > \
+	sed -r '/^#server.bind/s|(.*)|server.bind = "'"${cloud_server_ip}"'"|' | \
+	sed -r '/^\$SERVER\["socket"\]/s|"0.0.0.0:80"|"'"${cloud_server_ip}"':'"${cloud_server_port}"'"|' | \
+	sed -r '/^server.port/s|(.*)|server.port = '"${cloud_server_port}"'|' > \
 	"/usr/local/etc/lighttpd/lighttpd.conf"
 
 echo " "
@@ -2236,7 +2291,7 @@ cloud.trusteddomain.fix
 echo " "
 echo -e "${sep}"
 echo -e "${msg} It looks like we finished here!!! NICE${nc}"
-echo -e "${msg} Now you can head to ${url}https://$server_ip:$server_port${nc}"
+echo -e "${msg} Now you can head to ${url}https://$cloud_server_ip:$cloud_server_port${nc}"
 echo -e "${msg} to use your nextcloud whenever you wish!${nc}"
 echo " "
 echo " "
@@ -2344,6 +2399,124 @@ echo " "
 cd $(myappsdir)
 fetch https://raw.githubusercontent.com/JRGTH/nas4free-plex-extension/master/plex-install.sh && chmod +x plex-install.sh && ./plex-install.sh
 
+}
+
+#------------------------------------------------------------------------------#
+### SUBSONIC INSTALL
+
+install.subsonic ()
+{
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Welcome to the Subsonic installer!${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Let's get started with some packages${nc}"
+echo -e "${sep}"
+echo " "
+
+pkg install -y xtrans xproto xextproto javavmwrapper flac openjdk8 ffmpeg
+pkg install -y https://github.com/Nostalgist92/misc-code/blob/master/NAS4Free/Subsonic/lame.tbz
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Create folders for Subsonic${nc}"
+echo -e "${sep}"
+echo " "
+
+mkdir -p /var/subsonic/transcode
+mkdir /var/subsonic/standalone
+cp /usr/local/bin/lame /var/subsonic/transcode/
+cp /usr/local/bin/flac /var/subsonic/transcode/
+cp /usr/local/bin/ffmpeg /var/subsonic/transcode/
+cd /tmp/
+# Download Subsonic from sourceforge & extract
+fetch http://heanet.dl.sourceforge.net/project/subsonic/subsonic/${subsonic_ver}/subsonic-${subsonic_ver}-standalone.tar.gz
+tar xvzf /tmp/subsonic-${subsonic_ver}-standalone.tar.gz -C /var/subsonic/standalone
+chmod 777 *.*
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Now let's make sure subsonic starts.${nc}"
+echo -e "${msg} You can manually do this with:${nc}"
+echo -e "${cmd}    sh /var/subsonic/standalone/subsonic.sh${nc}"
+echo -e "${msg} For now, this script will do it automatically.${nc}"
+echo -e "${sep}"
+echo " "
+
+sh /var/subsonic/standalone/subsonic.sh
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} If subsonic started as it should you can connect to it via the browser at the${nc}"
+echo -e "${msg} following adress: Jail-IP:4040, default username is admin, and password admin.${nc}"
+echo -e "${sep}"
+echo " "
+
+echo " "
+echo -e "${sep}"
+echo " That should be it!"
+echo " Enjoy your Subsonic server!"
+echo -e "${sep}"
+echo " "
+}
+
+#------------------------------------------------------------------------------#
+### MADSONIC INSTALL
+
+install.madsonic ()
+{
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Welcome to the Madsonic installer!${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Let's get started with some packages${nc}"
+echo -e "${sep}"
+echo " "
+
+#pkg install -y madsonic-jetty
+pkg install -y madsonic-standalone
+
+echo " "
+echo -e "${sep}"
+echo " Adding madsonic to rc.conf"
+echo -e "${sep}"
+echo " "
+
+echo 'madsonic_enable="YES"' >> /etc/rc.conf
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Now let's make sure madsonic starts.${nc}"
+echo -e "${msg} You can manually do this with:${nc}"
+echo -e "${cmd}    /usr/local/etc/madsonic start${nc}"
+echo -e "${msg} For now, this script will do it automatically.${nc}"
+echo -e "${sep}"
+echo " "
+
+/usr/local/etc/rc.d/madsonic start
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} If madsonic started as it should you can connect to it via your${nc}"
+echo -e "${msg} browser with following adress: Jail-IP:4040${nc}"
+echo -e "${msg} Default username is admin, and password admin.${nc}"
+echo -e "${sep}"
+echo " "
+
+echo " "
+echo -e "${sep}"
+echo " That should be it!"
+echo " Enjoy your Subsonic server!"
+echo -e "${sep}"
+echo " "
 }
 
 #------------------------------------------------------------------------------#
@@ -3440,6 +3613,75 @@ case "$response" in
 esac
 }
 
+select.emby.update.version ()
+{
+echo -e "${msg} You can let the script install the default version (${qry}${emby_def_update_ver}${msg})${nc}"
+echo -e "${msg} Or you can select the version to install yourself.${nc}"
+echo -e "${emp} Only do so if you know what you're doing!${nc}"
+echo " "
+read -r -p " Select version yourself? [y/N] " response
+    case $response in
+        [yY][eE][sS]|[yY])
+            echo " "
+            echo -e "${msg} You can find release numbers here:${nc}"
+            echo -e "${url} https://github.com/MediaBrowser/Emby/releases${nc}"
+            echo " "
+            echo -e "${imp} NOTE: If selecting a beta or dev version,${nc}"
+            echo -e "${imp} leave off the '-beta'/'-dev' from version number!${nc}"
+            echo " "
+            echo -e "${msg} Which version number do you want?${nc}"
+            echo -e "${qry} Example version:${nc}"
+            echo -e "${url} 3.1.2${nc}"
+            echo " "
+            echo "Version:"
+            read userselected_emby_update_ver
+            echo " "
+            fetch --no-verify-peer -o /tmp/emby-$userselected_emby_update_ver.zip https://github.com/MediaBrowser/Emby/releases/download/$userselected_emby_update_ver/Emby.Mono.zip
+            echo " "
+            echo -e "${sep}"
+            echo -e "${msg} Download done, let's stop the server${nc}"
+            echo -e "${sep}"
+            echo " "
+
+            service emby-server stop
+
+            echo " "
+            echo -e "${sep}"
+            echo -e "${msg} Now to extract the download and replace old version${nc}"
+            echo -e "${sep}"
+            echo " "
+
+            unzip -o "/tmp/emby-${userselected_emby_update_ver}.zip" -d /usr/local/lib/emby-server
+            ;;
+        *)
+            echo " "
+            echo " Using default version as defined by script (${emby_def_update_ver})"
+            echo " "
+            echo -e "${sep}"
+            echo -e "${msg} Grab the update for Emby from github${nc}"
+            echo -e "${sep}"
+            echo " "
+
+            fetch --no-verify-peer -o /tmp/emby-${emby_def_update_ver}.zip https://github.com/MediaBrowser/Emby/releases/download/${emby_def_update_ver}/Emby.Mono.zip
+            echo " "
+            echo -e "${sep}"
+            echo -e "${msg} Download done, let's stop the server${nc}"
+            echo -e "${sep}"
+            echo " "
+
+            service emby-server stop
+
+            echo " "
+            echo -e "${sep}"
+            echo -e "${msg} Now to extract the download and replace old version${nc}"
+            echo -e "${sep}"
+            echo " "
+
+            unzip -o "/tmp/emby-${emby_def_update_ver}.zip" -d /usr/local/lib/emby-server
+            ;;
+    esac
+}
+
 # Split this function in to multiple parts?
 recompile.from.ports ()
 {
@@ -3590,27 +3832,46 @@ recompile.from.ports
 
 echo " "
 echo -e "${sep}"
-echo -e "${msg} Grab the update for Emby from github${nc}"
+echo -e "${msg} What version would you like to update to?${nc}"
 echo -e "${sep}"
 echo " "
 
-fetch --no-verify-peer -o /tmp/emby-${emby_update_ver}.zip https://github.com/MediaBrowser/Emby/releases/download/${emby_update_ver}/Emby.Mono.zip
+select.emby.update.version
 
-echo " "
-echo -e "${sep}"
-echo -e "${msg} Download done, let's stop the server${nc}"
-echo -e "${sep}"
-echo " "
+#echo " "
+#echo -e "${sep}"
+#echo -e "${msg} Download done, let's stop the server${nc}"
+#echo -e "${sep}"
+#echo " "
 
-service emby-server stop
+#service emby-server stop
 
-echo " "
-echo -e "${sep}"
-echo -e "${msg} Now to extract the download and replace old version${nc}"
-echo -e "${sep}"
-echo " "
+#echo " "
+#echo -e "${sep}"
+#echo -e "${msg} Now to extract the download and replace old version${nc}"
+#echo -e "${sep}"
+#echo " "
 
-unzip -o "/tmp/emby-${emby_update_ver}.zip" -d /usr/local/lib/emby-server
+#unzip -o "/tmp/emby-${userselected_emby_update_ver}.zip" -d /usr/local/lib/emby-server
+#unzip -o "/tmp/emby-${emby_def_update_ver}.zip" -d /usr/local/lib/emby-server
+
+# Script default version
+#if [ -f "/tmp/emby-${userselected_emby_update_ver}.zip" ]
+#then
+#	echo "$userselected_emby_update_ver.zip found, extracting"
+#    unzip -o "/tmp/emby-${userselected_emby_update_ver}.zip" -d /usr/local/lib/emby-server
+#else
+#	echo "/tmp/emby-${userselected_emby_update_ver}.zip not found, trying 'emby-${emby_def_update_ver}.zip'"
+#fi
+#
+# User selected version
+#if [ -f "/tmp/emby-${userselected_emby_update_ver}.zip" ]
+#then
+#	echo "$userselected_emby_update_ver.zip found, extracting"
+#    unzip -o "/tmp/emby-${userselected_emby_update_ver}.zip" -d /usr/local/lib/emby-server
+#else
+#	echo "$userselected_emby_update_ver.zip not found"
+#fi
 
 echo " "
 echo -e "${sep}"
@@ -3683,6 +3944,52 @@ update.subsonic ()
 {
 echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
+}
+
+#------------------------------------------------------------------------------#
+### MADSONIC UPDATE
+
+update.madsonic ()
+{
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Welcome to the Madsonic updater!${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Let's get started with some questions${nc}"
+echo -e "${sep}"
+echo " "
+read -r -p " Double check your version, is it the latest? [y/N] " response
+    case $response in
+        [yY][eE][sS]|[yY])
+            echo " No need to update anything then${nc}"
+            ;;
+        *)
+            echo " "
+            echo -e "${msg} Paste the download link to the madsonic standalone package${nc}"
+            echo -e "${qry} Example link:"
+            echo -e "${url} http://madsonic.org/download/6.2/20161222_madsonic-6.2.9080-war-jspc.zip${nc}"
+            echo " "
+            echo "Link:"
+            read madlink
+            echo " "
+            echo -e "${msg} Which version number is it?${nc}"
+            echo -e "${qry} Example version:${nc}"
+            echo -e "${url} 6.2.9080${nc}"
+            echo " "
+            echo "Version:"
+            read madversion
+            echo " "
+            #fetch -o madsonic"$buildno".tar.gz "$madlink"
+            fetch -o /tmp/madsonic-"$madversion".zip "$madlink"
+            #tar xvzf madsonic"$buildno".tar.gz -C /usr/local/share/madsonic-standalone
+            unzip -o /tmp/madsonic-"$madversion".zip -d /usr/local/share/madsonic-standalone
+            chmod +x /usr/local/share/madsonic-standalone/*
+            ;;
+    esac
 }
 
 #------------------------------------------------------------------------------#
@@ -4172,6 +4479,7 @@ confirm
 echo " "
 echo -e "${fin} Awesome, now we are ready to get on with it!${nc}"
 # Confirm with the user
+echo " "
 echo -e "${inf} Final confirmation before installing owncloud.${nc}"
 read -r -p "   Confirm Installation of OwnCloud? [y/N] " response
 case "$response" in
@@ -4227,7 +4535,7 @@ echo -e "${msg} If ${emp}ANY${msg} of these ${emp}DON'T${msg} match YOUR setup, 
 echo -e " "
 echo -e "      ${alt}#1: ${msg}Is this your jails IP? ${qry}$cloud_server_ip${nc}"
 echo -e "      ${alt}#2: ${msg}Is this the port you want to use? ${qry}$cloud_server_port${nc}"
-echo -e "      ${alt}#3: ${msg}Is this the ownCloud version you want to install? ${qry}$owncloud_version${nc}"
+echo -e "      ${alt}#3: ${msg}Is this the ownCloud version you want to install? ${qry}$nextcloud_version${nc}"
 echo -e " "
 echo -e "${emp} If #1 or #2 are incorrect you will encounter issues!${nc}"
 
@@ -4236,12 +4544,13 @@ confirm
 echo " "
 echo -e "${fin} Awesome, now we are ready to get on with it!${nc}"
 # Confirm with the user
-echo -e "${inf} Final confirmation before installing owncloud.${nc}"
-read -r -p "   Confirm Installation of OwnCloud? [y/N] " response
+echo " "
+echo -e "${inf} Final confirmation before installing NextCloud.${nc}"
+read -r -p "   Confirm Installation of NextCloud? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              install.owncloud
+              install.nextcloud
                ;;
     *)
               # Otherwise exit...
@@ -4475,6 +4784,26 @@ esac
 }
 
 #------------------------------------------------------------------------------#
+### MADSONIC CONFIRM INSTALL
+
+confirm.install.madsonic ()
+{
+# Confirm with the user
+read -r -p "   Confirm Installation of Madsonic? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              install.madsonic
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              return
+              ;;
+esac
+}
+
+#------------------------------------------------------------------------------#
 ### TEAMSPEAK 3 SERVER CONFIRM INSTALL
 
 confirm.install.teamspeak3 ()
@@ -4520,9 +4849,10 @@ esac
 confirm.install.obi ()
 {
 # Confirm with the user
-echo -e "${emp} WARNING: THIS HAS BEEN UNTESTED"
-echo -e "${emp} USE AT YOUR OWN RISK"
-echo -e "${emp} DO NOT INSTALL INSIDE A JAIL, RUN ON HOST SYSTEM"
+echo -e "${emp} WARNING: THIS HAS BEEN UNTESTED${nc}"
+echo -e "${emp} USE AT YOUR OWN RISK${nc}"
+echo -e "${emp} DO NOT INSTALL INSIDE A JAIL, RUN ON HOST SYSTEM${nc}"
+echo " "
 read -r -p "   Confirm Installation of OneButtonInstaller? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
@@ -4923,8 +5253,8 @@ do
         echo -e "${qry} Choose one:${nc}"
         echo " "
         echo -e "${fin}   1)${msg} OwnCloud${nc}"
-        echo -e "${fin}   2)${msg} NextCloud${nc}"
-        echo -e "${ca}   3)${ca} Pydio  (Currently Unavailable)${nc}"
+        echo -e "${fin}   2)${msg} NextCloud (Preferred)${nc}"
+        echo -e "${ca}   3)${ca} Pydio (Currently Unavailable)${nc}"
         echo " "
         echo -e "${ca}  a) About Cloud Storage (Currently Unavailable)${nc}"
         echo -e "${ca}  i) More Information / How-To's${nc}"
@@ -4971,7 +5301,7 @@ done
 
 owncloud.submenu ()
 {
-while [ "$choice" != "a,h,i,b" ]
+while [ "$choice" != "a,h,i,b,d" ]
 do
         echo -e "${sep}"
         echo -e "${fin} OwnCloud Options${nc}"
@@ -4979,13 +5309,14 @@ do
         echo -e "${qry} Choose one:${nc}"
         echo " "
         echo -e "${fin}   1)${msg} Install${nc}"
-        echo -e "${fin}   2)${msg} Update${nc}"
-        echo -e "${fin}   3)${msg} Backup${nc}"
+        echo -e "${ca}   2)${ca} Update${nc}"
+        echo -e "${ca}   3)${ca} Backup${nc}"
         echo " "
         echo -e "${fin}   4)${msg} Fix Known Errors${nc}"
         echo -e "${fin}   5)${msg} Other${nc}"
         echo " "
         echo -e "${inf}  a) About OwnCloud${nc}"
+        echo -e "${ca}  d) Difference between ownCloud / NextCloud${nc}"
         echo -e "${inf}  i) More Info / How-To's${nc}"
         echo -e "${inf}  h) Get Help${nc}"
         echo " "
@@ -5018,6 +5349,9 @@ do
             'a')
                 about.owncloud
                 ;;
+            'd')
+                about.cloud.differences
+                ;;
             'i')
                 moreinfo.submenu.owncloud
                 ;;
@@ -5039,7 +5373,7 @@ done
 
 nextcloud.submenu ()
 {
-while [ "$choice" != "a,h,i,b" ]
+while [ "$choice" != "a,h,i,b,d" ]
 do
         echo -e "${sep}"
         echo -e "${fin} NextCloud Options${nc}"
@@ -5047,13 +5381,11 @@ do
         echo -e "${qry} Choose one:${nc}"
         echo " "
         echo -e "${fin}   1)${msg} Install${nc}"
-        echo -e "${fin}   2)${msg} Update${nc}"
-        echo -e "${fin}   3)${msg} Backup${nc}"
-        echo " "
-        echo -e "${fin}   4)${msg} Fix Known Errors${nc}"
-        echo -e "${fin}   5)${msg} Other${nc}"
+        echo -e "${ca}   2)${ca} Update${nc}"
+        echo -e "${ca}   3)${ca} Backup${nc}"
         echo " "
         echo -e "${inf}  a) About NextCloud${nc}"
+        echo -e "${ca}  d) Difference between NextCloud / ownCloud${nc}"
         echo -e "${inf}  i) More Info / How-To's${nc}"
         echo -e "${inf}  h) Get Help${nc}"
         echo " "
@@ -5085,6 +5417,9 @@ do
                 ;;
             'a')
                 about.nextcloud
+                ;;
+            'd')
+                about.cloud.differences
                 ;;
             'i')
                 moreinfo.submenu.nextcloud
@@ -5175,7 +5510,8 @@ do
         echo " "
         echo -e "${fin}   1)${msg} Emby Media Server${nc}"
         echo -e "${ca}   2)${ca} Plex Media Server (Currently Unavailable)${nc}"
-        echo -e "${ca}   3)${msg} Subsonic${nc}"
+        echo -e "${fin}   3)${msg} Subsonic${nc}"
+        echo -e "${fin}   4)${msg} Madsonic${nc}"
         echo " "
         echo -e "${ca}  a) About Media Streaming (Currently Unavailable)${nc}"
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
@@ -5199,6 +5535,9 @@ do
             #    ;;
             '3')
                 subsonic.submenu
+                ;;
+            '4')
+                madsonic.submenu
                 ;;
             #'a')
             #    about.streaming
@@ -5346,69 +5685,6 @@ done
 }
 
 #------------------------------------------------------------------------------#
-### SUBSONIC INSTALL
-
-install.subsonic ()
-{
-echo " "
-echo -e "${sep}"
-echo -e "${msg}   Welcome to the Subsonic installer!${nc}"
-echo -e "${sep}"
-echo " "
-echo " "
-echo " "
-echo -e "${sep}"
-echo -e "${msg}   Let's get started with some packages${nc}"
-echo -e "${sep}"
-echo " "
-
-pkg install -y xtrans xproto xextproto javavmwrapper flac openjdk7
-pkg install -y ffmpeg # With LAME enabled
-
-echo " "
-echo -e "${sep}"
-echo -e "${msg} Create folders for Subsonic${nc}"
-echo -e "${sep}"
-echo " "
-
-mkdir -p /var/subsonic/transcode
-mkdir /var/subsonic/standalone
-cp /usr/local/bin/lame /var/subsonic/transcode/
-cp /usr/local/bin/flac /var/subsonic/transcode/
-cp /usr/local/bin/ffmpeg /var/subsonic/transcode/
-cd /tmp/
-# Download Subsonic from sourceforge & extract
-fetch http://heanet.dl.sourceforge.net/project/subsonic/subsonic/${subsonic_ver}/subsonic-${subsonic_ver}-standalone.tar.gz
-tar xvzf /tmp/subsonic-${subsonic_ver}-standalone.tar.gz -C /var/subsonic/standalone
-chmod 777 *.*
-
-echo " "
-echo -e "${sep}"
-echo -e "${msg} Now let's make sure subsonic starts.${nc}"
-echo -e "${msg} You can manually do this with:${nc}"
-echo -e "${cmd}    sh /var/subsonic/standalone/subsonic.sh${nc}"
-echo -e "${msg} For now, this script will do it automatically.${nc}"
-echo -e "${sep}"
-echo " "
-
-sh /var/subsonic/standalone/subsonic.sh
-
-echo " "
-echo -e "${sep}"
-echo -e "${msg} If subsonic started as it should you can connect to it via the browser at the${nc}"
-echo -e "${msg} following adress: Jail-IP:4040, default username is admin, and password admin.${nc}"
-echo -e "${sep}"
-echo " "
-
-echo " "
-echo -e "${sep}"
-echo " That should be it!"
-echo " Enjoy your Subsonic server!"
-echo -e "${sep}"
-echo " "
-}
-
-#------------------------------------------------------------------------------#
 ### SUBSONIC SUBMENU
 
 subsonic.submenu ()
@@ -5467,6 +5743,64 @@ done
 }
 
 #------------------------------------------------------------------------------#
+### MADSONIC SUBMENU
+
+madsonic.submenu ()
+{
+while [ "$choice" != "a,h,i,b,q" ]
+do
+        echo -e "${sep}"
+        echo -e "${fin} Madsonic Options${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:${nc}"
+        echo " "
+        echo -e "${fin}   1)${msg} Install${nc}"
+        echo -e "${fin}   2)${msg} Update${nc}"
+        echo -e "${ca}   3)${ca} Backup (Currently Unavailable)${nc}"
+        echo " "
+        echo -e "${ca}  a) About Madsonic (Currently Unavailable)${nc}"
+        echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
+        echo -e "${ca}  h) Get Help${nc}"
+        echo " "
+        echo -e "${emp}  b) Back${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+        echo " "
+
+        case $choice in
+            '1') echo -e "${inf} Installing..${nc}"
+                echo " "
+                confirm.install.madsonic
+                ;;
+            '2') echo -e "${inf} Running Update..${nc}"
+                echo " "
+                confirm.update.madsonic
+                ;;
+            '3') echo -e "${inf} Backup..${nc}"
+                echo " "
+                backup.madsonic
+                ;;
+            'a')
+                about.madsonic
+                ;;
+            'h')
+                gethelp
+                ;;
+            #'i')
+            #    moreinfo.submenu.subsonic
+            #    ;;
+            'b') return
+                ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
+                ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
 ### SEARCH TOOLS / DOWNLOAD AUTOMATION SUBMENU
 
 searchtools.submenu ()
@@ -5478,9 +5812,14 @@ do
         echo -e "${sep}"
         echo -e "${qry} Automate your downloads with:${nc}"
         echo " "
-        echo -e "${fin}   1)${msg} Sonarr (TV & Anime)${nc}"
-        echo -e "${fin}   2)${msg} CouchPotato (Movies)${nc}"
-        echo -e "${fin}   3)${msg} HeadPhones (Music)${nc}"
+        echo -e "${fin}   1)${msg} Sonarr (TV & Anime) (Preferred)${nc}"
+        echo -e "${ca}   2)${ca} Sickbeard (TV & Anime) (Currently Unavailable)${nc}"
+        echo -e "${fin}   3)${msg} CouchPotato (Movies)${nc}"
+        echo -e "${fin}   4)${msg} HeadPhones (Music) (Currently Unavailable)${nc}"
+        echo -e "${ca}   5)${ca} Mylar (Comics) (Currently Unavailable)${nc}"
+        echo -e "${ca}   6)${ca} LazyLibrarian (Books) (Currently Unavailable)${nc}"
+        echo " "
+        echo -e "${ca}   0)${ca} HTPC Manager${nc}"
         echo " "
         echo -e "${ca}  a) About Automation (Currently Unavailable)${nc}"
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
@@ -5498,13 +5837,29 @@ do
                 echo " "
                 sonarr.submenu
                 ;;
-            '2') echo -e "${inf} Taking you to the CouchPotato menu..${nc}"
+            '2') echo -e "${inf} Taking you to the Sickbeard menu..${nc}"
+                echo " "
+                sickbeard.submenu
+                ;;
+            '3') echo -e "${inf} Taking you to the CouchPotato menu..${nc}"
                 echo " "
                 couchpotato.submenu
                 ;;
-            '3') echo -e "${inf} Taking you to the HeadPhones menu..${nc}"
+            '4') echo -e "${inf} Taking you to the HeadPhones menu..${nc}"
                 echo " "
                 headphones.submenu
+                ;;
+            '5') echo -e "${inf} Taking you to the Mylar menu..${nc}"
+                echo " "
+                mylar.submenu
+                ;;
+            '6') echo -e "${inf} Taking you to the LazyLibrarian menu..${nc}"
+                echo " "
+                lazylibrarian.submenu
+                ;;
+            '0') echo -e "${inf} Taking you to the HTPC Manager menu..${nc}"
+                echo " "
+                htpc.submenu
                 ;;
             #'a')
             #    about.searchtools
@@ -5880,6 +6235,9 @@ do
         echo -e "${fin}   2)${msg} NZBGet (Usenet Downloader)${nc}"
         echo -e "${fin}   3)${msg} SABnzbd (Usenet Downloader)${nc}"
         echo " "
+        echo -e "${ca}   4)${ca} Jackett (Torrent Meta Search) (Currently Unavailable)${nc}"
+        echo -e "${ca}   5)${ca} NZBHydra (Usenet Meta Search) (Currently Unavailable)${nc}"
+        echo " "
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
         echo -e "${inf}  h) Get Help${nc}"
         echo " "
@@ -5899,6 +6257,12 @@ do
                 ;;
             '3')
                 sabnzbd.submenu
+                ;;
+            '4')
+                jackett.submenu
+                ;;
+            '5')
+                nzbhydra.submenu
                 ;;
             #'i')
             #    moreinfo.submenu.thebrig
@@ -6528,7 +6892,7 @@ mainmenu=""
 while [ "$choice" != "q,a,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.28 (January 15, 2017) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.29 (January 15, 2017) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
@@ -6611,16 +6975,41 @@ done
 
 
 ################################################################################
-##### To-Do's / Future Changes / etc.
+##### To-Do's / Future Changes / Planned Additions / etc.
 ################################################################################
 
+#------------------------------------------------------------------------------#
+### General
+
+# Allow users to select owncloud/nextcloud version/ip/port via script without
+# the need to edit the script manually. (Same as how Emby updater works now)
+
+#------------------------------------------------------------------------------#
+### Voice Servers
+
 # MED-TODO: Finish adding Teamspeak 3 Server & JTS3ServerMod (Server Bot)
+# FUTURE: Add "Ventrilo"
+# FUTURE: Add "Murmur" (Mumble)
+
+#------------------------------------------------------------------------------#
+### Media Download / Search / Management
+
+# FUTURE: Add "Mylar" (Comic Books)
+# FUTURE: Add "LazyLibrarian" (Books)
+# FUTURE: Add "Sickbeard" (TV/Anime)
+# FUTURE: Add "XDM"
+# LOW-TODO: Finish adding "Calibre" (Books)
+
+# FUTURE: Add "HTPC Manager" (Combines many services in one interface)
+
+# FUTURE: Add "NZBHydra" (Meta search for NZB indexers)
+# FUTURE: Add "Jackett" (Meta search for torrents)
+
 # MED-TODO: Finish "Deluge" scripts (Lots of issues with it)
 
-# LOW-TODO: Finish adding "Calibre"
-# LOW-TODO: Finish adding "Munin"
+#------------------------------------------------------------------------------#
+### Media Server
 
-# FUTURE: Add "Mail Server"
 # FUTURE: Add "Plex"
     # Maybe utilize ezPlex Portable Addon by JoseMR? (With permission of course)
 
@@ -6633,13 +7022,23 @@ done
 
     # Or make use of OneButtonInstaller by "Crest"
     # If not, use ports tree or whatever, will decide later.
-# FUTURE: Add "Pydio"
+
 # FUTURE: Add "Serviio"
 # FUTURE: Add "SqueezeBox"
-# FUTURE: Add "UMS"
+# FUTURE: Add "UMS (Universal Media Server)"
 # FUTURE: If this script has no issues then i may remove standalone scripts from github
 # FUTURE: IF & when jail creation via shell is possible for thebrig, will add that option to script.
-# FUTUTE: Add "Sickbeard"
+
+#------------------------------------------------------------------------------#
+### Web Server / Cloud Server
+
+# FUTURE: Add "Pydio"
+
+#------------------------------------------------------------------------------#
+### System Monitoring
+
+# LOW-TODO: Finish adding "Munin"
+
 # FUTURE: Add "Monit" (Free) & "M/Monit" (Free Trial but requires purchase)
 # "M/Monit" is NOT required to be able to use "Monit"
     #pkg install monit
@@ -6647,12 +7046,29 @@ done
     #cp /usr/local/etc/monitrc.sample /usr/local/etc/monitrc
     #chmod 600 /usr/local/etc/monitrc
     #service monit start
+# FUTURE: Add "Zabbix"
+# FUTURE: Add "Pandora"
+# FUTURE: Add "Icinga"
+# FUTURE: Add "Observium"
+# FUTURE: Add "Cacti"
+# FUTURE: Add "Nagios"
+# FUTURE: Add "nTop"
+# FUTURE: Add "Grafana"
+
+#------------------------------------------------------------------------------#
+### XMPP Server
+
 # FUTURE: Add "Jabber" Server (Or Prosody as i'm pretty sure that is easier to set up)
     #pkg install ejabberd
     #echo 'ejabberd_enable="YES"' >> /etc/rc.conf
     #cp /usr/local/etc/ejabberd/ejabberd.yml.example /usr/local/etc/ejabberd/ejabberd.yml
     #chown 543:543 /usr/local/etc/ejabberd/ejabberd.yml
     #service ejabberd start
+
+#------------------------------------------------------------------------------#
+### Other
+
+# FUTURE: Add "Mail Server"
 # FUTURE: Add OneButtonInstaller
     # http://www.nas4free.org/forums/viewtopic.php?f=71&t=11189
     # fetch https://raw.github.com/crestAT/nas4free-onebuttoninstaller/master/OBI.php && mkdir -p ext/OBI && echo '<a href="OBI.php">OneButtonInstaller</a>' > ext/OBI/menu.inc && echo -e "\nDONE"

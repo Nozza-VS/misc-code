@@ -1,5 +1,20 @@
 # Changelog
 
+### Version: 1.0.29 (January 15, 2017)
+
+* Emby
+    * Modified script to let user choose version to update to without the need to modify script
+* Madsonic
+    * Finished installer, should work but untested
+    + Added updater
+* NextCloud
+    * Fixed installer, still had some owncloud leftovers in it
+* General
+   * Some minor cleanup
+   * More To-Do's and such
+   * Need to fix menu items
+   * Plan to let user select version/ip/port for cloud the same way you can select Emby update version without requiring manual edit of the script
+
 ### Version: 1.0.28 (January 15, 2017)
 * TheBrig
     * Removed some of TheBrig options in favor of OneButtonInstaller

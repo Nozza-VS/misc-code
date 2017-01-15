@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script                    Version: 1.0.27 (September 18, 2016)
+# AIO Script                    Version: 1.0.28 (January 15, 2017)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -28,7 +28,9 @@
 
 cloud_server_port="81"
 cloud_server_ip="192.168.1.200"
+cloud_database_name="nextcloud"
 owncloud_version="9.0.0"
+nextcloud_version="11.0.0"
 
 ###! END OF OWNCLOUD INSTALLER CONFIG ! IMPORTANT ! DO NOT IGNORE ! ###
 ###! No need to edit below here unless the script asks you to !###
@@ -44,7 +46,7 @@ jail_ip="192.168.1.200"     # ! No need to change this for OwnCloud installs !
                             # installed OwnCloud previously.
 ################################################################################
 ###! EMBY CONFIG !###
-emby_update_ver="3.0.7200"  # You can find release numbers here:
+emby_update_ver="3.1.2"  # You can find release numbers here:
                             # https://github.com/MediaBrowser/Emby/releases
                             # To use the beta: "3.0.5947-beta"
                             # To use the dev: "3.0.5966.988-dev"
@@ -53,9 +55,10 @@ emby_update_ver="3.0.7200"  # You can find release numbers here:
 sab_ver="1.0.0"             # You can find release numbers here:
                             # https://github.com/sabnzbd/sabnzbd/releases
 ################################################################################
-###! SUBSONIC CONFIG !###
-subsonic_ver="5.3"          # You can find release numbers here:
+###! SUBSONIC / MADSONIC CONFIG !###
+subsonic_ver="6.0"          # You can find release numbers here:
                             # sourceforge.net/projects/subsonic/files/subsonic
+madsonic_ver="6.2.9080"     # http://beta.madsonic.org/pages/download.jsp
 ################################################################################
 ###! THEBRIG CONFIG !###
 # Define where to install TheBrig
@@ -79,15 +82,15 @@ CALIBRELIBRARYPATH="/mnt/Storage/Media/Books"
 ##################################################
 ###! MUNIN CONFIG !###############################
 # Enter the jail name you wish to run Munin in
-#muninjail="Munin"  # Unused currently
-                    # (For a future idea)
+#muninjail="Munin"   # Unused currently
+                     # (For a future idea)
 ##################################################
 ###! NZBGET CONFIG !##############################
 #nzbgetjail="NZBGet" # Unused currently
-                    # (For a future idea)
+                     # (For a future idea)
 ##################################################
 ###! DELUGE CONFIG !##############################
-#delugejail="Deluge"     # Unused currently
+#delugejail="Deluge" # Unused currently
 user_ID="UID"
 deluge_user="JonDoe"
 deluge_user_password="MyC0mpL3xPass"
@@ -167,7 +170,7 @@ done
 ################################################################################
 
 #------------------------------------------------------------------------------#
-### OWNCLOUD - ENABLE MEMORY CACHING
+### CLOUD - ENABLE MEMORY CACHING
 #TODO: Add option for automatic or manual (Will also need to ask if user is
 #      using default installation folder otherwise the auto version won't work)
 #------------------------------------------------------------------------------#
@@ -197,6 +200,52 @@ do
         echo -e "${msg} This is entirely optional. Edit config.php:${nc}"
         echo -e "${msg} Default location is:${nc}"
         echo -e "\033[1;36m    /usr/local/www/owncloud/config/config.php${nc}"
+        echo -e "${msg} Add the following right above the last line:${nc}"
+        echo -e "\033[1;33m    'memcache.local' => '\OC\Memcache\APCu',${nc}"
+        echo " "
+        echo -e "${msg} Once you've saved the file, restart the server with:${nc}"
+        echo -e "${cmd}    /usr/local/etc/rc.d/lighttpd restart"
+        echo " "
+        echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
+        echo -e "${msep}"
+
+        read choice
+
+        case $choice in
+            *)
+                 return
+                 ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+
+nextcloud.enablememcache ()
+{
+
+while [ "$choice" ]
+do
+        echo "  'memcache.local' => '\OC\Memcache\APCu'," >> /usr/local/www/nextcloud/config/memcache.txt
+        cp /usr/local/www/nextcloud/config/config.php /usr/local/www/nextcloud/config/old_config.bak
+        cat "/usr/local/www/nextcloud/config/old_config.bak" | \
+	        sed '21r /usr/local/www/nextcloud/config/memcache.txt' > \
+            "/usr/local/www/nextcloud/config/config.php"
+        rm /usr/local/www/nextcloud/config/memcache.txt
+
+        /usr/local/etc/rc.d/lighttpd restart
+
+        echo " "
+        echo "${sep}"
+        echo " "
+
+        echo -e " Head to your nextcloud admin page/refresh it"
+        echo -e " There should no longer be a message at the top about memory caching"
+        echo -e " If it didn't work follow these steps:"
+        echo -e " "
+        echo -e "${msg} This is entirely optional. Edit config.php:${nc}"
+        echo -e "${msg} Default location is:${nc}"
+        echo -e "\033[1;36m    /usr/local/www/nextcloud/config/config.php${nc}"
         echo -e "${msg} Add the following right above the last line:${nc}"
         echo -e "\033[1;33m    'memcache.local' => '\OC\Memcache\APCu',${nc}"
         echo " "
@@ -1871,6 +1920,347 @@ echo " "
 }
 
 #------------------------------------------------------------------------------#
+### NEXTCLOUD INSTALL
+
+install.nextcloud ()
+{
+
+confirm ()
+{
+# Confirm with the user
+read -r -p "   Continue? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              echo -e "${url} Great! Moving on..${nc}"
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              echo -e "${alt}Stopping script..${nc}"
+              echo " "
+              exit
+              ;;
+esac
+}
+
+cloud.trusteddomain.fix ()
+{
+# Confirm with the user
+echo " "
+echo -e "${emp} Please finish the nextcloud setup before continuing${nc}"
+echo -e "${msg} Head to ${url}https://$server_ip:$server_port ${msg}to do this.${nc}"
+echo -e "${msg} Fill out the page you are presented with and hit finish${nc}"
+echo " "
+echo -e "${msg} Admin username & password = whatever you choose${nc}"
+echo " "
+echo -e "${emp} Make sure you click 'Storage & database'${nc}"
+echo " "
+echo -e "${msg} Database user = ${qry}root${nc} | ${msg} Database password = ${nc}"
+echo -e "${msg} the ${qry}mysql password${msg} you chose earlier during the script.${nc}"
+echo -e "${msg} Database name =${qry} ${database_name} ${nc}"
+echo " "
+echo " Once the page reloads,"
+read -r -p "   do you have a 'untrusted domain' error? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, let's fix that.
+              echo " "
+              echo -e "${url} Doing some last second changes to fix that..${nc}"
+              echo " "
+              # Prevent "Trusted Domain" error
+              echo "    '${server_ip}'," >> /usr/local/www/nextcloud/config/trusted.txt
+              cp /usr/local/www/nextcloud/config/config.php /usr/local/www/nextcloud/config/old_config.bak
+              cat "/usr/local/www/nextcloud/config/old_config.bak" | \
+                sed '8r /usr/local/www/nextcloud/config/trusted.txt' > \
+                "/usr/local/www/nextcloud/config/config.php"
+              rm /usr/local/www/nextcloud/config/trusted.txt
+              echo -e " Done, continuing with the rest of the script"
+               ;;
+    *)
+              # If no, just continue like normal.
+              echo " "
+              echo -e "${qry} Great!, no need to do anything, continuing with script..${nc}"
+              echo " "
+              ;;
+esac
+}
+
+
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Welcome to the NextCloud installer!${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Let's get to installing some stuff!!${nc}"
+echo -e "${sep}"
+echo " "
+
+# Install packages
+pkg install -y lighttpd php70-openssl php70-ctype php70-curl php70-dom php70-fileinfo php70-filter php70-gd php70-hash php70-iconv php70-json php70-mbstring php70-pdo php70-pdo_mysql php70-pdo_sqlite php70-session php70-simplexml php70-sqlite3 php70-xml php70-xmlrpc php70-xmlwriter php70-xmlreader php70-gettext php70-mcrypt php70-zip php70-zlib php70-posix php70-APCu mp3info mysql56-server pecl-apcu
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Packages installed - now configuring MySQL${nc}"
+echo -e "${sep}"
+echo " "
+
+echo 'mysql_enable="YES"' >> /etc/rc.conf
+echo '[mysqld]' >> /var/db/mysql/my.cnf
+echo 'skip-networking' >> /var/db/mysql/my.cnf
+
+# Start MySQL Server
+/usr/local/etc/rc.d/mysql-server start
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Creating database for nextcloud${nc}"
+echo -e "${sep}"
+echo " "
+
+mysql -u root -e "create database ${database_name}";
+echo -e "${msg} Database was created: ${database_name}.${nc}"
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Securing the install. Default root password is blank,${nc}"
+echo -e "${msg} you want to provide a strong root password, remove the${nc}"
+echo -e "${msg} anonymous accounts, disallow remote root access,${nc}"
+echo -e "${msg} remove the test database, and reload privilege tables${nc}"
+echo -e "${sep}"
+echo " "
+
+mysql_secure_installation
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Done with MySQL - Performing key operations now${nc}"
+echo -e "${sep}"
+echo " "
+
+cd ~
+openssl genrsa -des3 -out server.key 1024
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Removing password from key${nc}"
+echo -e "${sep}"
+echo " "
+
+openssl rsa -in server.key -out no.pwd.server.key
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Creating cert request. The Common Name should match${nc}"
+echo -e "${msg} the URL you want to use${nc}"
+echo -e "${sep}"
+echo " "
+
+openssl req -new -key no.pwd.server.key -out server.csr
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Creating cert & pem file & moving to proper location${nc}"
+echo -e "${sep}"
+echo " "
+
+openssl x509 -req -days 365 -in /root/server.csr -signkey /root/no.pwd.server.key -out /root/server.crt
+cat no.pwd.server.key server.crt > server.pem
+mkdir /usr/local/etc/lighttpd/ssl
+cp server.crt /usr/local/etc/lighttpd/ssl
+chown -R www:www /usr/local/etc/lighttpd/ssl/
+chmod 0600 server.pem
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Creating backup of lighttpd config${nc}"
+echo -e "${sep}"
+echo " "
+
+cp /usr/local/etc/lighttpd/lighttpd.conf /usr/local/etc/lighttpd/old_config.bak
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Modifying lighttpd.conf file${nc}"
+echo -e "${sep}"
+echo " "
+
+cat "/usr/local/etc/lighttpd/old_config.bak" | \
+	sed -r '/^var.server_root/s|"(.*)"|"/usr/local/www/nextcloud"|' | \
+	sed -r '/^server.use-ipv6/s|"(.*)"|"disable"|' | \
+	sed -r '/^server.document-root/s|"(.*)"|"/usr/local/www/nextcloud"|' | \
+	sed -r '/^#server.bind/s|(.*)|server.bind = "'"${server_ip}"'"|' | \
+	sed -r '/^\$SERVER\["socket"\]/s|"0.0.0.0:80"|"'"${server_ip}"':'"${server_port}"'"|' | \
+	sed -r '/^server.port/s|(.*)|server.port = '"${server_port}"'|' > \
+	"/usr/local/etc/lighttpd/lighttpd.conf"
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Adding stuff to lighttpd.conf file${nc}"
+echo -e "${sep}"
+echo " "
+
+echo 'ssl.engine = "enable"' >> /usr/local/etc/lighttpd/lighttpd.conf
+echo 'ssl.pemfile = "/root/server.pem"' >> /usr/local/etc/lighttpd/lighttpd.conf
+echo 'ssl.ca-file = "/usr/local/etc/lighttpd/ssl/server.crt"' >> /usr/local/etc/lighttpd/lighttpd.conf
+echo 'ssl.cipher-list  = "ECDHE-RSA-AES256-SHA384:AES256-SHA256:RC4-SHA:RC4:HIGH:!MD5:!aNULL:!EDH:!AESGCM"' >> /usr/local/etc/lighttpd/lighttpd.conf
+echo 'ssl.honor-cipher-order = "enable"' >> /usr/local/etc/lighttpd/lighttpd.conf
+echo 'ssl.disable-client-renegotiation = "enable"' >> /usr/local/etc/lighttpd/lighttpd.conf
+echo '$HTTP["url"] =~ "^/data/" {' >> /usr/local/etc/lighttpd/lighttpd.conf
+echo 'url.access-deny = ("")' >> /usr/local/etc/lighttpd/lighttpd.conf
+echo '}' >> /usr/local/etc/lighttpd/lighttpd.conf
+echo '$HTTP["url"] =~ "^($|/)" {' >> /usr/local/etc/lighttpd/lighttpd.conf
+echo 'dir-listing.activate = "disable"' >> /usr/local/etc/lighttpd/lighttpd.conf
+echo '}' >> /usr/local/etc/lighttpd/lighttpd.conf
+echo 'cgi.assign = ( ".php" => "/usr/local/bin/php-cgi" )' >> /usr/local/etc/lighttpd/lighttpd.conf
+echo 'server.modules += ( "mod_setenv" )' >> /usr/local/etc/lighttpd/lighttpd.conf
+echo '$HTTP["scheme"] == "https" {' >> /usr/local/etc/lighttpd/lighttpd.conf
+echo '    setenv.add-response-header  = ( "Strict-Transport-Security" => "max-age=15768000")' >> /usr/local/etc/lighttpd/lighttpd.conf
+echo '}' >> /usr/local/etc/lighttpd/lighttpd.conf
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Enabling the fastcgi module${nc}"
+echo -e "${sep}"
+echo " "
+
+cp /usr/local/etc/lighttpd/modules.conf /usr/local/etc/lighttpd/old_modules.bak
+cat "/usr/local/etc/lighttpd/old_modules.bak" | \
+	sed -r '/^#include "conf.d\/fastcgi.conf"/s|#||' > \
+	"/usr/local/etc/lighttpd/modules.conf"
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Adding stuff to fastcgi.conf file${nc}"
+echo -e "${sep}"
+echo " "
+echo 'fastcgi.server = ( ".php" =>' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
+echo '((' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
+echo '"socket" => "/tmp/php.socket",' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
+echo '"bin-path" => "/usr/local/bin/php-cgi",' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
+echo '"allow-x-send-file" => "enable",' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
+echo '"bin-environment" => (' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
+echo '"MOD_X_SENDFILE2_ENABLED" => "1",' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
+echo '"PHP_FCGI_CHILDREN" => "16",' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
+echo '"PHP_FCGI_MAX_REQUESTS" => "10000"' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
+echo '),' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
+echo '"min-procs" => 1,' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
+echo '"max-procs" => 1,' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
+echo '"idle-timeout" => 20' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
+echo '))' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
+echo ' )' >> /usr/local/etc/lighttpd/conf.d/fastcgi.conf
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Obtaining corrected MIME.conf file for lighttpd to use${nc}"
+echo -e "${sep}"
+echo " "
+
+mv /usr/local/etc/lighttpd/conf.d/mime.conf /usr/local/etc/lighttpd/conf.d/mime_conf.bak
+fetch -o /usr/local/etc/lighttpd/conf.d/mime.conf http://www.xenopsyche.com/mkempe/oc/mime.conf
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Modifying php.ini${nc}"
+echo -e "${sep}"
+echo " "
+
+echo always_populate_raw_post_data = -1 > /usr/local/etc/php.ini
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Creating www folder and downloading NextCloud${nc}"
+echo -e "${sep}"
+echo " "
+
+mkdir -p /usr/local/www
+# Get NextCloud, extract it, copy it to the webserver
+# and have the jail assign proper permissions
+cd "/tmp"
+fetch "https://download.nextcloud.com/server/releases/nextcloud-${nextcloud_version}.tar.bz2"
+tar xf "nextcloud-${nextcloud_version}.tar.bz2" -C /usr/local/www
+chown -R www:www /usr/local/www/
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Adding lighttpd to rc.conf${nc}"
+echo -e "${sep}"
+echo " "
+
+echo 'lighttpd_enable="YES"' >> /etc/rc.conf
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}  Done, lighttpd should start up automatically!${nc}"
+echo -e "${sep}"
+echo " "
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Attempting to start webserver.${nc}"
+echo -e "${msg} If you get a Cannot 'start' lighttpd error, add:${nc}"
+echo -e "\033[1;33m     lighttpd_enable="YES"${nc}   to   \033[1;36m/etc/rc.conf${nc}"
+echo -e "${msg} Command being run here is:"
+echo -e "${cmd}     /usr/local/etc/rc.d/lighttpd start${nc}"
+echo -e "${sep}"
+echo " "
+
+/usr/local/etc/rc.d/lighttpd start
+
+#echo " "
+#echo -e "${sep}"
+#echo -e "${msg} Enable Memory Caching${nc}"
+#echo -e "${sep}"
+#echo " "
+
+#TODO: Enable Memory Caching by default
+#echo "  'memcache.local' => '\OC\Memcache\APCu'," >> #/usr/local/www/nextcloud/config/memcache.txt
+#cp /usr/local/www/nextcloud/config/config.php /usr/local/www/nextcloud/config/old_config.bak
+#cat "/usr/local/www/nextcloud/config/old_config.bak" | \
+#	sed '21r /usr/local/www/nextcloud/config/memcache.txt' > \
+#    "/usr/local/www/nextcloud/config/config.php"
+#rm /usr/local/www/nextcloud/config/memcache.txt
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Now to finish nextcloud setup${nc}"
+echo -e "${sep}"
+echo " "
+
+cloud.trusteddomain.fix
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} It looks like we finished here!!! NICE${nc}"
+echo -e "${msg} Now you can head to ${url}https://$server_ip:$server_port${nc}"
+echo -e "${msg} to use your nextcloud whenever you wish!${nc}"
+echo " "
+echo " "
+echo " "
+echo -e "${emp} Memory Caching ${msg}will have to be enabled manually.${nc}"
+echo -e "${msg} This is entirely optional. Head to this file:${nc}"
+echo -e "\033[1;36m    /usr/local/www/nextcloud/config/config.php${nc} ${msg}and add:${nc}"
+echo -e "\033[1;33m    'memcache.local' => '\OC\Memcache\APCu',${nc}"
+echo -e "${msg} right above the last line.${nc}"
+echo -e "${msg} Once you've edited this file, restart the server with:${nc}"
+echo -e "${cmd}   /usr/local/etc/rc.d/lighttpd restart${nc}"
+echo " "
+echo " "
+echo " "
+echo -e "${msg} If you need any help, visit the forums here:${nc}"
+echo -e "${url} http://forums.nas4free.org/viewtopic.php?f=79&t=9383${nc}"
+echo -e "${msg} Or jump on my Discord server${nc}"
+echo -e "${url} https://discord.gg/0bXnhqvo189oM8Cr${nc}"
+echo -e "${sep}"
+echo " "
+
+}
+
+#------------------------------------------------------------------------------#
 ### PYDIO INSTALL
 
 install.pydio ()
@@ -2241,6 +2631,41 @@ echo " "
 confirmsuccess
 
 }
+
+
+
+#------------------------------------------------------------------------------#
+### OBI INSTALL
+
+install.obi ()
+{
+
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Welcome to OneButtonInstaller... installer!${nc}"
+echo -e "${sep}"
+echo " "
+
+echo " "
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Let's get on with the install.${nc}"
+echo -e "${sep}"
+echo " "
+
+fetch https://raw.github.com/crestAT/nas4free-onebuttoninstaller/master/OBI.php && mkdir -p ext/OBI && echo '<a href="OBI.php">OneButtonInstaller</a>' > ext/OBI/menu.inc && echo -e "\nDONE"
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} OBI should now be successfully installed${nc}"
+echo -e "${msg} Head to your NAS4Free WebGUI and you should find it under${nc}"
+echo -e "${msg}    EXTENSIONS | OneButtonInstaller${nc}"
+echo -e "${msg} On this page choose where to install it to and hit 'Save'.${nc}"
+echo -e "${msg} Now your done and ready to easily install things such as TheBrig!${nc}"
+echo -e "${sep}"
+echo " "
 
 
 
@@ -3019,7 +3444,8 @@ esac
 recompile.from.ports ()
 {
 # Confirm with the user
-echo -e "${msg} These steps could take some time${nc}"
+echo -e "${msg} These steps could take some time and are NOT required.${nc}"
+echo -e "${msg} If you're unsure what 'ports' are or if you have them, choose 'No'.${nc}"
 read -r -p "   Would you like to recompile these now? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
@@ -3066,7 +3492,7 @@ case "$response" in
               echo -e "${inf}            ${msg}disabled by default due to mp3 licensing restrictions)${nc}"
               echo -e "${inf}    OPUS    ${msg}(required for opus audio codec support)${nc}"
               echo -e "${inf}    X265    ${msg}(required for H.265 video codec support${nc}"
-              echo -e "${msg} Then press 'OK' for every box that follows.${nc}"
+              echo -e "${msg} Then press 'OK' for any box that follows.${nc}"
               echo -e "${msg} This one may take a while, please be patient${nc}"
               echo -e "${sep}"
               echo " "
@@ -3137,13 +3563,13 @@ create.emby.backup
 echo " "
 echo -e "${sep}"
 echo -e "${msg} Updating packages..${nc}"
-echo -e "${msg} (You may see some things get deinstalled/reinstalled here)${nc}"
+echo -e "${msg} (You may see some things get uninstalled/reinstalled here)${nc}"
 echo -e "${sep}"
 echo " "
 
 pkg update
 pkg upgrade -y
-pkg install -y emby-server # In case it gets deinstalled
+pkg install -y emby-server # In case it gets uninstalled
 
 echo " "
 
@@ -3153,8 +3579,7 @@ echo " "
 echo -e "${sep}"
 echo -e "${msg} Recompile ffmpeg and ImageMagick${nc}"
 echo " "
-echo -e "${msg} This is optional but to get the most out of your Emby Media Server${nc}"
-echo -e "${msg} you will need to do this. (Can also be done at a later time)${nc}"
+echo -e "${msg} This is 100% optional but doing so can improve your Emby Server${nc}"
 echo -e "${msg}    This can be done either later via Emby menus or now.${nc}"
 echo -e "${msg}    Additional information can also be found in the menu.${nc}"
 echo -e "${msg} You will also need the 'ports tree' enabled for this to work.${nc}"
@@ -3361,8 +3786,6 @@ echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
 }
 
-
-
 #------------------------------------------------------------------------------#
 ### HEADPHONES UPDATE
 
@@ -3372,17 +3795,6 @@ echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 # Headphones can be updated automatically
 # TODO: Add instructions on how to enable auto updates
 # TODO: Add manual update here just in case (via github)
-echo " "
-}
-
-
-#------------------------------------------------------------------------------#
-### THEBRIG UPDATE
-
-update.thebrig ()
-{
-echo -e "${emp} This part of the script is unfinished currently :(${nc}"
-# TODO: Add instructions on how to update via nas webgui
 echo " "
 }
 
@@ -3427,7 +3839,7 @@ echo -e "${sep}"
 echo " "
 
 pkg update
-pkg updgrade
+pkg upgrade
 
 echo " "
 echo -e "${sep}"
@@ -3777,6 +4189,70 @@ esac
 }
 
 #------------------------------------------------------------------------------#
+### NEXTCLOUD CONFIRM INSTALL
+
+confirm.install.nextcloud ()
+{
+confirm ()
+{
+# Confirm with the user
+read -r -p "   Continue? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              echo -e "${url} Great! Moving on..${nc}"
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              echo -e "${alt} Stopping script..${nc}"
+              echo " "
+              echo -e "${sep}"
+              exit
+              ;;
+esac
+}
+echo -e "${sep}"
+echo -e "${msg}   Let's start with double checking some things${nc}"
+echo -e "${sep}"
+echo " "
+
+echo -e "${msg} Is this script running ${alt}INSIDE${msg} of a jail?${nc}"
+
+confirm
+
+echo " "
+echo -e "${msg} Checking to see if you need to modify the script${nc}"
+echo -e "${msg} If ${emp}ANY${msg} of these ${emp}DON'T${msg} match YOUR setup, answer with ${emp}no${nc}."
+echo -e " "
+echo -e "      ${alt}#1: ${msg}Is this your jails IP? ${qry}$cloud_server_ip${nc}"
+echo -e "      ${alt}#2: ${msg}Is this the port you want to use? ${qry}$cloud_server_port${nc}"
+echo -e "      ${alt}#3: ${msg}Is this the ownCloud version you want to install? ${qry}$owncloud_version${nc}"
+echo -e " "
+echo -e "${emp} If #1 or #2 are incorrect you will encounter issues!${nc}"
+
+confirm
+
+echo " "
+echo -e "${fin} Awesome, now we are ready to get on with it!${nc}"
+# Confirm with the user
+echo -e "${inf} Final confirmation before installing owncloud.${nc}"
+read -r -p "   Confirm Installation of OwnCloud? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              install.owncloud
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              echo -e "${sep}"
+              return
+              ;;
+esac
+}
+
+#------------------------------------------------------------------------------#
 ### PYDIO CONFIRM INSTALL
 
 confirm.install.pydio ()
@@ -3867,28 +4343,6 @@ case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
               install.headphones
-               ;;
-    *)
-              # Otherwise exit...
-              echo " "
-              return
-              ;;
-esac
-}
-
-#------------------------------------------------------------------------------#
-### THEBRIG EXPERIMENTAL CONFIRM INSTALL
-
-confirm.install.thebrig.EXPERIMENTAL ()
-{
-# Confirm with the user
-echo -e "${emp} WARNING: THIS HAS BEEN UNTESTED"
-echo -e "${emp} USE AT YOUR OWN RISK"
-read -r -p "   Confirm Installation of TheBrig? [y/N] " response
-case "$response" in
-    [yY][eE][sS]|[yY])
-              # If yes, then continue
-              install.thebrig.EXPERIMENTAL
                ;;
     *)
               # Otherwise exit...
@@ -4051,6 +4505,29 @@ case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
               install.teamspeak3bot
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              return
+              ;;
+esac
+}
+
+#------------------------------------------------------------------------------#
+### OBI CONFIRM INSTALL
+
+confirm.install.obi ()
+{
+# Confirm with the user
+echo -e "${emp} WARNING: THIS HAS BEEN UNTESTED"
+echo -e "${emp} USE AT YOUR OWN RISK"
+echo -e "${emp} DO NOT INSTALL INSIDE A JAIL, RUN ON HOST SYSTEM"
+read -r -p "   Confirm Installation of OneButtonInstaller? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              install.obi
                ;;
     *)
               # Otherwise exit...
@@ -4445,8 +4922,9 @@ do
         echo -e "${sep}"
         echo -e "${qry} Choose one:${nc}"
         echo " "
-        echo -e "${fin}   1)${msg} ownCloud${nc}"
-        echo -e "${ca}   2)${ca} Pydio  (Currently Unavailable)${nc}"
+        echo -e "${fin}   1)${msg} OwnCloud${nc}"
+        echo -e "${fin}   2)${msg} NextCloud${nc}"
+        echo -e "${ca}   3)${ca} Pydio  (Currently Unavailable)${nc}"
         echo " "
         echo -e "${ca}  a) About Cloud Storage (Currently Unavailable)${nc}"
         echo -e "${ca}  i) More Information / How-To's${nc}"
@@ -4463,7 +4941,10 @@ do
             '1')
                 owncloud.submenu
                 ;;
-            #'2')
+            '2')
+                nextcloud.submenu
+                ;;
+            #'3')
             #    pydio.submenu
             #    ;;
             'a')
@@ -4554,6 +5035,74 @@ done
 }
 
 #------------------------------------------------------------------------------#
+### NEXTCLOUD SUBMENU
+
+nextcloud.submenu ()
+{
+while [ "$choice" != "a,h,i,b" ]
+do
+        echo -e "${sep}"
+        echo -e "${fin} NextCloud Options${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:${nc}"
+        echo " "
+        echo -e "${fin}   1)${msg} Install${nc}"
+        echo -e "${fin}   2)${msg} Update${nc}"
+        echo -e "${fin}   3)${msg} Backup${nc}"
+        echo " "
+        echo -e "${fin}   4)${msg} Fix Known Errors${nc}"
+        echo -e "${fin}   5)${msg} Other${nc}"
+        echo " "
+        echo -e "${inf}  a) About NextCloud${nc}"
+        echo -e "${inf}  i) More Info / How-To's${nc}"
+        echo -e "${inf}  h) Get Help${nc}"
+        echo " "
+        echo -e "${emp}  b) Back${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+        echo " "
+
+        case $choice in
+            '1') echo -e "${inf} Installing..${nc}"
+                echo " "
+                confirm.install.nextcloud
+                ;;
+            '2') echo -e "${inf} Running Update..${nc}"
+                echo " "
+                confirm.update.nextcloud
+                ;;
+            '3') echo -e "${inf} Backup..${nc}"
+                echo " "
+                backup.nextcloud
+                ;;
+            '4')
+                nextcloud.errorfix.submenu
+                ;;
+            '5')
+                nextcloud.otheroptions.menu
+                ;;
+            'a')
+                about.nextcloud
+                ;;
+            'i')
+                moreinfo.submenu.nextcloud
+                ;;
+            'h')
+                gethelp
+                ;;
+            'b')
+                return
+                ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
+                ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
 ### PYDIO SUBMENU
 
 pydio.submenu ()
@@ -4626,7 +5175,7 @@ do
         echo " "
         echo -e "${fin}   1)${msg} Emby Media Server${nc}"
         echo -e "${ca}   2)${ca} Plex Media Server (Currently Unavailable)${nc}"
-        echo -e "${ca}   3)${ca} Subsonic (Currently Unavailable)${nc}"
+        echo -e "${ca}   3)${msg} Subsonic${nc}"
         echo " "
         echo -e "${ca}  a) About Media Streaming (Currently Unavailable)${nc}"
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
@@ -4648,9 +5197,9 @@ do
             #    echo " "
             #    plex.submenu
             #    ;;
-            #'3')
-            #    subsonic.submenu
-            #    ;;
+            '3')
+                subsonic.submenu
+                ;;
             #'a')
             #    about.streaming
             #    ;;
@@ -4829,8 +5378,8 @@ cp /usr/local/bin/flac /var/subsonic/transcode/
 cp /usr/local/bin/ffmpeg /var/subsonic/transcode/
 cd /tmp/
 # Download Subsonic from sourceforge & extract
-fetch http://heanet.dl.sourceforge.net/project/subsonic/subsonic/5.3/subsonic-5.3-standalone.tar.gz
-tar xvzf /tmp/subsonic-5.3-standalone.tar.gz -C /var/subsonic/standalone
+fetch http://heanet.dl.sourceforge.net/project/subsonic/subsonic/${subsonic_ver}/subsonic-${subsonic_ver}-standalone.tar.gz
+tar xvzf /tmp/subsonic-${subsonic_ver}-standalone.tar.gz -C /var/subsonic/standalone
 chmod 777 *.*
 
 echo " "
@@ -5033,6 +5582,64 @@ done
 }
 
 #------------------------------------------------------------------------------#
+### SICKBEARD SUBMENU
+
+sickbeard.submenu ()
+{
+while [ "$choice" != "a,h,i,b,q" ]
+do
+        echo -e "${sep}"
+        echo -e "${fin} SickBeard Options${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:${nc}"
+        echo " "
+        echo -e "${ca}   1)${msg} Install (Currently Unavailable)${nc}"
+        echo -e "${ca}   2)${msg} Update (Currently Unavailable)${nc}"
+        echo -e "${ca}   3)${ca} Backup (Currently Unavailable)${nc}"
+        echo " "
+        echo -e "${ca}  a) About SickBeard (Currently Unavailable)${nc}"
+        echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
+        echo -e "${ca}  h) Get Help${nc}"
+        echo " "
+        echo -e "${emp}   b) Back${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+
+        case $choice in
+            '1') echo -e "${inf} Installing..${nc}"
+                echo " "
+                confirm.install.sickbeard
+                ;;
+            '2') echo -e "${inf} Running Update..${nc}"
+                echo " "
+                confirm.update.sickbeard
+                ;;
+            #'3') echo -e "${inf} Backup..${nc}"
+            #    echo " "
+            #    backup.sickbeard
+            #    ;;
+            'a')
+                about.sickbeard
+                ;;
+            'h')
+                gethelp
+                ;;
+            #'i')
+            #    moreinfo.submenu.sickbeard
+            #    ;;
+            'b') return
+                ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
+                ;;
+        esac
+done
+}
+
+
+#------------------------------------------------------------------------------#
 ### COUCHPOTATO SUBMENU
 
 couchpotato.submenu ()
@@ -5164,10 +5771,7 @@ do
         echo -e "${qry} Choose one:${nc}"
         echo " "
         echo -e "${fin}   1)${msg} Install (Guide Only)${nc}"
-        echo -e "${ca}   2)${ca} Update (Currently Unavailable)${nc}"
-        echo -e "${ca}   3)${ca} Backup (Currently Unavailable)${nc}"
-        echo " "
-        echo -e "${alt}   e)${emp} Install (EXPERIMENTAL)${nc}"
+        echo -e "${ca}   2)${ca} Backup (Currently Unavailable)${nc}"
         echo " "
         echo -e "${inf}  a) About TheBrig${nc}"
         echo -e "${inf}  i) More Info / How-To's${nc}"
@@ -5185,18 +5789,10 @@ do
                 echo " "
                 thebrig.howto.installthebrig
                 ;;
-            #'2') echo -e "${inf} Running Update..${nc}"
-            #    echo " "
-            #    confirm.update.thebrig
-            #    ;;
-            #'3') echo -e "${inf} Backup..${nc}"
+            #'2') echo -e "${inf} Backup..${nc}"
             #    echo " "
             #    backup.thebrig
             #    ;;
-            'e') echo -e "${inf} Installing..${nc}"
-                echo " "
-                confirm.install.thebrig.EXPERIMENTAL
-                ;;
             'a')
                 about.thebrig
                 ;;
@@ -5216,20 +5812,19 @@ done
 }
 
 #------------------------------------------------------------------------------#
-### THEBRIG SUBMENU
+### OBI SUBMENU
 
 obi.submenu ()
 {
 while [ "$choice" != "a,e,h,i,m" ]
 do
         echo -e "${sep}"
-        echo -e "${fin} TheBrig Options${nc}"
+        echo -e "${fin} OneButtonInstaller Options${nc}"
         echo -e "${sep}"
         echo -e "${qry} Choose one:${nc}"
         echo " "
-        echo -e "${ca}   1)${ca} Install (Currently Unavailable)${nc}"
+        echo -e "${fin}   1)${msg} Install${nc}"
         echo -e "${ca}   2)${ca} Update (Currently Unavailable)${nc}"
-        echo -e "${ca}   3)${ca} Backup (Currently Unavailable)${nc}"
         echo " "
         echo -e "${ca}  a)${ca} About OneButtonInstaller${nc}"
         echo -e "${ca}  i)${ca} More Info / How-To's${nc}"
@@ -5243,17 +5838,13 @@ do
         echo " "
 
         case $choice in
-            #'1') echo -e "${inf} Installing..${nc}"
-            #    echo " "
-            #    confirm.install.obi
-            #    ;;
+            '1') echo -e "${inf} Installing..${nc}"
+                echo " "
+                confirm.install.obi
+                ;;
             #'2') echo -e "${inf} Running Update..${nc}"
             #    echo " "
             #    confirm.update.obi
-            #    ;;
-            #'3') echo -e "${inf} Backup..${nc}"
-            #    echo " "
-            #    backup.obi
             #    ;;
             #'a')
             #    about.obi
@@ -5937,7 +6528,7 @@ mainmenu=""
 while [ "$choice" != "q,a,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.27 (September 18, 2016) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.28 (January 15, 2017) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
@@ -5945,12 +6536,11 @@ do
         echo " "
         echo -e "${fin}   1)${url} MySQL + phpMyAdmin${nc}"
         echo -e "${fin}   2)${url} Host Your Own: ${msg}Web Server / Cloud Storage / Game Server / + More${nc}"
-        echo -e "         (WordPress / OwnCloud / Pydio / Teamspeak etc.)"
+        echo -e "         (WordPress / NextCloud / Pydio / Teamspeak etc.)"
         echo -e "${fin}   3)${url} Media Streaming Servers ${nc}(Emby / Plex / Subsonic etc.)"
         echo -e "${fin}   4)${url} Sonarr ${nc}(TV & Anime) / ${url}CouchPotato ${nc}(Movies) / ${url}HeadPhones ${nc}(Music)"
         echo -e "${fin}   5)${url} Download Tools ${nc}(NZBGet - Usenet / Deluge - Torrents)${nc}"
         echo " "
-        echo -e "${cmd}   j)${msg} TheBrig${nc}"
         echo -e "${cmd}   o)${msg} OneButtonInstaller${nc}"
         echo " "
         echo -e "${inf}  a) About This Script${nc}"
@@ -5983,9 +6573,6 @@ do
             'a')
                 about.thisscript
                 ;;
-            'j')
-                thebrig.submenu
-                ;;
             'o')
                 obi.submenu
                 ;;
@@ -6014,6 +6601,7 @@ done
 ################################################################################
 # Emby
 # OwnCloud
+# NextCloud
 
 
 ################################################################################
@@ -6051,7 +6639,7 @@ done
 # FUTURE: Add "UMS"
 # FUTURE: If this script has no issues then i may remove standalone scripts from github
 # FUTURE: IF & when jail creation via shell is possible for thebrig, will add that option to script.
-# FUTUTE: Add "Sickbeard"?
+# FUTUTE: Add "Sickbeard"
 # FUTURE: Add "Monit" (Free) & "M/Monit" (Free Trial but requires purchase)
 # "M/Monit" is NOT required to be able to use "Monit"
     #pkg install monit

@@ -1,5 +1,17 @@
 # Changelog
 
+### Version: 1.0.28 (January 15, 2017)
+* TheBrig
+    * Removed some of TheBrig options in favor of OneButtonInstaller
+* Emby
+    * Updated version to 3.1.2
+* Subsonic
+    * Enabled menu item (Untested - use with caution)
++ Added Madsonic (incomplete)
++ Added NextCloud
++ Added Sickbeard (incomplete, use with caution)
+
+
 ### Version: 1.0.27 (September 18, 2016)
 * Emby
     * Updated version to .7200

@@ -1,7 +1,16 @@
 # Changelog
 
-### Version: 1.0.29 (January 15, 2017)
+### Version: 1.0.30 (January 17, 2017)
+* Madsonic
+    * Fixed updater
+* SABnzbd
+    * Changed SAB default version to 1.2.0 (https://github.com/sabnzbd/sabnzbd/releases/tag/1.2.0)
+* Pydio
+    + Some inital groundwork on installer
+* General
+    * Updated some menu items
 
+### Version: 1.0.29 (January 15, 2017)
 * Emby
     * Modified script to let user choose version to update to without the need to modify script
 * Madsonic
@@ -13,7 +22,6 @@
    * Some minor cleanup
    * More To-Do's and such
    * Need to fix menu items
-   * Plan to let user select version/ip/port for cloud the same way you can select Emby update version without requiring manual edit of the script
 
 ### Version: 1.0.28 (January 15, 2017)
 * TheBrig

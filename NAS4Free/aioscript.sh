@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script                    Version: 1.0.29 (January 15, 2017)
+# AIO Script                    Version: 1.0.30 (January 17, 2017)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -50,7 +50,7 @@ emby_def_update_ver="3.1.2" # You can find release numbers here:
                             # Example, To use the dev: "3.0.5966.988-dev"
 ################################################################################
 ###! SABNZBD CONFIG !###
-sab_ver="1.0.0"             # You can find release numbers here:
+sab_ver="1.2.0"             # You can find release numbers here:
                             # https://github.com/sabnzbd/sabnzbd/releases
 ################################################################################
 ###! SUBSONIC / MADSONIC CONFIG !###
@@ -139,9 +139,9 @@ do
         echo -e "${fin}   ${ul}My Email${fin} (Discord is easier):${nc}"
         echo -e "${msg}      support@vengefulsyndicate.com${nc}"
         echo -e "${fin}   ${ul}Forums:${nc}"
-        echo -e "${msg}      NAS4Free Forums - OwnCloud:${nc}"
+        echo -e "${msg}      NAS4Free Forums - NextCloud/OwnCloud:${nc}"
         echo -e "${url}      http://forums.nas4free.org/viewtopic.php?f=79&t=9383${nc}"
-        echo -e "${msg}      VS Forums:${nc}"
+        echo -e "${msg}      [VS] Forums:${nc}"
         echo -e "${url}      forums.vengefulsyndicate.com${nc}"
         echo " "
         echo -e "${fin}   Find an issue with the script or have a suggestion?${nc}"
@@ -1693,6 +1693,39 @@ case "$response" in
 esac
 }
 
+setconfig ()
+{
+read -r -p " Did you modify the script before running? [y/N] " response
+    case $response in
+        [yY][eE][sS]|[yY])
+            echo " No need to do anything here then${nc}"
+            ;;
+        *)
+            echo " "
+            echo -e "${msg} Set your IP. MUST MATCH YOUR JAIL IP!${nc}"
+            echo -e "${qry} Example:"
+            echo -e "${url} 192.168.1.200${nc}"
+            echo " "
+            echo "Server IP:"
+            read oc_server_ip
+            echo " "
+            echo -e "${msg} Set your Port (Default [81] is fine)${nc}"
+            echo -e "${qry} Example:"
+            echo -e "${url} 81${nc}"
+            echo " "
+            echo "Server Port:"
+            read oc_server_port
+            echo " "
+            echo -e "${msg} ownCloud version to install${nc}"
+            echo -e "${qry} Example:"
+            echo -e "${url} 9.0.0${nc}"
+            echo " "
+            echo "ownCloud Version:"
+            read oc_server_ver
+            ;;
+    esac
+}
+
 trusteddomain.error ()
 {
 # Confirm with the user
@@ -1744,7 +1777,13 @@ echo " "
 echo " "
 echo " "
 echo -e "${sep}"
-echo -e "${msg}   Let's get to installing some stuff!!${nc}"
+echo -e "${msg}   Let's start with the config!!${nc}"
+echo -e "${sep}"
+echo " "
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Let's install all the requirements${nc}"
 echo -e "${sep}"
 echo " "
 
@@ -2331,6 +2370,50 @@ echo -e "${sep}"
 echo -e "${msg}   Let's start with installing the prerequisites${nc}"
 echo -e "${sep}"
 echo " "
+
+pkg install nginx php70 php70-extensions php70-curl php70-gd php70-imap php70-mbstring php70-mcrypt php70-mysqli php70-openssl php70-pdo_mysql php70-zip php70-zlib mysql57-server
+
+echo 'nginx_enable="YES"' >> /etc/rc.conf
+echo 'php_fpm_enable="YES"' >> /etc/rc.conf
+echo 'mysql_enable="YES"' >> /etc/rc.conf
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Packages installed, configuring mysql${nc}"
+echo -e "${sep}"
+echo " "
+
+echo '# The MySQL server configuration' >> /var/db/mysql/my.cnf
+echo '[mysqld]' >> /var/db/mysql/my.cnf
+echo 'socket          = /tmp/mysql.sock' >> /var/db/mysql/my.cnf
+echo '' >> /var/db/mysql/my.cnf
+echo '# Don't listen on a TCP/IP port at all.' >> /var/db/mysql/my.cnf
+echo 'skip-networking' >> /var/db/mysql/my.cnf
+echo 'skip-name-resolve' >> /var/db/mysql/my.cnf
+echo '' >> /var/db/mysql/my.cnf
+echo '#Expire binary logs after one day:' >> /var/db/mysql/my.cnf
+echo 'expire_logs_days = 1' >> /var/db/mysql/my.cnf
+
+service mysql-server start
+
+mysql_secure_installation
+
+#mysql -u root -e "create database ${pydio_database_name}";
+mysql -u root -e "create database pydio";
+
+cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
+
+service php-fpm start
+
+fetch "https://download.pydio.com/pub/core/archives/pydio-core-7.0.3.tar.gz"
+tar -xzvf pydio-*
+
+mv pydio-core-5.x.x /usr/local/www/pydio
+
+chown -R www:www /usr/local/www/pydio
+chmod -R 770 /usr/local/www/pydio
+
+service nginx start
 }
 
 #------------------------------------------------------------------------------#
@@ -2375,6 +2458,7 @@ echo -e "${msg} to finish setting up your Emby server${nc}"
 echo -e " "
 echo -e "${msg} You should also recompile ffmpeg+imagemagick${nc}"
 echo -e "${msg} This option can be found in the Emby submenu of this script${nc}"
+echo -e "${msg} It's also advised to run the update option after a clean install.${nc}"
 echo -e "${sep}"
 echo " "
 }
@@ -2396,7 +2480,7 @@ echo -e "${msg}   Let's start with downloading the install script${nc}"
 echo -e "${sep}"
 echo " "
 
-cd $(myappsdir)
+cd ${myappsdir}
 fetch https://raw.githubusercontent.com/JRGTH/nas4free-plex-extension/master/plex-install.sh && chmod +x plex-install.sh && ./plex-install.sh
 
 }
@@ -2418,6 +2502,7 @@ echo -e "${msg}   Let's get started with some packages${nc}"
 echo -e "${sep}"
 echo " "
 
+pkg install -y subsonic-standalone
 pkg install -y xtrans xproto xextproto javavmwrapper flac openjdk8 ffmpeg
 pkg install -y https://github.com/Nostalgist92/misc-code/blob/master/NAS4Free/Subsonic/lame.tbz
 
@@ -3517,6 +3602,14 @@ echo " "
 }
 
 #------------------------------------------------------------------------------#
+### NEXTCLOUD UPDATE
+
+update.pydio ()
+{
+
+}
+
+#------------------------------------------------------------------------------#
 ### PYDIO UPDATE
 
 update.pydio ()
@@ -3538,7 +3631,6 @@ echo -e "${msep}"
 read -r -p " " response
 case "$response" in
     *)
-              # Otherwise continue with backup...
               ;;
 esac
 }
@@ -3944,6 +4036,10 @@ update.subsonic ()
 {
 echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
+
+pkg update
+pkg upgrade
+
 }
 
 #------------------------------------------------------------------------------#
@@ -3969,6 +4065,7 @@ read -r -p " Double check your version, is it the latest? [y/N] " response
             ;;
         *)
             echo " "
+            echo -e "${sep}"
             echo -e "${msg} Paste the download link to the madsonic standalone package${nc}"
             echo -e "${qry} Example link:"
             echo -e "${url} http://madsonic.org/download/6.2/20161222_madsonic-6.2.9080-war-jspc.zip${nc}"
@@ -3983,11 +4080,40 @@ read -r -p " Double check your version, is it the latest? [y/N] " response
             echo "Version:"
             read madversion
             echo " "
+            echo -e "${sep}"
+            echo -e "${msg} Downloading update${nc}"
+            echo -e "${sep}"
+            echo " "
+
             #fetch -o madsonic"$buildno".tar.gz "$madlink"
             fetch -o /tmp/madsonic-"$madversion".zip "$madlink"
             #tar xvzf madsonic"$buildno".tar.gz -C /usr/local/share/madsonic-standalone
+            echo " Download finished"
+
+            echo " "
+            echo -e "${sep}"
+            echo -e "${msg} Stopping madsonic service to apply update${nc}"
+            echo -e "${sep}"
+            echo " "
+
+            service madsonic stop
+
+            echo " "
+            echo -e "${sep}"
+            echo -e "${msg} Extracting downloaded file${nc}"
+            echo -e "${sep}"
+            echo " "
+
             unzip -o /tmp/madsonic-"$madversion".zip -d /usr/local/share/madsonic-standalone
             chmod +x /usr/local/share/madsonic-standalone/*
+            echo " Extraction finished"
+
+            echo " "
+            echo -e "${sep}"
+            echo -e "${msg} Starting madsonic service${nc}"
+            echo -e "${sep}"
+            echo " "
+            service madsonic start
             ;;
     esac
 }
@@ -4091,6 +4217,10 @@ echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 # TODO: Add instructions on how to enable auto updates
 # TODO: Add manual update here just in case (via github)
 echo " "
+
+pkg update
+pkg upgrade
+
 }
 
 #------------------------------------------------------------------------------#
@@ -4103,6 +4233,10 @@ echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 # TODO: Add instructions on how to enable auto updates
 # TODO: Add manual update here just in case (via github)
 echo " "
+
+pkg update
+pkg upgrade
+
 }
 
 #------------------------------------------------------------------------------#
@@ -4114,6 +4248,9 @@ update.deluge ()
 echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
 
+pkg update
+pkg upgrade
+
 }
 
 #------------------------------------------------------------------------------#
@@ -4122,7 +4259,9 @@ echo " "
 update.nzbget ()
 {
 
+echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
+
 pkg update
 pkg upgrade nzbget
 
@@ -4195,8 +4334,13 @@ echo " "
 
 update.teamspeak3 ()
 {
+
 echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
+
+pkg update
+pkg upgrade nzbget
+
 }
 
 #------------------------------------------------------------------------------#
@@ -4204,8 +4348,13 @@ echo " "
 
 update.teamspeak3bot ()
 {
+
 echo -e "${emp} This part of the script is unfinished currently :(${nc}"
 echo " "
+
+pkg update
+pkg upgrade nzbget
+
 }
 
 
@@ -5135,6 +5284,26 @@ esac
 }
 
 #------------------------------------------------------------------------------#
+### MADSONIC CONFIRM UPDATE
+
+confirm.update.madsonic ()
+{
+# Confirm with the user
+read -r -p "   Confirm Update of Madsonic? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              update.madsonic
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              return
+              ;;
+esac
+}
+
+#------------------------------------------------------------------------------#
 ### TEAMSPEAK 3 SERVER CONFIRM UPDATE
 
 confirm.update.teamspeak3 ()
@@ -5332,14 +5501,14 @@ do
                 echo " "
                 confirm.install.owncloud
                 ;;
-            '2') echo -e "${inf} Running Update..${nc}"
-                echo " "
-                confirm.update.owncloud
-                ;;
-            '3') echo -e "${inf} Backup..${nc}"
-                echo " "
-                backup.owncloud
-                ;;
+            #'2') echo -e "${inf} Running Update..${nc}"
+            #    echo " "
+            #    confirm.update.owncloud
+            #    ;;
+            #'3') echo -e "${inf} Backup..${nc}"
+            #    echo " "
+            #    backup.owncloud
+            #    ;;
             '4')
                 owncloud.errorfix.submenu
                 ;;
@@ -5401,14 +5570,14 @@ do
                 echo " "
                 confirm.install.nextcloud
                 ;;
-            '2') echo -e "${inf} Running Update..${nc}"
-                echo " "
-                confirm.update.nextcloud
-                ;;
-            '3') echo -e "${inf} Backup..${nc}"
-                echo " "
-                backup.nextcloud
-                ;;
+            #'2') echo -e "${inf} Running Update..${nc}"
+            #    echo " "
+            #    confirm.update.nextcloud
+            #    ;;
+            #'3') echo -e "${inf} Backup..${nc}"
+            #    echo " "
+            #    backup.nextcloud
+            #    ;;
             '4')
                 nextcloud.errorfix.submenu
                 ;;
@@ -5789,7 +5958,7 @@ do
                 gethelp
                 ;;
             #'i')
-            #    moreinfo.submenu.subsonic
+            #    moreinfo.submenu.madsonic
             #    ;;
             'b') return
                 ;;
@@ -5837,10 +6006,10 @@ do
                 echo " "
                 sonarr.submenu
                 ;;
-            '2') echo -e "${inf} Taking you to the Sickbeard menu..${nc}"
-                echo " "
-                sickbeard.submenu
-                ;;
+            #'2') echo -e "${inf} Taking you to the Sickbeard menu..${nc}"
+            #    echo " "
+            #    sickbeard.submenu
+            #    ;;
             '3') echo -e "${inf} Taking you to the CouchPotato menu..${nc}"
                 echo " "
                 couchpotato.submenu
@@ -5849,18 +6018,18 @@ do
                 echo " "
                 headphones.submenu
                 ;;
-            '5') echo -e "${inf} Taking you to the Mylar menu..${nc}"
-                echo " "
-                mylar.submenu
-                ;;
-            '6') echo -e "${inf} Taking you to the LazyLibrarian menu..${nc}"
-                echo " "
-                lazylibrarian.submenu
-                ;;
-            '0') echo -e "${inf} Taking you to the HTPC Manager menu..${nc}"
-                echo " "
-                htpc.submenu
-                ;;
+            #'5') echo -e "${inf} Taking you to the Mylar menu..${nc}"
+            #    echo " "
+            #    mylar.submenu
+            #    ;;
+            #'6') echo -e "${inf} Taking you to the LazyLibrarian menu..${nc}"
+            #    echo " "
+            #    lazylibrarian.submenu
+            #    ;;
+            #'0') echo -e "${inf} Taking you to the HTPC Manager menu..${nc}"
+            #    echo " "
+            #    htpc.submenu
+            #    ;;
             #'a')
             #    about.searchtools
             #    ;;
@@ -5975,12 +6144,12 @@ do
             #    echo " "
             #    backup.sickbeard
             #    ;;
-            'a')
-                about.sickbeard
-                ;;
-            'h')
-                gethelp
-                ;;
+            #'a')
+            #    about.sickbeard
+            #    ;;
+            #'h')
+            #    gethelp
+            #    ;;
             #'i')
             #    moreinfo.submenu.sickbeard
             #    ;;
@@ -6026,14 +6195,14 @@ do
                 echo " "
                 confirm.install.couchpotato
                 ;;
-            '2') echo -e "${inf} Running Update..${nc}"
-                echo " "
-                confirm.update.couchpotato
-                ;;
-            '3') echo -e "${inf} Backup..${nc}"
-                echo " "
-                backup.couchpotato
-                ;;
+            #'2') echo -e "${inf} Running Update..${nc}"
+            #    echo " "
+            #    confirm.update.couchpotato
+            #    ;;
+            #'3') echo -e "${inf} Backup..${nc}"
+            #    echo " "
+            #    backup.couchpotato
+            #    ;;
             'a')
                 about.couchpotato
                 ;;
@@ -6085,14 +6254,14 @@ do
                 echo " "
                 confirm.install.headphones
                 ;;
-            '2') echo -e "${inf} Running Update..${nc}"
-                echo " "
-                confirm.update.headphones
-                ;;
-            '3') echo -e "${inf} Backup..${nc}"
-                echo " "
-                backup.headphones
-                ;;
+            #'2') echo -e "${inf} Running Update..${nc}"
+            #    echo " "
+            #    confirm.update.headphones
+            #    ;;
+            #'3') echo -e "${inf} Backup..${nc}"
+            #    echo " "
+            #    backup.headphones
+            #    ;;
             'a')
                 about.headphones
                 ;;
@@ -6231,12 +6400,12 @@ do
         echo -e "${sep}"
         echo -e "${qry} Choose one:${nc}"
         echo " "
-        echo -e "${ca}   1)${ca} Deluge (Torrenting) (Currently Unavailable)${nc}"
+        echo -e "${fin}   1)${msg} Deluge (Torrenting)${nc}"
         echo -e "${fin}   2)${msg} NZBGet (Usenet Downloader)${nc}"
         echo -e "${fin}   3)${msg} SABnzbd (Usenet Downloader)${nc}"
         echo " "
-        echo -e "${ca}   4)${ca} Jackett (Torrent Meta Search) (Currently Unavailable)${nc}"
-        echo -e "${ca}   5)${ca} NZBHydra (Usenet Meta Search) (Currently Unavailable)${nc}"
+        echo -e "${fin}   4)${msg} Jackett (Torrent Meta Search)${nc}"
+        echo -e "${fin}   5)${msg} NZBHydra (Usenet Meta Search)${nc}"
         echo " "
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
         echo -e "${inf}  h) Get Help${nc}"
@@ -6249,9 +6418,9 @@ do
         echo " "
 
         case $choice in
-            #'1')
-            #    deluge.submenu
-            #    ;;
+            '1')
+                deluge.submenu
+                ;;
             '2')
                 nzbget.submenu
                 ;;
@@ -6265,7 +6434,7 @@ do
                 nzbhydra.submenu
                 ;;
             #'i')
-            #    moreinfo.submenu.thebrig
+            #    moreinfo.submenu.downloadtools
             #    ;;
             'h')
                 gethelp
@@ -6292,12 +6461,12 @@ do
         echo -e "${sep}"
         echo -e "${qry} Choose one:${nc}"
         echo " "
-        echo -e "${fin}   1)${msg} Install${nc}"
-        echo -e "${fin}   2)${msg} Update${nc}"
-        echo -e "${fin}   3)${msg} Backup${nc}"
+        echo -e "${ca}   1)${ca} Install (Currently Unavailable)${nc}"
+        echo -e "${ca}   2)${ca} Update (Currently Unavailable)${nc}"
+        echo -e "${ca}   3)${ca} Backup (Currently Unavailable)${nc}"
         echo " "
-        echo -e "${inf}  a) About Deluge${nc}"
-        echo -e "${inf}  i) More Info / How-To's${nc}"
+        echo -e "${ca}  a) About Deluge (Currently Unavailable)${nc}"
+        echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
         echo -e "${inf}  h) Get Help${nc}"
         echo " "
         echo -e "${emp}  b) Back${nc}"
@@ -6308,27 +6477,27 @@ do
         echo " "
 
         case $choice in
-            '1') echo -e "${inf} Installing..${nc}"
-                echo " "
-                confirm.install.deluge
-                ;;
-            '2') echo -e "${inf} Running Update..${nc}"
-                echo " "
-                confirm.update.deluge
-                ;;
-            '3') echo -e "${inf} Backup..${nc}"
-                echo " "
-                backup.deluge
-                ;;
-            'a')
-                about.deluge
-                ;;
+            #'1') echo -e "${inf} Installing..${nc}"
+            #    echo " "
+            #    confirm.install.deluge
+            #    ;;
+            #'2') echo -e "${inf} Running Update..${nc}"
+            #    echo " "
+            #    confirm.update.deluge
+            #    ;;
+            #'3') echo -e "${inf} Backup..${nc}"
+            #    echo " "
+            #    backup.deluge
+            #    ;;
+            #'a')
+            #    about.deluge
+            #    ;;
             'h')
                 gethelp
                 ;;
-            'i')
-                moreinfo.submenu.deluge
-                ;;
+            #'i')
+            #    moreinfo.submenu.deluge
+            #    ;;
             'b') return
                 ;;
             *)   echo -e "${alt}        Invalid choice, please try again${nc}"
@@ -6444,6 +6613,123 @@ do
                 ;;
             #'i')
             #    moreinfo.submenu.sabnzbd
+            #    ;;
+            'b') return
+                ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
+                ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### NZBHydra SUBMENU
+
+nzbhydra.submenu ()
+{
+while [ "$choice" != "a,h,i,m,q" ]
+do
+        echo -e "${sep}"
+        echo -e "${fin} NZBHydra Options${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:${nc}"
+        echo " "
+        echo -e "${ca}   1)${ca} Install (Currently Unavailable)${nc}"
+        echo -e "${ca}   2)${ca} Update (Currently Unavailable)${nc}"
+        echo -e "${ca}   3)${ca} Backup (Currently Unavailable)${nc}"
+        echo " "
+        echo -e "${ca}  a) About NZBHydra (Currently Unavailable)${nc}"
+        echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
+        echo -e "${inf}  h) Get Help${nc}"
+        echo " "
+        echo -e "${emp}  b) Back${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+        echo " "
+
+        case $choice in
+            #'1') echo -e "${inf} Installing..${nc}"
+            #    echo " "
+            #    confirm.install.nzbhydra
+            #    ;;
+            #'2') echo -e "${inf} Running Update..${nc}"
+            #    echo " "
+            #    confirm.update.nzbhydra
+            #    ;;
+            #'3') echo -e "${inf} Backup..${nc}"
+            #    echo " "
+            #    backup.nzbhydra
+            #    ;;
+            'a')
+                about.nzbhydra
+                ;;
+            'h')
+                gethelp
+                ;;
+            #'i')
+            #    moreinfo.submenu.nzbhydra
+            #    ;;
+            'b') return
+                ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
+                ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### Jackett SUBMENU
+
+jackett.submenu ()
+{
+while [ "$choice" != "a,h,i,m,q" ]
+do
+        echo -e "${sep}"
+        echo -e "${fin} Jackett Options${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:${nc}"
+        echo " "
+        echo -e "${ca}   1)${ca} Install - Private Trackers (Currently Unavailable)${nc}"
+        echo -e "${ca}   1)${ca} Install - Public Trackers (Currently Unavailable)${nc}"
+        echo -e "${ca}   2)${ca} Update (Currently Unavailable)${nc}"
+        echo -e "${ca}   3)${ca} Backup (Currently Unavailable)${nc}"
+        echo " "
+        echo -e "${ca}  a) About Jackett (Currently Unavailable)${nc}"
+        echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
+        echo -e "${inf}  h) Get Help${nc}"
+        echo " "
+        echo -e "${emp}  b) Back${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+        echo " "
+
+        case $choice in
+            #'1') echo -e "${inf} Installing..${nc}"
+            #    echo " "
+            #    confirm.install.jackett
+            #    ;;
+            #'2') echo -e "${inf} Running Update..${nc}"
+            #    echo " "
+            #    confirm.update.jackett
+            #    ;;
+            #'3') echo -e "${inf} Backup..${nc}"
+            #    echo " "
+            #    backup.jackett
+            #    ;;
+            #'a')
+            #    about.jackett
+            #    ;;
+            'h')
+                gethelp
+                ;;
+            #'i')
+            #    moreinfo.submenu.jackett
             #    ;;
             'b') return
                 ;;
@@ -6892,7 +7178,7 @@ mainmenu=""
 while [ "$choice" != "q,a,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.29 (January 15, 2017) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.30 (January 17, 2017) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "

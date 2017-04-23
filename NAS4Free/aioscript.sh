@@ -1,5 +1,5 @@
 #!/bin/sh
-# AIO Script                    Version: 1.0.30 (January 17, 2017)
+# AIO Script                    Version: 1.0.31 (April 23, 2017)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -25,47 +25,47 @@
 cloud_server_port="81"
 cloud_server_ip="192.168.1.200"
 cloud_database_name="nextcloud" # Only needed for nextcloud, owncloud can ignore
-owncloud_version="9.0.0"      # The version of ownCloud you wish to install.
+owncloud_version="9.0.0"        # The version of ownCloud you wish to install.
                         # You can set this to "latest" but it isn't recommended
                         # as owncloud updates may require an updated script.
-nextcloud_version="11.0.0"    # Same as owncloud_version but for nextcloud.
+nextcloud_version="11.0.2"      # Same as owncloud_version but for nextcloud.
 
 ##! END OF OWNCLOUD / NEXTCLOUD INSTALLER CONFIG ! IMPORTANT ! DO NOT IGNORE ! ##
 ###! No need to edit below here unless the script asks you to !###
 ##### OWNCLOUD / NEXTCLOUD UPDATER CONFIG #####
 owncloud_update="latest"    # This can be safely ignored unless you are planning
-                    # on using the updater in this script (not recommended)
-                    # It's best to leave it alone and let owncloud update itself
+                        # on using the updater in this script (not recommended)
+                        # It's best to leave it alone and let owncloud update itself
 ################################################################################
 ##### OTHER APPS CONFIGURATION #####
-jail_ip="192.168.1.200"     # ! No need to change this for OwnCloud installs !
-                            # Only change this for OTHER jails/apps
-                            # MUST be different to cloud_server_ip if you have
-                            # installed OwnCloud previously.
+jail_ip="192.168.1.200"   # ! No need to change this for OwnCloud installs !
+                          # Only change this for OTHER jails/apps
+                        # MUST be different to cloud_server_ip if you have
+                        # installed OwnCloud previously.
 ################################################################################
 ###! EMBY CONFIG !###
-emby_def_update_ver="3.1.2" # You can find release numbers here:
-                            # https://github.com/MediaBrowser/Emby/releases
-                            # Example, To use the beta: "3.0.5947-beta"
-                            # Example, To use the dev: "3.0.5966.988-dev"
+emby_def_update_ver="3.2.13.0"  # You can find release numbers here:
+                        # https://github.com/MediaBrowser/Emby/releases
+                        # Example, To use the beta: "3.0.5947-beta"
+                        # Example, To use the dev: "3.0.5966.988-dev"
 ################################################################################
 ###! SABNZBD CONFIG !###
-sab_ver="1.2.0"             # You can find release numbers here:
-                            # https://github.com/sabnzbd/sabnzbd/releases
+sab_ver="2.0.0"         # You can find release numbers here:
+                        # https://github.com/sabnzbd/sabnzbd/releases
 ################################################################################
 ###! SUBSONIC / MADSONIC CONFIG !###
-subsonic_ver="6.0"          # You can find release numbers here:
-                            # sourceforge.net/projects/subsonic/files/subsonic
-madsonic_ver="6.2.9080"     # http://beta.madsonic.org/pages/download.jsp
+subsonic_ver="6.0"      # You can find release numbers here:
+                        # sourceforge.net/projects/subsonic/files/subsonic
+madsonic_ver="6.2.9040" # http://beta.madsonic.org/pages/download.jsp
 ################################################################################
 ###! THEBRIG CONFIG !###
 # Define where to install TheBrig
 thebriginstalldir="/mnt/Storage/System/Jails"
 thebrigbranch="alcatraz"    # Define which version of TheBrig to install
-                            # master   - For 9.0 and 9.1 FreeBSD versions
-                            # working  - For 9.1 and 9.2 FreeBSD versions
-                            # alcatraz - For 9.3 and 10.x FreeBSD versions
-# thebrigversion="3"        # Not needed anymore
+                        # master   - For 9.0 and 9.1 FreeBSD versions
+                        # working  - For 9.1 and 9.2 FreeBSD versions
+                        # alcatraz - For 9.3 and 10.x FreeBSD versions
+# thebrigversion="3"    # Not needed anymore
 
 ###! END OF THEBRIG CONFIG !###
 ################################################################################
@@ -1334,7 +1334,7 @@ case "$response" in
     [yY][eE][sS]|[yY])
               echo " "
               echo -e "${sep}"
-              echo -e "${msg} First, lets do ImageMagick${nc}"
+              echo -e "${fin} First, lets do ImageMagick${nc}"
               echo -e "${msg} When the options pop up, disable (By pressing space when its highlighted):${nc}"
               echo -e "${inf}    16BIT_PIXEL   ${msg}(to increase thumbnail generation performance)${nc}"
               echo -e "${msg} and then press 'Enter'${nc}"
@@ -1392,7 +1392,7 @@ case "$response" in
     [yY][eE][sS]|[yY])
               echo " "
               echo -e "${sep}"
-              echo -e "${msg} Great, now ffmpeg${nc}"
+              echo -e "${fin} Great, now ffmpeg${nc}"
               echo -e "${sep}"
               echo " "
 
@@ -1518,6 +1518,35 @@ case "$response" in
 esac
 }
 
+dbtype ()
+{
+echo " "
+echo -e "${emp} Choose between MariaDB or MySQL:${nc}"
+echo " "
+echo -e "${msg} 1: MariaDB${nc}"
+echo -e "${msg} 2: MySQL${nc}"
+echo " "
+echo " Choose carefully, in some cases this cannot be changed!"
+read -r -p "   Make your selection? [1 or 2] " response
+case "$response" in
+    [1])
+              echo " Installing MariaDB"
+              echo " "
+              pkg install -y mariadb10-server
+          ;;
+    [2])
+              echo " Installing MySQL"
+              echo " "
+              pkg install -y mysql56-server
+          ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              echo -e "${alt} No DB Selected${nc}"
+              echo " "
+          ;;
+esac
+}
 
 
 echo " "
@@ -1538,6 +1567,8 @@ echo -e "${sep}"
 echo " "
 
 pkg install -y nano mysql56-server mod_php56 php56-mysql php56-mysqli phpmyadmin apache24
+
+#dbtype
 
 # -------------------------------------------------------
 # MySQL
@@ -2095,7 +2126,7 @@ echo -e "${sep}"
 echo " "
 
 # Install packages
-pkg install -y lighttpd php70-openssl php70-ctype php70-curl php70-dom php70-fileinfo php70-filter php70-gd php70-hash php70-iconv php70-json php70-mbstring php70-pdo php70-pdo_mysql php70-pdo_sqlite php70-session php70-simplexml php70-sqlite3 php70-xml php70-xmlrpc php70-xmlwriter php70-xmlreader php70-gettext php70-mcrypt php70-zip php70-zlib php70-posix php70-APCu mp3info mysql56-server pecl-apcu
+pkg install -y lighttpd php70-openssl php70-ctype php70-curl php70-dom php70-fileinfo php70-filter php70-gd php70-hash php70-iconv php70-json php70-mbstring php70-pdo php70-pdo_mysql php70-pdo_sqlite php70-session php70-simplexml php70-sqlite3 php70-xml php70-xmlrpc php70-xmlwriter php70-xmlreader php70-gettext php70-mcrypt php70-zip php70-zlib php70-posix mp3info mysql56-server pecl-apcu4
 
 echo " "
 echo -e "${sep}"
@@ -2383,6 +2414,7 @@ echo -e "${msg}   Packages installed, configuring mysql${nc}"
 echo -e "${sep}"
 echo " "
 
+#touch /usr/local/etc/my.cnf
 echo '# The MySQL server configuration' >> /var/db/mysql/my.cnf
 echo '[mysqld]' >> /var/db/mysql/my.cnf
 echo 'socket          = /tmp/mysql.sock' >> /var/db/mysql/my.cnf
@@ -2400,6 +2432,14 @@ mysql_secure_installation
 
 #mysql -u root -e "create database ${pydio_database_name}";
 mysql -u root -e "create database pydio";
+
+# SSL Certificates setup
+#cd /usr/local/etc/nginx
+#openssl genrsa -des3 -out server.key 2048
+#openssl req -new -key server.key -out server.csr
+#openssl x509 -req -days 3650 -in server.csr -signkey server.key -out ssl-bundle.crt
+#cp server.key server.key.orig
+#openssl rsa -in server.key.orig -out server.key
 
 cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
 
@@ -3168,8 +3208,11 @@ echo -e "${sep}"
 echo " "
 
 pkg install -y python27 py27-sqlite3
-pkg install -y py27-yenc py27-cheetah py27-openssl py27-feedparser py27-utils
+pkg install -y py27-pip py27-yenc py27-cheetah py27-openssl py27-feedparser py27-utils par2cmdline-tbb
 pkg install -y unrar unzip par2cmdline nano
+
+pip install cryptography --upgrade
+pip install --upgrade sabyenc
 
 echo " "
 echo -e "${sep}"
@@ -3178,6 +3221,7 @@ echo -e "${sep}"
 echo " "
 
 cd tmp
+#fetch --no-verify-peer -o /tmp/SABnzbd-${sab_ver}-src.tar.gz https://github.com/sabnzbd/sabnzbd/releases/download/${sab_ver}/SABnzbd-${sab_ver}-src.tar.gz
 fetch "http://downloads.sourceforge.net/project/sabnzbdplus/sabnzbdplus/${sab_ver}/SABnzbd-${sab_ver}-src.tar.gz"
 tar xfz SABnzbd-${sab_ver}-src.tar.gz -C /usr/local
 rm SABnzbd-${sab_ver}-src.tar.gz
@@ -3728,6 +3772,12 @@ read -r -p " Select version yourself? [y/N] " response
             echo "Version:"
             read userselected_emby_update_ver
             echo " "
+            echo " Downloading user selected version (${emby_def_update_ver})"
+            echo " "
+            echo -e "${sep}"
+            echo -e "${msg} Grab the update for Emby from github${nc}"
+            echo -e "${sep}"
+            echo " "
             fetch --no-verify-peer -o /tmp/emby-$userselected_emby_update_ver.zip https://github.com/MediaBrowser/Emby/releases/download/$userselected_emby_update_ver/Emby.Mono.zip
             echo " "
             echo -e "${sep}"
@@ -3786,7 +3836,7 @@ case "$response" in
               # If yes, then make a backup before proceeding
               echo " "
               echo -e "${sep}"
-              echo -e "${msg} First, lets do ImageMagick${nc}"
+              echo -e "${fin} First, lets do ImageMagick${nc}"
               echo -e "${msg} When the options pop up, disable (By pressing space when its highlighted):${nc}"
               echo -e "${inf}    16BIT_PIXEL   ${msg}(to increase thumbnail generation performance)${nc}"
               echo -e "${msg} and then press 'Enter'${nc}"
@@ -3812,7 +3862,7 @@ case "$response" in
 
               echo " "
               echo -e "${sep}"
-              echo -e "${msg} Great, now ffmpeg${nc}"
+              echo -e "${fin} Great, now ffmpeg${nc}"
               echo -e "${sep}"
               echo " "
 
@@ -3911,12 +3961,12 @@ echo -e "${msg} Package updates done${nc}"
 
 echo " "
 echo -e "${sep}"
-echo -e "${msg} Recompile ffmpeg and ImageMagick${nc}"
+echo -e "${inf} Recompile ffmpeg and ImageMagick${nc}"
 echo " "
 echo -e "${msg} This is 100% optional but doing so can improve your Emby Server${nc}"
 echo -e "${msg}    This can be done either later via Emby menus or now.${nc}"
 echo -e "${msg}    Additional information can also be found in the menu.${nc}"
-echo -e "${msg} You will also need the 'ports tree' enabled for this to work.${nc}"
+echo -e "${emp} You will also need the 'ports tree' enabled for this to work.${nc}"
 echo -e "${sep}"
 echo " "
 
@@ -5105,9 +5155,8 @@ echo -e "${emp} CAUTION: Things can go wrong! I highly suggest${nc}"
 echo -e "${emp}          having a backup just in case!${nc}"
 echo -e "${inf}          (Script will offer to create one)${nc}"
 echo " "
-echo -e "${qry} Reminder${msg}: make sure you have modified the '${inf}emby_update_ver${msg}'${nc}"
-echo -e "${msg} line at the top of this script to the latest version.${nc}"
-echo -e "${msg}    ( Currently set to:${inf} ${emby_update_ver} ${msg})${nc}"
+echo -e "${qry} Update Version${msg}: ${inf} ${emby_def_update_ver} ${msg})${nc}"
+echo -e "${msg}      You are able to change this shortly.${nc}"
 echo " "
 echo -e "${msg} You can find the latest version number here:${nc}"
 echo -e "${url} https://github.com/MediaBrowser/Emby/releases${url}"
@@ -5350,20 +5399,20 @@ esac
 # TODO: Add appropriate commands to backups option once finished
 ################################################################################
 
-### MYSQL SUBMENU
+### DATABASES SUBMENU
 #------------------------------------------------------------------------------#
 
-mysql.submenu ()
+databases.submenu ()
 {
 while [ "$choice" != "a,h,i,m,q" ]
 do
         echo -e "${sep}"
-        echo -e "${fin} MySQL + phpMyAdmin${nc}"
+        echo -e "${fin} MySQL/MariaDB + phpMyAdmin${nc}"
         echo -e "${sep}"
         echo -e "${qry} Choose one:${nc}"
         echo " "
-        echo -e "${fin}   1)${msg} Install${nc}"
-        echo -e "${fin}   2)${msg} Update${nc}"
+        echo -e "${fin}   1)${msg} Install MySQL${nc}"
+        echo -e "${fin}   2)${msg} Update MySQL${nc}"
         echo -e "${ca}   3)${ca} Backup (Currently Unavailable)${nc}"
         echo " "
         echo -e "${inf}  a) About MySQL${nc}"
@@ -5682,6 +5731,8 @@ do
         echo -e "${fin}   3)${msg} Subsonic${nc}"
         echo -e "${fin}   4)${msg} Madsonic${nc}"
         echo " "
+        echo -e "${ca}   2)${ca} Ombi - Plex/Emby Requests (Currently Unavailable)${nc}"
+        echo " "
         echo -e "${ca}  a) About Media Streaming (Currently Unavailable)${nc}"
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
         echo -e "${inf}  h) Get Help${nc}"
@@ -5984,9 +6035,11 @@ do
         echo -e "${fin}   1)${msg} Sonarr (TV & Anime) (Preferred)${nc}"
         echo -e "${ca}   2)${ca} Sickbeard (TV & Anime) (Currently Unavailable)${nc}"
         echo -e "${fin}   3)${msg} CouchPotato (Movies)${nc}"
-        echo -e "${fin}   4)${msg} HeadPhones (Music) (Currently Unavailable)${nc}"
-        echo -e "${ca}   5)${ca} Mylar (Comics) (Currently Unavailable)${nc}"
-        echo -e "${ca}   6)${ca} LazyLibrarian (Books) (Currently Unavailable)${nc}"
+        echo -e "${ca}   4)${ca} Watcher (Movies)${nc}"
+        echo -e "${ca}   5)${ca} Radarr (Sonarr for Movies)${nc}"
+        echo -e "${fin}   6)${msg} HeadPhones (Music) (Currently Unavailable)${nc}"
+        echo -e "${ca}   7)${ca} Mylar (Comics) (Currently Unavailable)${nc}"
+        echo -e "${ca}   8)${ca} LazyLibrarian (Books) (Currently Unavailable)${nc}"
         echo " "
         echo -e "${ca}   0)${ca} HTPC Manager${nc}"
         echo " "
@@ -6755,7 +6808,7 @@ do
         echo -e "${ca}   1)${ca} Web Server (Currently Unavailable)${nc}"
         echo -e "${fin}   2)${msg} Cloud Storage (${lbt}OwnCloud${nc} / ${lbt}Pydio${nc})${nc}"
         echo -e "${ca}   3)${ca} Game Server(s) (Currently Unavailable)${nc}"
-        echo -e "${ca}   4)${ca} Teamspeak 3 Server (Currently Unavailable)${nc}"
+        echo -e "${ca}   4)${ca} Voice Servers ${nc}(Teamspeak / Mumble / Vent) (Currently Unavailable)${nc}"
         echo " "
         echo -e "${ca}  a) About Self Hosting (Currently Unavailable)${nc}"
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
@@ -6781,7 +6834,7 @@ do
             #    gameservers.submenu
             #    ;;
             #'4')
-            #    teamspeak3.submenu
+            #    voip.submenu
             #    ;;
             #'a')
             #    about.selhosting
@@ -6866,6 +6919,65 @@ do
 done
 }
 
+#------------------------------------------------------------------------------#
+### VOICE SERVERS SUBMENU
+
+voip.submenu ()
+{
+while [ "$choice" != "a,h,i,b,q" ]
+do
+        echo -e "${sep}"
+        echo -e "${fin} Voice Server Options${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:${nc}"
+        echo " "
+        echo -e "${fin}   1)${msg} Install${nc}"
+        echo -e "${ca}   2)${ca} Update${nc}"
+        echo -e "${ca}   3)${ca} Backup${nc}"
+        echo " "
+        echo -e "${ca}  a) About Teamspeak${nc}"
+        echo -e "${ca}  i) More Info / How-To's${nc}"
+        echo -e "${inf}  h) Get Help${nc}"
+        echo " "
+        echo -e "${emp}  b) Back${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+        echo " "
+
+        case $choice in
+            '1') echo -e "${inf} Installing..${nc}"
+                echo " "
+                confirm.install.teamspeak3
+                ;;
+            '2') echo -e "${inf} Running Update..${nc}"
+                echo " "
+                confirm.update.teamspeak3
+                ;;
+            '3') echo -e "${inf} Backup..${nc}"
+                echo " "
+                backup.teamspeak3
+                ;;
+            #'a')
+            #    about.teamspeak3
+            #    ;;
+            'h')
+                gethelp
+                ;;
+            #'i')
+            #    moreinfo.submenu.teamspeak3
+            #    ;;
+            'b') return
+                ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
+                ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
 ### TEAMSPEAK SERVER SUBMENU
 
 teamspeak3.submenu ()
@@ -6932,6 +7044,22 @@ do
                 ;;
         esac
 done
+}
+
+#------------------------------------------------------------------------------#
+### MUMBLE/MURMUR SERVER SUBMENU
+
+murmur.submenu ()
+{
+
+}
+
+#------------------------------------------------------------------------------#
+### VENTRILO SERVER SUBMENU
+
+ventrilo.submenu ()
+{
+
 }
 
 
@@ -7184,7 +7312,7 @@ do
         echo " "
         echo -e "${qry} Please make a selection! ${nc}(It's best to run 1-5 INSIDE of a jail)"
         echo " "
-        echo -e "${fin}   1)${url} MySQL + phpMyAdmin${nc}"
+        echo -e "${fin}   1)${url} MySQL/MariaDB + phpMyAdmin${nc}"
         echo -e "${fin}   2)${url} Host Your Own: ${msg}Web Server / Cloud Storage / Game Server / + More${nc}"
         echo -e "         (WordPress / NextCloud / Pydio / Teamspeak etc.)"
         echo -e "${fin}   3)${url} Media Streaming Servers ${nc}(Emby / Plex / Subsonic etc.)"
@@ -7206,7 +7334,7 @@ do
 
         case $choice in
             '1')
-                mysql.submenu
+                databases.submenu
                 ;;
             '2')
                 selfhosting.submenu
@@ -7267,13 +7395,14 @@ done
 #------------------------------------------------------------------------------#
 ### General
 
-# Allow users to select owncloud/nextcloud version/ip/port via script without
-# the need to edit the script manually. (Same as how Emby updater works now)
+
+# FUTURE: Allow users to select owncloud/nextcloud version/ip/port via script
+# without the need to edit the script manually.
 
 #------------------------------------------------------------------------------#
 ### Voice Servers
 
-# MED-TODO: Finish adding Teamspeak 3 Server & JTS3ServerMod (Server Bot)
+# LOW-PRIORITY: Finish adding Teamspeak 3 Server & JTS3ServerMod (Server Bot)
 # FUTURE: Add "Ventrilo"
 # FUTURE: Add "Murmur" (Mumble)
 
@@ -7284,14 +7413,18 @@ done
 # FUTURE: Add "LazyLibrarian" (Books)
 # FUTURE: Add "Sickbeard" (TV/Anime)
 # FUTURE: Add "XDM"
-# LOW-TODO: Finish adding "Calibre" (Books)
+# FUTURE: Finish adding "Calibre" (Books)
+
+# FUTURE: Add "Radarr"
+# FUTURE: Add "Watcher" (Movies - CouchPotato Alternative)
+# FUTURE: Add "Ombi" (Emby/Plex Media Requests)
 
 # FUTURE: Add "HTPC Manager" (Combines many services in one interface)
 
 # FUTURE: Add "NZBHydra" (Meta search for NZB indexers)
 # FUTURE: Add "Jackett" (Meta search for torrents)
 
-# MED-TODO: Finish "Deluge" scripts (Lots of issues with it)
+# LOW-PRIORITY: Finish "Deluge" scripts (Lots of issues with it)
 
 #------------------------------------------------------------------------------#
 ### Media Server
@@ -7321,9 +7454,14 @@ done
 # FUTURE: Add "Pydio"
 
 #------------------------------------------------------------------------------#
+### Databases
+
+# FUTURE: Add "MariaDB"
+
+#------------------------------------------------------------------------------#
 ### System Monitoring
 
-# LOW-TODO: Finish adding "Munin"
+# LOW-PRIORITY: Finish adding "Munin"
 
 # FUTURE: Add "Monit" (Free) & "M/Monit" (Free Trial but requires purchase)
 # "M/Monit" is NOT required to be able to use "Monit"

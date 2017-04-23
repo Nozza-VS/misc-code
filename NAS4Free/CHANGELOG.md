@@ -1,5 +1,20 @@
 # Changelog
 
+### Version: 1.0.31 (April 23, 2017)
+* Emby
+    * Updated default install/update version to 3.2.13
+    * Started working on user selected versions (More user friendly than updating file manually)
+* Voice Servers
+    * Reworked Teamspeak menu to show various other voice servers
+    + Started adding Vent
+    + Started adding Murmur (Mumble)
+* MySQL
+    * Started adding MariaDB
+* General
+    * Updated some default version numbers
+* NextCloud
+    * Fixed APCu
+
 ### Version: 1.0.30 (January 17, 2017)
 * Madsonic
     * Fixed updater

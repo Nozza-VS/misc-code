@@ -109,6 +109,43 @@ case "$response" in
 esac
 }
 
+cloud.caching ()
+{
+echo " "
+echo -e "${sep}"
+echo -e "${emp} Memory Caching${nc}"
+echo -e "${sep}"
+echo " "
+echo -e "${msg} Would you like to learn about enabling the memory cache?${nc}"
+echo -e "${msg} This is entirely optional and nextcloud works without it.${nc}"
+echo -e "${msg} You NEED the ports tree enabled on this jail for this${nc}"
+echo " "
+read -r -p "   Learn about how to enable memory caching? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, let's fix that.
+              echo " "
+              echo -e "${msg} First you NEED to make sure ports are ENABLED for this jail.${nc}"
+              echo -e "${msg} If they are, run this command (Could take a while):${nc}"
+              echo -e "${cmd}   cd /usr/ports/devel/pecl-APCu && make -DBATCH install clean${nc}"
+              echo " "
+              echo -e "${msg} Once that is done, head to this file:${nc}"
+              echo -e "\033[1;36m    /usr/local/www/nextcloud/config/config.php${nc} ${msg}and   add:${nc}"
+              echo -e "\033[1;33m    'memcache.local' => '\OC\Memcache\APCu',${nc}"
+              echo -e "${msg} right above the last line.${nc}"
+              echo " "
+              echo -e "${msg} Once you've edited this file, restart the server with:${nc}"
+              echo -e "${cmd}   /usr/local/etc/rc.d/lighttpd restart${nc}"
+              echo " "
+              confirm
+              ;;
+    *)
+              # If no, just continue like normal.
+              ;;
+esac
+}
+
+
 # Add some colour!
 nc='\033[0m'        # No Color
 alt='\033[0;31m'    # Alert Text
@@ -168,8 +205,8 @@ echo -e "${sep}"
 echo " "
 
 # Install packages
-pkg install -y lighttpd php70-openssl php70-ctype php70-curl php70-dom php70-fileinfo php70-filter php70-gd php70-hash php70-iconv php70-json php70-mbstring php70-pdo php70-pdo_mysql php70-pdo_sqlite php70-session php70-simplexml php70-sqlite3 php70-xml php70-xmlrpc php70-xmlwriter php70-xmlreader php70-gettext php70-mcrypt php70-zip php70-zlib php70-posix mp3info mysql56-server pecl-apcu4
-# php70-APCu - No longer in repositories
+pkg install -y lighttpd php70-openssl php70-ctype php70-curl php70-dom php70-fileinfo php70-filter php70-gd php70-hash php70-iconv php70-json php70-mbstring php70-pdo php70-pdo_mysql php70-pdo_sqlite php70-session php70-simplexml php70-sqlite3 php70-xml php70-xmlrpc php70-xmlwriter php70-xmlreader php70-gettext php70-mcrypt php70-zip php70-zlib php70-posix mp3info mysql56-server
+# php70-APCu - No longer in repositories at this time
 
 echo " "
 echo -e "${sep}"
@@ -401,21 +438,13 @@ echo " "
 
 cloud.trusteddomain.fix
 
+cloud.caching
+
 echo " "
 echo -e "${sep}"
 echo -e "${msg} It looks like we finished here!!! NICE${nc}"
 echo -e "${msg} Now you can head to ${url}https://$server_ip:$server_port${nc}"
 echo -e "${msg} to use your nextcloud whenever you wish!${nc}"
-echo " "
-echo " "
-echo " "
-echo -e "${emp} Memory Caching ${msg}will have to be enabled manually.${nc}"
-echo -e "${msg} This is entirely optional. Head to this file:${nc}"
-echo -e "\033[1;36m    /usr/local/www/nextcloud/config/config.php${nc} ${msg}and add:${nc}"
-echo -e "\033[1;33m    'memcache.local' => '\OC\Memcache\APCu',${nc}"
-echo -e "${msg} right above the last line.${nc}"
-echo -e "${msg} Once you've edited this file, restart the server with:${nc}"
-echo -e "${cmd}   /usr/local/etc/rc.d/lighttpd restart${nc}"
 echo " "
 echo " "
 echo " "

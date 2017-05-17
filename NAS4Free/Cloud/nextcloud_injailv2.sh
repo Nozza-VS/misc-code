@@ -1,5 +1,5 @@
 #!/bin/sh
-# NextCloud Script v2           Version: 2.0.2 (May 17, 2017)
+# NextCloud Script v2           Version: 2.0.3 (May 17, 2017)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -11,20 +11,20 @@
 #   In some instances of this script, the following variables must be defined
 #   by the user:
 #
-#   cloud_server_port:  Used to specify the port Owncloud will be listening to.
+#   cloud_server_port:  Used to specify the port Nextcloud will be listening to.
 #                       Needed due to some installs of N4F having trouble with
 #            the admin webgui showing up, even when browsing to the jail's IP.
 #
 #
-#   cloud_server_ip:    This value is used to specify the ip address Owncloud
+#   cloud_server_ip:    This value is used to specify the ip address Nextcloud
 #                       will listen to. This is needed to keep the jail from
 #            listening on all ip's
 #
-#   owncloud_version:   The version of NextCloud you wish to install. You can set
-#            this with "latest" but it isn't recommended as owncloud updates may
+#   nextcloud_version:   The version of NextCloud you wish to install. You can set
+#            this with "latest" but it isn't recommended as nextcloud updates may
 #            require an updated script. Has been tested on v8.x.x up to v9.0.0.
 #
-###! OWNCLOUD CONFIG ! IMPORTANT ! DO NOT IGNORE ! ###
+###! NEXTCLOUD CONFIG ! IMPORTANT ! DO NOT IGNORE ! ###
 server_port="81"
 server_ip="192.168.1.200"
 server_ip_auto=$(ifconfig | grep -e "inet" -e "addr:" | grep -v "inet6" | grep -v "127.0.0.1" | head -n 1 | awk '{print $2}')
@@ -32,10 +32,10 @@ nextcloud_version="11.0.0"
 database_name="nextcloud"
 ### No need to edit below here ###
 ### Any modifications made below here are done at your own risk ###
-##### OWNCLOUD UPDATER CONFIG #####
-owncloud_update="latest"    # This can be safely ignored unless you are planning
+##### NEXTCLOUD UPDATER CONFIG #####
+nextcloud_update="latest"    # This can be safely ignored unless you are planning
                     # on using the updater in this script (not recommended)
-                    # It's best to leave it alone and let owncloud update itself
+                    # It's best to leave it alone and let nextcloud update itself
 ##### END OF CONFIGURATION SECTION #####
 ################################################################################
 
@@ -86,6 +86,20 @@ exerr () { echo -e "$*" >&2 ; exit 1; }
 install.cloud ()
 {
 
+install.finished.continue ()
+{
+echo " "
+echo -e "${msep}"
+echo -e "${emp}   Press Enter To Continue${nc}"
+echo -e "${msep}"
+echo " "
+read -r -p " " response
+case "$response" in
+    *)
+              ;;
+esac
+}
+
 cloud.options ()
 {
 echo " "
@@ -132,7 +146,7 @@ cloud.trusteddomain.fix ()
 # Confirm with the user
 echo " "
 echo -e "${emp} Please finish the nextcloud setup before continuing${nc}"
-echo -e "${msg} Head to ${url}https://$server_ip:$server_port ${msg}to do this.${nc}"
+echo -e "${msg} Head to ${url}https://$userselected_ip:$userselected_port ${msg}to do this.${nc}"
 echo -e "${msg} Fill out the page you are presented with and hit finish${nc}"
 echo " "
 echo -e "${msg} Admin username & password = whatever you choose${nc}"
@@ -282,9 +296,9 @@ echo -e "${sep}"
 echo " "
 
 cat "/usr/local/etc/lighttpd/old_config.bak" | \
-	sed -r '/^var.server_root/s|"(.*)"|"/usr/local/www/owncloud"|' | \
+	sed -r '/^var.server_root/s|"(.*)"|"/usr/local/www/nextcloud"|' | \
 	sed -r '/^server.use-ipv6/s|"(.*)"|"disable"|' | \
-	sed -r '/^server.document-root/s|"(.*)"|"/usr/local/www/owncloud"|' | \
+	sed -r '/^server.document-root/s|"(.*)"|"/usr/local/www/nextcloud"|' | \
 	sed -r '/^#server.bind/s|(.*)|server.bind = "'"${userselected_ip}"'"|' | \
 	sed -r '/^\$SERVER\["socket"\]/s|"0.0.0.0:80"|"'"${userselected_ip}"':'"${userselected_port}"'"|' | \
 	sed -r '/^server.port/s|(.*)|server.port = '"${userselected_port}"'|' > \
@@ -419,7 +433,7 @@ echo " "
 
 echo " "
 echo -e "${sep}"
-echo -e "${msg} Now to finish owncloud setup${nc}"
+echo -e "${msg} Now to finish nextcloud setup${nc}"
 echo -e "${sep}"
 echo " "
 
@@ -429,7 +443,7 @@ echo " "
 echo -e "${sep}"
 echo -e "${msg} It looks like we finished here!!! NICE${nc}"
 echo -e "${msg} Now you can head to ${url}https://$userselected_ip:$userselected_port${nc}"
-echo -e "${msg} to use your owncloud whenever you wish!${nc}"
+echo -e "${msg} to use your nextcloud whenever you wish!${nc}"
 echo " "
 echo " "
 echo " "
@@ -445,6 +459,9 @@ echo -e "${msg} Or jump on my Discord server${nc}"
 echo -e "${url} https://discord.gg/0bXnhqvo189oM8Cr${nc}"
 echo -e "${sep}"
 echo " "
+
+install.finished.continue
+
 }
 
 ################################################################################
@@ -483,7 +500,7 @@ done
 ##### OTHER OPTIONS
 ################################################################################
 
-owncloud.enablememcache ()
+nextcloud.enablememcache ()
 {
 
 while [ "$choice" ]
@@ -495,12 +512,12 @@ do
 		echo " "
 
 
-        echo "  'memcache.local' => '\OC\Memcache\APCu'," >> /usr/local/www/owncloud/config/memcache.txt
-        cp /usr/local/www/owncloud/config/config.php /usr/local/www/owncloud/config/old_config.bak
-        cat "/usr/local/www/owncloud/config/old_config.bak" | \
-	        sed '21r /usr/local/www/owncloud/config/memcache.txt' > \
-            "/usr/local/www/owncloud/config/config.php"
-        rm /usr/local/www/owncloud/config/memcache.txt
+        echo "  'memcache.local' => '\OC\Memcache\APCu'," >> /usr/local/www/nextcloud/config/memcache.txt
+        cp /usr/local/www/nextcloud/config/config.php /usr/local/www/nextcloud/config/old_config.bak
+        cat "/usr/local/www/nextcloud/config/old_config.bak" | \
+	        sed '21r /usr/local/www/nextcloud/config/memcache.txt' > \
+            "/usr/local/www/nextcloud/config/config.php"
+        rm /usr/local/www/nextcloud/config/memcache.txt
 
         /usr/local/etc/rc.d/lighttpd restart
 
@@ -508,13 +525,13 @@ do
         echo "${sep}"
         echo " "
 
-        echo -e " Head to your owncloud admin page/refresh it"
+        echo -e " Head to your nextcloud admin page/refresh it"
         echo -e " There should no longer be a message at the top about memory caching"
         echo -e " If it didn't work follow these steps:"
         echo -e " "
         echo -e "${msg} This is entirely optional. Edit config.php:${nc}"
         echo -e "${msg} Default location is:${nc}"
-        echo -e "\033[1;36m    /usr/local/www/owncloud/config/config.php${nc}"
+        echo -e "\033[1;36m    /usr/local/www/nextcloud/config/config.php${nc}"
         echo -e "${msg} Add the following right above the last line:${nc}"
         echo -e "\033[1;33m    'memcache.local' => '\OC\Memcache\APCu',${nc}"
         echo " "
@@ -548,7 +565,7 @@ echo -e "${alt}    Click Database options and choose MySQL${nc}"
 echo -e "${msg} Database username: root${nc}"
 echo -e "${msg} Database password: THE PASSWORD YOU ENTERED EARLIER FOR MYSQL${nc}"
 echo -e "${msg} Database host: Leave as is (Should be localhost)${nc}"
-echo -e "${msg} Database name: Your choice (owncloud is fine)${nc}"
+echo -e "${msg} Database name: Your choice (nextcloud is fine)${nc}"
 echo " "
 echo -e "${emp} Click Finish Setup, the page will take a moment to refresh${nc}"
 echo -e "${msg} After it refreshes, if you are seeing a 'Trusted Domain' error,${nc}"
@@ -566,7 +583,7 @@ trusteddomainfix ()
 {
 # Confirm with the user
 echo " "
-echo -e "${emp} Please finish the owncloud setup before continuing${nc}"
+echo -e "${emp} Please finish the nextcloud setup before continuing${nc}"
 echo -e "${msg} Head to ${url}https://$server_ip:$server_port ${msg}to do this.${nc}"
 echo -e "${msg} Fill out the page you are presented with and hit finish${nc}"
 echo " "
@@ -576,9 +593,9 @@ echo -e "${emp} Make sure you click 'Storage & database'${nc}"
 echo " "
 echo -e "${msg} Database user = ${qry}root${nc} | Database password = ${nc}"
 echo -e "${msg} the ${qry}mysql password${msg} you chose earlier during the script.${nc}"
-echo -e "${msg} Database name = your choice (just ${qry}owncloud${msg} is fine)${nc}"
+echo -e "${msg} Database name = your choice (just ${qry}nextcloud${msg} is fine)${nc}"
 echo " "
-echo " When trying to access owncloud"
+echo " When trying to access nextcloud"
 read -r -p "   do you have a 'untrusted domain' error? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
@@ -587,12 +604,12 @@ case "$response" in
               echo -e "${url} Doing some last second changes to fix that..${nc}"
               echo " "
               # Prevent "Trusted Domain" error
-              echo "    '${userselected_ip}'," >> /usr/local/www/owncloud/config/trusted.txt
-              cp /usr/local/www/owncloud/config/config.php /usr/local/www/owncloud/config/old_config.bak
-              cat "/usr/local/www/owncloud/config/old_config.bak" | \
-                sed '8r /usr/local/www/owncloud/config/trusted.txt' > \
-                "/usr/local/www/owncloud/config/config.php"
-              rm /usr/local/www/owncloud/config/trusted.txt
+              echo "    '${userselected_ip}'," >> /usr/local/www/nextcloud/config/trusted.txt
+              cp /usr/local/www/nextcloud/config/config.php /usr/local/www/nextcloud/config/old_config.bak
+              cat "/usr/local/www/nextcloud/config/old_config.bak" | \
+                sed '8r /usr/local/www/nextcloud/config/trusted.txt' > \
+                "/usr/local/www/nextcloud/config/config.php"
+              rm /usr/local/www/nextcloud/config/trusted.txt
               echo -e " Done, continuing with the rest of the script"
                ;;
     *)
@@ -624,10 +641,10 @@ echo always_populate_raw_post_data = -1 > /usr/local/etc/php.ini
 
 ################################################################################
 ##### UPDATERS
-# TODO: Merge owncloud_update.sh in to this script.
+# TODO: Merge nextcloud_update.sh in to this script.
 ################################################################################
 
-update.owncloud ()
+update.nextcloud ()
 {
 echo " "
 echo -e "${sep}"
@@ -642,7 +659,7 @@ echo -e "${sep}"
 echo " "
 
 cd "/tmp"
-fetch "https://download.owncloud.org/community/owncloud-${owncloud_update}.tar.bz2"
+fetch "https://download.nextcloud.org/community/nextcloud-${nextcloud_update}.tar.bz2"
 
 echo " "
 echo -e "${sep}"
@@ -659,14 +676,14 @@ echo -e "${sep}"
 echo " "
 
 # Create inital backup folder if it doesn't exist
-mkdir -p /usr/local/www/.owncloud-backup
+mkdir -p /usr/local/www/.nextcloud-backup
 
 # Copy current install to backup directory
-# mv /usr/local/www/owncloud  /usr/local/www/.owncloud-backup/owncloud-${backupdate} # NOTE: May not need this but leaving it in just in case
-cp -R /usr/local/www/owncloud  /usr/local/www/.owncloud-backup/owncloud-${backupdate}
+# mv /usr/local/www/nextcloud  /usr/local/www/.nextcloud-backup/nextcloud-${backupdate} # NOTE: May not need this but leaving it in just in case
+cp -R /usr/local/www/nextcloud  /usr/local/www/.nextcloud-backup/nextcloud-${backupdate}
 
 echo -e "${msg} Backup of current install made in:${nc}"
-echo -e "${qry}     /usr/local/www/.owncloud-backup/owncloud-${nc}\033[1;36m${backupdate}${nc}"
+echo -e "${qry}     /usr/local/www/.nextcloud-backup/nextcloud-${nc}\033[1;36m${backupdate}${nc}"
 echo -e "${msg} Keep note of this just in case something goes wrong with the update${nc}"
 
 echo " "
@@ -675,20 +692,20 @@ echo -e "${msg}     Now to extract NextCloud in place of the old install.${nc}"
 echo -e "${sep}"
 echo " "
 
-tar xf "owncloud-${owncloud_update}.tar.bz2" -C /usr/local/www
+tar xf "nextcloud-${nextcloud_update}.tar.bz2" -C /usr/local/www
 echo " Done!"
 # Give permissions to www
 chown -R www:www /usr/local/www/
 
 #echo " " # NOTE: May not need the next few lines but leaving them in just in case
 #echo -e "${sep}"
-#echo -e "${msg}     Restore owncloud config, /data & /themes${nc}"
+#echo -e "${msg}     Restore nextcloud config, /data & /themes${nc}"
 #echo -e "${sep}"
 #echo " "
 
-# cp -R /usr/local/www/.owncloud-backup/owncloud-${backupdate}/data /usr/local/www/owncloud/
-# cp -R /usr/local/www/.owncloud-backup/owncloud-${backupdate}/themes/* /usr/local/www/owncloud/
-# cp /usr/local/www/.owncloud-backup/owncloud-${backupdate}/config/config.php /usr/local/www/owncloud/config/
+# cp -R /usr/local/www/.nextcloud-backup/nextcloud-${backupdate}/data /usr/local/www/nextcloud/
+# cp -R /usr/local/www/.nextcloud-backup/nextcloud-${backupdate}/themes/* /usr/local/www/nextcloud/
+# cp /usr/local/www/.nextcloud-backup/nextcloud-${backupdate}/config/config.php /usr/local/www/nextcloud/config/
 
 echo " "
 echo -e "${sep}"
@@ -704,12 +721,12 @@ echo -e "${msg} That should be it!${nc}"
 echo -e "${msg} Now head to your NextCloud webpage and make sure everything is working correctly.${nc}"
 echo " "
 echo -e "${msg} If something went wrong you can do the following to restore the old install:${nc}"
-echo -e "${cmd}   rm -r /usr/local/www/owncloud${nc}"
-echo -e "${cmd}   mv /usr/local/www/.owncloud-backup/owncloud-${backupdate} /usr/local/www/owncloud${nc}"
+echo -e "${cmd}   rm -r /usr/local/www/nextcloud${nc}"
+echo -e "${cmd}   mv /usr/local/www/.nextcloud-backup/nextcloud-${backupdate} /usr/local/www/nextcloud${nc}"
 echo " "
 echo -e "${msg} After you check to make sure everything is working fine as expected,${nc}"
 echo -e "${msg} You can safely remove backups with this command (May take some time):${nc}"
-echo -e "${cmd}   rm -r /usr/local/www/.owncloud-backup${nc}"
+echo -e "${cmd}   rm -r /usr/local/www/.nextcloud-backup${nc}"
 echo -e "${alt} THIS WILL REMOVE ANY AND ALL BACKUPS MADE BY THIS SCRIPT${nc}"
 echo " "
 echo -e "${sep}"
@@ -726,6 +743,18 @@ echo " "
 backupcloud ()
 {
 echo -e "${emp} This part of the script is unfinished currently :("
+
+# Create inital backup folder if it doesn't exist
+mkdir -p /usr/local/www/.nextcloud-backup
+
+# Copy current install to backup directory
+# mv /usr/local/www/nextcloud  /usr/local/www/.nextcloud-backup/nextcloud-${backupdate} # NOTE: May not need this but leaving it in just in case
+cp -R /usr/local/www/nextcloud  /usr/local/www/.nextcloud-backup/nextcloud-${backupdate}
+
+echo -e "${msg} Backup of current install made in:${nc}"
+echo -e "${qry}     /usr/local/www/.nextcloud-backup/nextcloud-${nc}\033[1;36m${backupdate}${nc}"
+echo -e "${msg} Keep note of this.${nc}"
+
 }
 
 
@@ -787,7 +816,7 @@ do
 
         case $choice in
             '1') echo -e "${inf} Enabling Memory Caching..${nc}"
-                owncloud.enablememcache
+                nextcloud.enablememcache
                 ;;
             'm') return
                 ;;
@@ -808,7 +837,7 @@ do
         echo -e "${qry} Choose one:"
         echo " "
         echo -e "${msg} How to..."
-        echo -e "${fin}   1)${msg} Finish the owncloud setup"
+        echo -e "${fin}   1)${msg} Finish the nextcloud setup"
         echo " "
         echo -e "${emp}   m) Main Menu${nc}"
 
@@ -870,7 +899,7 @@ confirm
 #echo -e " "
 #echo -e "      ${alt}#1: ${msg}Is this your jails IP? ${qry}$server_ip${nc}"
 #echo -e "      ${alt}#2: ${msg}Is this the port you want to use? ${qry}$server_port${nc}"
-#echo -e "      ${alt}#3: ${msg}Is this the NextCloud version you want to install? ${qry}$owncloud_version${nc}"
+#echo -e "      ${alt}#3: ${msg}Is this the NextCloud version you want to install? ${qry}$nextcloud_version${nc}"
 #echo -e " "
 #echo -e "${emp} If #1 or #2 are incorrect you will encounter issues!${nc}"
 
@@ -879,7 +908,7 @@ confirm
 echo " "
 echo -e "${url} Awesome, now we are ready to get on with it!${nc}"
 # Confirm with the user
-echo -e "${inf} Final confirmation before installing owncloud.${nc}"
+echo -e "${inf} Final confirmation before installing nextcloud.${nc}"
 read -r -p "   Confirm Installation of NextCloud? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
@@ -902,14 +931,17 @@ esac
 confirm.update.cloud ()
 {
 # Confirm with the user
+echo " "
 echo -e "${alt} This updater is untested and may not work at all${nc}"
+echo -e "${emp} Do NOT use this on a primary live server without testing${nc}"
 echo -e "${msg} Proceed at your own risk${nc}"
+echo " "
 echo " Highly recommended to Backup first"
 read -r -p "   Confirm Update of NextCloud? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              update.owncloud
+              update.nextcloud
                ;;
     *)
               # Otherwise exit...
@@ -930,7 +962,7 @@ read -r -p "   Confirm Backup of NextCloud? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
-              backupcloud
+              backup.cloud
                ;;
     *)
               # Otherwise exit...
@@ -951,7 +983,7 @@ mainmenu=""
 while [ "$choice" != "q,i,h" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} NextCloud Script - Version: 2.0.2 (May 17, 2017)"
+        echo -e "${inf} NextCloud Script - Version: 2.0.3 (May 17, 2017)"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
@@ -1011,3 +1043,4 @@ done
 #------------------------------------------------------------------------------#
 
 # FUTURE: Add MySQL alternative setup options
+

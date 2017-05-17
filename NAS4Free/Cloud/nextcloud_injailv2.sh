@@ -1,5 +1,5 @@
 #!/bin/sh
-# NextCloud Script v2           Version: 2.0.1 (April 14, 2017)
+# NextCloud Script v2           Version: 2.0.2 (May 17, 2017)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -951,7 +951,7 @@ mainmenu=""
 while [ "$choice" != "q,i,h" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} NextCloud Script - Version: 2.0.1 (April 14, 2017)"
+        echo -e "${inf} NextCloud Script - Version: 2.0.2 (May 17, 2017)"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "

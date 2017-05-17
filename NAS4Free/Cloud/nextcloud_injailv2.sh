@@ -27,6 +27,7 @@
 ###! OWNCLOUD CONFIG ! IMPORTANT ! DO NOT IGNORE ! ###
 server_port="81"
 server_ip="192.168.1.200"
+server_ip_auto=$(ifconfig | grep -e "inet" -e "addr:" | grep -v "inet6" | grep -v "127.0.0.1" | head -n 1 | awk '{print $2}')
 nextcloud_version="11.0.0"
 database_name="nextcloud"
 ### No need to edit below here ###
@@ -85,6 +86,47 @@ exerr () { echo -e "$*" >&2 ; exit 1; }
 install.cloud ()
 {
 
+cloud.options ()
+{
+echo " "
+echo -e "${msg} What is your jails IP?${nc}"
+echo -e "${emp} This MUST be your jails IP${nc}"
+echo " Detected IP:"
+ifconfig | grep -e "inet" -e "addr:" | grep -v "inet6" | grep -v "127.0.0.1" | head -n 1 | awk '{print $2}'
+echo " "
+echo " Input IP:"
+read userselected_ip
+echo " "
+echo -e "${msg} What port do you want to run it on?${nc}"
+echo "Recommended: 81"
+echo " "
+echo " Input Port:"
+read userselected_port
+echo " "
+echo -e "${msg} What version would you like to install${nc}"
+echo "Tested + Confirmed Working: 11.0.0"
+echo " "
+echo " Input Version:"
+read userselected_version
+#echo " "
+#echo -e "${emp} Only do so if you know what you're doing!${nc}"
+#echo " Default Database name: nextcloud"
+#read -r -p " Set Database name to something else? [y/N] " response
+#    case $response in
+#        [yY][eE][sS]|[yY])
+#			echo " "
+#			echo -e "${msg} What port do you want to run it on?${nc}"
+#			echo "Recommended: 81"
+#			echo " "
+#			echo " Input Port:"
+#			read userselected_dbname
+#			;;
+#		*)
+#			database_name="nextcloud"
+#			;;
+#	esac
+}
+
 cloud.trusteddomain.fix ()
 {
 # Confirm with the user
@@ -110,7 +152,7 @@ case "$response" in
               echo -e "${url} Doing some last second changes to fix that..${nc}"
               echo " "
               # Prevent "Trusted Domain" error
-              echo "    '${server_ip}'," >> /usr/local/www/nextcloud/config/trusted.txt
+              echo "    '${userselected_ip}'," >> /usr/local/www/nextcloud/config/trusted.txt
               cp /usr/local/www/nextcloud/config/config.php /usr/local/www/nextcloud/config/old_config.bak
               cat "/usr/local/www/nextcloud/config/old_config.bak" | \
                 sed '8r /usr/local/www/nextcloud/config/trusted.txt' > \
@@ -135,13 +177,23 @@ echo " "
 echo " "
 echo " "
 echo -e "${sep}"
+echo -e "${msg}   First, some configuration${nc}"
+echo -e "${sep}"
+echo " "
+
+cloud.options
+
+echo " "
+echo -e "${sep}"
 echo -e "${msg}   Let's get to installing some stuff!!${nc}"
 echo -e "${sep}"
 echo " "
 
 # Install packages
-pkg install -y lighttpd php70-openssl php70-ctype php70-curl php70-dom php70-fileinfo php70-filter php70-gd php70-hash php70-iconv php70-json php70-mbstring php70-pdo php70-pdo_mysql php70-pdo_sqlite php70-session php70-simplexml php70-sqlite3 php70-xml php70-xmlrpc php70-xmlwriter php70-xmlreader php70-gettext php70-mcrypt php70-zip php70-zlib php70-posix mp3info mysql56-server pecl-apcu4
+pkg install -y lighttpd php70-openssl php70-ctype php70-curl php70-dom php70-fileinfo php70-filter php70-gd php70-hash php70-iconv php70-json php70-mbstring php70-pdo php70-pdo_mysql php70-pdo_sqlite php70-session php70-simplexml php70-sqlite3 php70-xml php70-xmlrpc php70-xmlwriter php70-xmlreader php70-gettext php70-mcrypt php70-zip php70-zlib php70-posix mp3info mysql56-server
 # php70-APCu - No longer in repositories
+# Alternative
+# php70-memcache php70-memcached
 
 echo " "
 echo -e "${sep}"
@@ -233,9 +285,9 @@ cat "/usr/local/etc/lighttpd/old_config.bak" | \
 	sed -r '/^var.server_root/s|"(.*)"|"/usr/local/www/owncloud"|' | \
 	sed -r '/^server.use-ipv6/s|"(.*)"|"disable"|' | \
 	sed -r '/^server.document-root/s|"(.*)"|"/usr/local/www/owncloud"|' | \
-	sed -r '/^#server.bind/s|(.*)|server.bind = "'"${server_ip}"'"|' | \
-	sed -r '/^\$SERVER\["socket"\]/s|"0.0.0.0:80"|"'"${server_ip}"':'"${server_port}"'"|' | \
-	sed -r '/^server.port/s|(.*)|server.port = '"${server_port}"'|' > \
+	sed -r '/^#server.bind/s|(.*)|server.bind = "'"${userselected_ip}"'"|' | \
+	sed -r '/^\$SERVER\["socket"\]/s|"0.0.0.0:80"|"'"${userselected_ip}"':'"${userselected_port}"'"|' | \
+	sed -r '/^server.port/s|(.*)|server.port = '"${userselected_port}"'|' > \
 	"/usr/local/etc/lighttpd/lighttpd.conf"
 
 echo " "
@@ -321,8 +373,8 @@ mkdir -p /usr/local/www
 # Get NextCloud, extract it, copy it to the webserver
 # and have the jail assign proper permissions
 cd "/tmp"
-fetch "https://download.nextcloud.com/server/releases/nextcloud-${nextcloud_version}.tar.bz2"
-tar xf "nextcloud-${nextcloud_version}.tar.bz2" -C /usr/local/www
+fetch "https://download.nextcloud.com/server/releases/nextcloud-${userselected_version}.tar.bz2"
+tar xf "nextcloud-${userselected_version}.tar.bz2" -C /usr/local/www
 chown -R www:www /usr/local/www/
 
 echo " "
@@ -376,7 +428,7 @@ cloud.trusteddomain.fix
 echo " "
 echo -e "${sep}"
 echo -e "${msg} It looks like we finished here!!! NICE${nc}"
-echo -e "${msg} Now you can head to ${url}https://$cloud_server_ip:$cloud_server_port${nc}"
+echo -e "${msg} Now you can head to ${url}https://$userselected_ip:$userselected_port${nc}"
 echo -e "${msg} to use your owncloud whenever you wish!${nc}"
 echo " "
 echo " "
@@ -436,6 +488,13 @@ owncloud.enablememcache ()
 
 while [ "$choice" ]
 do
+		echo " "
+		echo "${sep}"
+		echo -e "${emp} APCu memory cache is currently unavailable on BSD systems"
+		echo "${sep}"
+		echo " "
+
+
         echo "  'memcache.local' => '\OC\Memcache\APCu'," >> /usr/local/www/owncloud/config/memcache.txt
         cp /usr/local/www/owncloud/config/config.php /usr/local/www/owncloud/config/old_config.bak
         cat "/usr/local/www/owncloud/config/old_config.bak" | \
@@ -528,7 +587,7 @@ case "$response" in
               echo -e "${url} Doing some last second changes to fix that..${nc}"
               echo " "
               # Prevent "Trusted Domain" error
-              echo "    '${server_ip}'," >> /usr/local/www/owncloud/config/trusted.txt
+              echo "    '${userselected_ip}'," >> /usr/local/www/owncloud/config/trusted.txt
               cp /usr/local/www/owncloud/config/config.php /usr/local/www/owncloud/config/old_config.bak
               cat "/usr/local/www/owncloud/config/old_config.bak" | \
                 sed '8r /usr/local/www/owncloud/config/trusted.txt' > \
@@ -805,17 +864,17 @@ echo -e "${msg} Is this script running ${alt}INSIDE${msg} of a jail?${nc}"
 
 confirm
 
-echo " "
-echo -e "${msg} Checking to see if you need to modify the script${nc}"
-echo -e "${msg} If ${emp}ANY${msg} of these ${emp}DON'T${msg} match YOUR setup, answer with ${emp}no${nc}."
-echo -e " "
-echo -e "      ${alt}#1: ${msg}Is this your jails IP? ${qry}$server_ip${nc}"
-echo -e "      ${alt}#2: ${msg}Is this the port you want to use? ${qry}$server_port${nc}"
-echo -e "      ${alt}#3: ${msg}Is this the NextCloud version you want to install? ${qry}$owncloud_version${nc}"
-echo -e " "
-echo -e "${emp} If #1 or #2 are incorrect you will encounter issues!${nc}"
+#echo " "
+#echo -e "${msg} Checking to see if you need to modify the script${nc}"
+#echo -e "${msg} If ${emp}ANY${msg} of these ${emp}DON'T${msg} match YOUR setup, answer with ${emp}no${nc}."
+#echo -e " "
+#echo -e "      ${alt}#1: ${msg}Is this your jails IP? ${qry}$server_ip${nc}"
+#echo -e "      ${alt}#2: ${msg}Is this the port you want to use? ${qry}$server_port${nc}"
+#echo -e "      ${alt}#3: ${msg}Is this the NextCloud version you want to install? ${qry}$owncloud_version${nc}"
+#echo -e " "
+#echo -e "${emp} If #1 or #2 are incorrect you will encounter issues!${nc}"
 
-confirm
+#confirm
 
 echo " "
 echo -e "${url} Awesome, now we are ready to get on with it!${nc}"

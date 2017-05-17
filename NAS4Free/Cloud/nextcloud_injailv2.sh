@@ -1,5 +1,5 @@
 #!/bin/sh
-# NextCloud Script v2           Version: 2.0.3 (May 17, 2017)
+# NextCloud Script v2           Version: 2.0.4 (May 17, 2017)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -28,7 +28,7 @@
 server_port="81"
 server_ip="192.168.1.200"
 server_ip_auto=$(ifconfig | grep -e "inet" -e "addr:" | grep -v "inet6" | grep -v "127.0.0.1" | head -n 1 | awk '{print $2}')
-nextcloud_version="11.0.0"
+nextcloud_version="11.0.2"
 database_name="nextcloud"
 ### No need to edit below here ###
 ### Any modifications made below here are done at your own risk ###
@@ -505,13 +505,6 @@ nextcloud.enablememcache ()
 
 while [ "$choice" ]
 do
-		echo " "
-		echo "${sep}"
-		echo -e "${emp} APCu memory cache is currently unavailable on BSD systems"
-		echo "${sep}"
-		echo " "
-
-
         echo "  'memcache.local' => '\OC\Memcache\APCu'," >> /usr/local/www/nextcloud/config/memcache.txt
         cp /usr/local/www/nextcloud/config/config.php /usr/local/www/nextcloud/config/old_config.bak
         cat "/usr/local/www/nextcloud/config/old_config.bak" | \
@@ -525,9 +518,9 @@ do
         echo "${sep}"
         echo " "
 
-        echo -e " Head to your nextcloud admin page/refresh it"
-        echo -e " There should no longer be a message at the top about memory caching"
-        echo -e " If it didn't work follow these steps:"
+        echo -e " Head to your nextcloud admin page/refresh it${nc}"
+        echo -e " There should no longer be a message at the top about memory caching${nc}"
+        echo -e " If it didn't work follow these steps:${nc}"
         echo -e " "
         echo -e "${msg} This is entirely optional. Edit config.php:${nc}"
         echo -e "${msg} Default location is:${nc}"
@@ -740,7 +733,7 @@ echo " "
 # TODO: Create backup script
 ################################################################################
 
-backupcloud ()
+backup.cloud ()
 {
 echo -e "${emp} This part of the script is unfinished currently :("
 
@@ -816,7 +809,14 @@ do
 
         case $choice in
             '1') echo -e "${inf} Enabling Memory Caching..${nc}"
-                nextcloud.enablememcache
+
+						echo " "
+						echo "${sep}"
+						echo -e "${emp} APCu memory cache is currently unavailable on BSD systems :(${nc}"
+						echo "${sep}"
+						echo " "
+
+                #nextcloud.enablememcache
                 ;;
             'm') return
                 ;;
@@ -983,7 +983,7 @@ mainmenu=""
 while [ "$choice" != "q,i,h" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} NextCloud Script - Version: 2.0.3 (May 17, 2017)"
+        echo -e "${inf} NextCloud Script - Version: 2.0.4 (May 17, 2017)"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
@@ -998,6 +998,7 @@ do
         echo " "
         echo -e "${inf}  i) More Info / How-To's${nc}"
         echo -e "${inf}  h) Get Help${nc}"
+		echo " "
         echo -e "${alt}  q) Quit${nc}"
 
         echo -e "${ssep}"
@@ -1043,4 +1044,5 @@ done
 #------------------------------------------------------------------------------#
 
 # FUTURE: Add MySQL alternative setup options
-
+# FUTURE: Add LetsEncrypt SSL certificate setup. Will require some info about
+# 		  port forwarding

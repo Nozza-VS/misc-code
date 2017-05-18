@@ -86,7 +86,7 @@ exerr () { echo -e "$*" >&2 ; exit 1; }
 install.cloud ()
 {
 
-install.finished.continue ()
+nextcloud.install.continue ()
 {
 echo " "
 echo -e "${msep}"
@@ -100,28 +100,29 @@ case "$response" in
 esac
 }
 
-cloud.options ()
+nextcloud.options ()
 {
 echo " "
 echo -e "${msg} What is your jails IP?${nc}"
-echo -e "${emp} This MUST be your jails IP${nc}"
-echo " Detected IP:"
-ifconfig | grep -e "inet" -e "addr:" | grep -v "inet6" | grep -v "127.0.0.1" | head -n 1 | awk '{print $2}'
+echo -e "${alt} This MUST be your jails IP${nc}"
+printf "${inf} Detected IP: ${nc}" ; ifconfig | grep -e "inet" -e "addr:" | grep -v "inet6" | grep -v "127.0.0.1" | head -n 1 | awk '{print $2}'
 echo " "
-echo " Input IP:"
-read userselected_ip
+printf "${emp} Set IP: ${nc}" ; read userselected_ip
+echo -e "${fin}    IP set to: ${msg}${userselected_ip}${nc}"
 echo " "
 echo -e "${msg} What port do you want to run it on?${nc}"
-echo "Recommended: 81"
+echo -e "${inf}    Recommended: ${msg}81${nc}"
 echo " "
-echo " Input Port:"
-read userselected_port
+printf "${emp} Set Port: ${nc}" ; read userselected_port
+echo -e "${fin}    Port set to: ${msg}${userselected_port}${nc}"
 echo " "
 echo -e "${msg} What version would you like to install${nc}"
-echo "Tested + Confirmed Working: 11.0.0"
+echo -e "${inf}    Tested & Confirmed Working: 11.0.0"
 echo " "
-echo " Input Version:"
-read userselected_version
+printf "${emp} Set Version: ${nc}" ; read -r userselected_version
+echo -e "${fin}    Version set to: ${msg}${userselected_version}${nc}"
+echo " "
+nextcloud.install.continue
 #echo " "
 #echo -e "${emp} Only do so if you know what you're doing!${nc}"
 #echo " Default Database name: nextcloud"
@@ -195,7 +196,7 @@ echo -e "${msg}   First, some configuration${nc}"
 echo -e "${sep}"
 echo " "
 
-cloud.options
+nextcloud.options
 
 echo " "
 echo -e "${sep}"
@@ -460,7 +461,7 @@ echo -e "${url} https://discord.gg/0bXnhqvo189oM8Cr${nc}"
 echo -e "${sep}"
 echo " "
 
-install.finished.continue
+nextcloud.install.continue
 
 }
 

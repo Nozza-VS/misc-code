@@ -1,5 +1,6 @@
 #!/bin/sh
-# AIO Script                    Version: 1.0.31 (April 23, 2017)
+#[ -n "$DEBUG" ] && set -x -o pipefail -e
+# AIO Script                    Version: 1.0.32 (May 19, 2017)
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 # While using "nano" to edit this script (nano /aioscript.sh),
@@ -97,7 +98,8 @@ deluge_user_password="MyC0mpL3xPass"
 ################################################################################
 
 
-
+# Get IP
+jailip=$(ifconfig | grep -e "inet" -e "addr:" | grep -v "inet6" | grep -v "127.0.0.1" | head -n 1 | awk '{print $2}')
 #Grab the date & time to be used later
 date=$(date +"%Y.%m.%d-%I.%M%p")
 
@@ -160,6 +162,33 @@ do
         esac
 done
 }
+
+
+
+################################################################################
+##### Debug
+################################################################################
+
+OPTIND=1         # Reset in case getopts has been used previously in the shell.
+
+while getopts "dnvh" opt; do
+      case $opt in
+        h)	echo " "
+			echo -e "${inf} -v ${msg}Run the script run in verbose mode${nc}"
+			echo -e "${inf} -d ${msg}Print command traces before executing command${nc}"
+			echo -e "${inf} -n ${msg}Read commands but do not execute them${nc}"
+			echo " "
+			exit 1;;
+        d)	set -x;;
+        n)	set -n;;
+        v)	set -v;;
+        *)  echo " "
+			echo -e "${alt}        Invalid choice, please try again${nc}"
+			echo " "
+            exit 1;;
+
+      esac
+    done
 
 
 
@@ -1439,7 +1468,7 @@ esac
 
 emby.server.improvements ()
 {
-
+	echo " "
 }
 
 
@@ -2050,68 +2079,59 @@ echo " "
 install.nextcloud ()
 {
 
-confirm ()
+nextcloud.continue ()
 {
-# Confirm with the user
-read -r -p "   Continue? [y/N] " response
+echo -e "${msep}"
+echo -e "${emp}   Press Enter To Continue${nc}"
+echo -e "${msep}"
+read -r -p " " response
 case "$response" in
-    [yY][eE][sS]|[yY])
-              # If yes, then continue
-              echo -e "${url} Great! Moving on..${nc}"
-               ;;
     *)
-              # Otherwise exit...
-              echo " "
-              echo -e "${alt}Stopping script..${nc}"
-              echo " "
-              exit
               ;;
 esac
 }
 
-cloud.trusteddomain.fix ()
+nextcloud.options ()
 {
-# Confirm with the user
 echo " "
-echo -e "${emp} Please finish the nextcloud setup before continuing${nc}"
-echo -e "${msg} Head to ${url}https://$cloud_server_ip:$cloud_server_port ${msg}to do this.${nc}"
-echo -e "${msg} Fill out the page you are presented with and hit finish${nc}"
+echo -e "${msg} What is your jails IP?${nc}"
+echo -e "${alt} This MUST be your jails IP${nc}"
+printf "${inf} Detected IP: ${nc}" ; ifconfig | grep -e "inet" -e "addr:" | grep -v "inet6" | grep -v "127.0.0.1" | head -n 1 | awk '{print $2}'
 echo " "
-echo -e "${msg} Admin username & password = whatever you choose${nc}"
+printf "${emp} Set IP: ${nc}" ; read userselected_ip
+echo -e "${fin}    IP set to: ${msg}${userselected_ip}${nc}"
 echo " "
-echo -e "${emp} Make sure you click 'Storage & database'${nc}"
+echo -e "${msg} What port do you want to run it on?${nc}"
+echo -e "${inf}    Recommended: ${msg}81${nc}"
 echo " "
-echo -e "${msg} Database user = ${qry}root${nc} | ${msg} Database password = ${nc}"
-echo -e "${msg} the ${qry}mysql password${msg} you chose earlier during the script.${nc}"
-echo -e "${msg} Database name =${qry} ${cloud_database_name} ${nc}"
+printf "${emp} Set Port: ${nc}" ; read userselected_port
+echo -e "${fin}    Port set to: ${msg}${userselected_port}${nc}"
 echo " "
-echo " Once the page reloads,"
-read -r -p "   do you have a 'untrusted domain' error? [y/N] " response
-case "$response" in
-    [yY][eE][sS]|[yY])
-              # If yes, let's fix that.
-              echo " "
-              echo -e "${url} Doing some last second changes to fix that..${nc}"
-              echo " "
-              # Prevent "Trusted Domain" error
-              echo "    '${cloud_server_ip}'," >> /usr/local/www/nextcloud/config/trusted.txt
-              cp /usr/local/www/nextcloud/config/config.php /usr/local/www/nextcloud/config/old_config.bak
-              cat "/usr/local/www/nextcloud/config/old_config.bak" | \
-                sed '8r /usr/local/www/nextcloud/config/trusted.txt' > \
-                "/usr/local/www/nextcloud/config/config.php"
-              rm /usr/local/www/nextcloud/config/trusted.txt
-              echo -e " Done, continuing with the rest of the script"
-               ;;
-    *)
-              # If no, just continue like normal.
-              echo " "
-              echo -e "${qry} Great!, no need to do anything, continuing with script..${nc}"
-              echo " "
-              ;;
-esac
+echo -e "${msg} What version would you like to install${nc}"
+echo -e "${inf}    Tested & Confirmed Working: 11.0.0"
+echo " "
+printf "${emp} Set Version: ${nc}" ; read -r userselected_version
+echo -e "${fin}    Version set to: ${msg}${userselected_version}${nc}"
+echo " "
+nextcloud.continue
+#echo " "
+#echo -e "${emp} Only do so if you know what you're doing!${nc}"
+#echo " Default Database name: nextcloud"
+#read -r -p " Set Database name to something else? [y/N] " response
+#    case $response in
+#        [yY][eE][sS]|[yY])
+#			echo " "
+#			echo -e "${msg} What port do you want to run it on?${nc}"
+#			echo "Recommended: 81"
+#			echo " "
+#			echo " Input Port:"
+#			read userselected_dbname
+#			;;
+#		*)
+#			database_name="nextcloud"
+#			;;
+#	esac
 }
-
-
 
 echo " "
 echo -e "${sep}"
@@ -2121,12 +2141,23 @@ echo " "
 echo " "
 echo " "
 echo -e "${sep}"
+echo -e "${msg}   First, some configuration${nc}"
+echo -e "${sep}"
+echo " "
+
+nextcloud.options
+
+echo " "
+echo -e "${sep}"
 echo -e "${msg}   Let's get to installing some stuff!!${nc}"
 echo -e "${sep}"
 echo " "
 
 # Install packages
-pkg install -y lighttpd php70-openssl php70-ctype php70-curl php70-dom php70-fileinfo php70-filter php70-gd php70-hash php70-iconv php70-json php70-mbstring php70-pdo php70-pdo_mysql php70-pdo_sqlite php70-session php70-simplexml php70-sqlite3 php70-xml php70-xmlrpc php70-xmlwriter php70-xmlreader php70-gettext php70-mcrypt php70-zip php70-zlib php70-posix mp3info mysql56-server pecl-apcu4
+pkg install -y lighttpd php70-openssl php70-ctype php70-curl php70-dom php70-fileinfo php70-filter php70-gd php70-hash php70-iconv php70-json php70-mbstring php70-pdo php70-pdo_mysql php70-pdo_sqlite php70-session php70-simplexml php70-sqlite3 php70-xml php70-xmlrpc php70-xmlwriter php70-xmlreader php70-gettext php70-mcrypt php70-zip php70-zlib php70-posix mp3info mysql56-server
+# php70-APCu - No longer in repositories
+# Alternative
+# php70-memcache php70-memcached
 
 echo " "
 echo -e "${sep}"
@@ -2147,8 +2178,8 @@ echo -e "${msg} Creating database for nextcloud${nc}"
 echo -e "${sep}"
 echo " "
 
-mysql -u root -e "create database ${cloud_database_name}";
-echo -e "${msg} Database was created: ${cloud_database_name}.${nc}"
+mysql -u root -e "create database ${database_name}";
+echo -e "${msg} Database was created: ${database_name}.${nc}"
 
 echo " "
 echo -e "${sep}"
@@ -2163,7 +2194,7 @@ mysql_secure_installation
 
 echo " "
 echo -e "${sep}"
-echo -e "${msg} Done with MySQL - Performing key operations now${nc}"
+echo -e "${msg} Done hardening MySQL - Performing key operations now${nc}"
 echo -e "${sep}"
 echo " "
 
@@ -2218,9 +2249,9 @@ cat "/usr/local/etc/lighttpd/old_config.bak" | \
 	sed -r '/^var.server_root/s|"(.*)"|"/usr/local/www/nextcloud"|' | \
 	sed -r '/^server.use-ipv6/s|"(.*)"|"disable"|' | \
 	sed -r '/^server.document-root/s|"(.*)"|"/usr/local/www/nextcloud"|' | \
-	sed -r '/^#server.bind/s|(.*)|server.bind = "'"${cloud_server_ip}"'"|' | \
-	sed -r '/^\$SERVER\["socket"\]/s|"0.0.0.0:80"|"'"${cloud_server_ip}"':'"${cloud_server_port}"'"|' | \
-	sed -r '/^server.port/s|(.*)|server.port = '"${cloud_server_port}"'|' > \
+	sed -r '/^#server.bind/s|(.*)|server.bind = "'"${userselected_ip}"'"|' | \
+	sed -r '/^\$SERVER\["socket"\]/s|"0.0.0.0:80"|"'"${userselected_ip}"':'"${userselected_port}"'"|' | \
+	sed -r '/^server.port/s|(.*)|server.port = '"${userselected_port}"'|' > \
 	"/usr/local/etc/lighttpd/lighttpd.conf"
 
 echo " "
@@ -2306,8 +2337,8 @@ mkdir -p /usr/local/www
 # Get NextCloud, extract it, copy it to the webserver
 # and have the jail assign proper permissions
 cd "/tmp"
-fetch "https://download.nextcloud.com/server/releases/nextcloud-${nextcloud_version}.tar.bz2"
-tar xf "nextcloud-${nextcloud_version}.tar.bz2" -C /usr/local/www
+fetch "https://download.nextcloud.com/server/releases/nextcloud-${userselected_version}.tar.bz2"
+tar xf "nextcloud-${userselected_version}.tar.bz2" -C /usr/local/www
 chown -R www:www /usr/local/www/
 
 echo " "
@@ -2356,23 +2387,19 @@ echo -e "${msg} Now to finish nextcloud setup${nc}"
 echo -e "${sep}"
 echo " "
 
-cloud.trusteddomain.fix
+
 
 echo " "
 echo -e "${sep}"
 echo -e "${msg} It looks like we finished here!!! NICE${nc}"
-echo -e "${msg} Now you can head to ${url}https://$cloud_server_ip:$cloud_server_port${nc}"
+echo -e "${msg} Now you can head to ${url}https://$userselected_ip:$userselected_port${nc}"
 echo -e "${msg} to use your nextcloud whenever you wish!${nc}"
 echo " "
 echo " "
 echo " "
-echo -e "${emp} Memory Caching ${msg}will have to be enabled manually.${nc}"
-echo -e "${msg} This is entirely optional. Head to this file:${nc}"
-echo -e "\033[1;36m    /usr/local/www/nextcloud/config/config.php${nc} ${msg}and add:${nc}"
-echo -e "\033[1;33m    'memcache.local' => '\OC\Memcache\APCu',${nc}"
-echo -e "${msg} right above the last line.${nc}"
-echo -e "${msg} Once you've edited this file, restart the server with:${nc}"
-echo -e "${cmd}   /usr/local/etc/rc.d/lighttpd restart${nc}"
+echo -e "${emp} Memory Caching ${msg}is an optional feature that is not enabled by default${nc}"
+echo -e "${msg} This is entirely optional and any messages about it can be safely ignored.${nc}"
+echo -e "${msg} If you wish to enable it, you can do so via the 'Other Options' menu.${nc}"
 echo " "
 echo " "
 echo " "
@@ -2383,6 +2410,9 @@ echo -e "${url} https://discord.gg/0bXnhqvo189oM8Cr${nc}"
 echo -e "${sep}"
 echo " "
 
+nextcloud.continue
+
+echo " "
 }
 
 #------------------------------------------------------------------------------#
@@ -2419,7 +2449,7 @@ echo '# The MySQL server configuration' >> /var/db/mysql/my.cnf
 echo '[mysqld]' >> /var/db/mysql/my.cnf
 echo 'socket          = /tmp/mysql.sock' >> /var/db/mysql/my.cnf
 echo '' >> /var/db/mysql/my.cnf
-echo '# Don't listen on a TCP/IP port at all.' >> /var/db/mysql/my.cnf
+echo "# Don't listen on a TCP/IP port at all." >> /var/db/mysql/my.cnf
 echo 'skip-networking' >> /var/db/mysql/my.cnf
 echo 'skip-name-resolve' >> /var/db/mysql/my.cnf
 echo '' >> /var/db/mysql/my.cnf
@@ -2523,6 +2553,103 @@ echo " "
 cd ${myappsdir}
 fetch https://raw.githubusercontent.com/JRGTH/nas4free-plex-extension/master/plex-install.sh && chmod +x plex-install.sh && ./plex-install.sh
 
+}
+
+#------------------------------------------------------------------------------#
+### OMBI INSTALL
+
+install.ombi ()
+{
+
+ombi.continue ()
+{
+echo -e "${msep}"
+echo -e "${emp}   Press Enter To Continue${nc}"
+echo -e "${msep}"
+read -r -p " " response
+case "$response" in
+    *)
+              echo " "
+              ;;
+esac
+}
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Ombi Install Script${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Let's start with some required packages${nc}"
+echo -e "${sep}"
+echo " "
+
+#Install packages
+pkg install wget mono screen unzip nano git sqlite3
+
+# Set default editor
+setenv EDITOR /usr/local/bin/nano
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Download Ombi${nc}"
+echo -e "${sep}"
+echo " "
+
+# Download Ombi
+wget -O /tmp/Ombi.zip https://github.com/tidusjar/Ombi/releases/download/v2.2.1/Ombi.zip
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Extract Ombi${nc}"
+echo -e "${sep}"
+echo " "
+
+# Unzip Ombi
+unzip /tmp/Ombi.zip -d /usr/local/share/
+# Move Ombi
+mv /usr/local/share/Release /usr/local/share/ombi/
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Create startup file${nc}"
+echo -e "${sep}"
+echo " "
+
+# Create ombi file
+touch /usr/local/bin/ombi
+echo "#!/bin/sh" > /usr/local/bin/ombi
+echo "cd /usr/local/share/ombi/" > /usr/local/bin/ombi
+echo "/usr/local/bin/screen -d -m -S ombi /usr/local/bin/mono /usr/local/share/ombi/Ombi.exe" > /usr/local/bin/ombi
+chmod 775 /usr/local/bin/ombi
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Add these lines to crontab${nc}"
+echo -e "${msg}   Copy the lines before pressing Enter then paste in to crontab${nc}"
+echo -e "${msg}   Close crontab afterwards with the following combination of keys${nc}"
+echo -e "${msg}   Ctrl+X then Y then Enter${nc}"
+echo -e "${sep}"
+echo " "
+
+# Add to crontab
+echo "SHELL=/bin/sh"
+echo "PATH=/etc:/bin:/sbin:/usr/bin:/usr/sbin"
+echo "#start ombi"
+echo "@reboot /usr/local/bin/ombi"
+echo " "
+
+ombi.continue
+
+crontab -e
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Restart jail and visit http://jailip:3579${nc}"
+echo -e "${sep}"
+echo " "
 }
 
 #------------------------------------------------------------------------------#
@@ -2758,6 +2885,92 @@ echo " "
 }
 
 #------------------------------------------------------------------------------#
+### WATCHER INSTALL
+
+install.watcher ()
+{
+
+echo -e "${sep}"
+echo -e "${sep}     Welcome to the Watcher installer!${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${sep} Let's get started with some packages${nc}"
+echo -e "${sep}"
+echo " "
+
+pkg update && pkg upgrade
+pkg install git python3 sqlite3
+
+cd /usr/local/
+git clone https://github.com/nosmokingbandit/Watcher3.git
+
+echo " "
+echo -e "${sep}"
+echo -e "${sep} Start watcher${nc}"
+echo -e "${sep}"
+echo " "
+
+python watcher/watcher.py --daemon --log /var/log/ --db /var/db/watcher.sqlite --pid /var/run/watcher.pid
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Open your browser and go to: ${url}http://${jailip}:9090${nc}"
+echo -e "${sep}"
+echo " "
+
+
+
+}
+
+#------------------------------------------------------------------------------#
+### RADARR INSTALL
+
+install.radarr ()
+{
+
+echo -e "${sep}"
+echo -e "${sep}     Welcome to the Radarr installer!${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${sep} Let's get started with some packages${nc}"
+echo -e "${sep}"
+echo " "
+
+pkg update && pkg upgrade
+pkg install -y mono mediainfo sqlite3 libgdiplus
+
+cd /usr/local/
+fetch https://github.com/Radarr/Radarr/releases/download/latest/Radarr.develop.latest.linux.tar.gz
+tar -zxvf Radarr.develop.*.linux.tar.gz
+rm Radarr.*.linux.tar.gz
+echo "/usr/local/bin/mono /usr/local/Radarr/Radarr.exe" > /etc/rc.d/radarr
+chmod 555 /etc/rc.d/radarr
+#this is needed for updates within Radarr
+ln -s /usr/local/bin/mono /bin
+
+echo " "
+echo -e "${sep}"
+echo -e "${sep} Start watcher${nc}"
+echo -e "${sep}"
+echo " "
+
+service radarr start
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Open your browser and go to: ${url}http://${jailip}:7878${nc}"
+echo -e "${sep}"
+echo " "
+
+}
+
+#------------------------------------------------------------------------------#
 ### HEADPHONES INSTALL
 
 install.headphones ()
@@ -2866,7 +3079,7 @@ esac
 confirmsuccess ()
 {
 # Confirm with the user
-echo -e "${msg} Head to your NAS WebGUI (Refresh page if it's already open)${nc}"
+echo -e "${msg} Head to your NAS WebGUI - Refresh page if it's already open${nc}"
 read -r -p "   Can you seen an 'Extensions' tab with 'TheBrig' listed? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
@@ -2876,7 +3089,7 @@ case "$response" in
     *)
               # Otherwise exit...
               echo " "
-              echo -e "${alt} Seems this script had an issue somewhere :(${nc}"
+              echo -e "${alt} Seems this script had an issue somewhere ${nc}"
               echo " "
               exit
               ;;
@@ -2968,6 +3181,89 @@ echo " "
 
 
 #------------------------------------------------------------------------------#
+### HTPC MANAGER INSTALL
+
+install.htpcmanager ()
+{
+
+echo -e "${sep}"
+echo -e "${sep}     Welcome to the HTPC installer!${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${sep} Let's get started with some packages${nc}"
+echo -e "${sep}"
+echo " "
+
+pkg update && pkg upgrade
+pkg install -y python27 sqlite3 git
+
+echo " "
+echo -e "${sep}"
+echo -e "${sep} Grab HTPC manager from github${nc}"
+echo -e "${sep}"
+echo " "
+
+cd /usr/local/
+git clone https://github.com/styxit/HTPC-Manager.git
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Open your browser and go to: ${url}http://${jailip}:9090${nc}"
+echo -e "${sep}"
+echo " "
+
+}
+
+#------------------------------------------------------------------------------#
+### ORGANIZR INSTALL
+
+install.organizr ()
+{
+
+echo -e "${sep}"
+echo -e "${sep}     Welcome to the Organizr installer!${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${sep} Let's get started with some packages${nc}"
+echo -e "${sep}"
+echo " "
+
+pkg update && pkg upgrade
+pkg install -y apache24 php56 mod_php56 php56-extensions php56-pdo php56-pdo_sqlite php56-simplexml php56-zip php56-openssl git
+
+echo " "
+echo -e "${sep}"
+echo -e "${sep} Modify apache${nc}"
+echo -e "${sep}"
+echo " "
+
+sysrc apache_enable=YES
+service apache24 start
+
+echo " "
+echo -e "${sep}"
+echo -e "${sep} Grab Organizer from github${nc}"
+echo -e "${sep}"
+echo " "
+
+cd  /usr/local/www/
+git clone https://github.com/causefx/Organizr.git
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Open your browser and go to: ${url}http://${jailip}/${nc}"
+echo -e "${sep}"
+echo " "
+
+}
+
+#------------------------------------------------------------------------------#
 ### CALIBRE INSTALL
 
 install.calibre ()
@@ -3004,6 +3300,83 @@ echo " "
 echo -e "${sep}"
 echo " That should be it!"
 echo " Happy reading!!"
+echo -e "${sep}"
+echo " "
+
+}
+
+#------------------------------------------------------------------------------#
+### MYLAR INSTALL
+
+install.mylar ()
+{
+
+echo -e "${sep}"
+echo -e "${sep}     Welcome to the Mylar installer!${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${sep} Let's get started with some packages${nc}"
+echo -e "${sep}"
+echo " "
+
+pkg install -y python27 git py27-cherrypy
+
+cd /usr/local/
+git clone https://github.com/evilhero/mylar.git
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Run Mylar${nc}"
+echo -e "${sep}"
+echo " "
+
+python mylar/mylar.py -d
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Open your browser and go to: ${url}http://${jailip}:8090${nc}"
+echo -e "${sep}"
+echo " "
+
+}
+
+#------------------------------------------------------------------------------#
+### LAZYLIBRARIAN INSTALL
+
+install.lazylibrarian ()
+{
+
+echo -e "${sep}"
+echo -e "${sep}     Welcome to the Lazy Librarian installer!${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${sep} Let's get started with some packages${nc}"
+echo -e "${sep}"
+echo " "
+
+pkg update && pkg upgrade
+pkg install -y python27 git
+
+cd /usr/local/
+git clone https://github.com/DobyTang/LazyLibrarian.git
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Run LazyLibrarian${nc}"
+echo -e "${sep}"
+echo " "
+
+python LazyLibrarian.py -d
+
+echo " "
+echo -e "${sep}"
+echo -e "${msg} Open your browser and go to: ${url}http://${jailip}:5299${nc}"
 echo -e "${sep}"
 echo " "
 
@@ -3095,7 +3468,7 @@ echo " ${deluge_user}:${deluge_user_password}:10" >> /home/deluge/.config/deluge
 echo " "
 
 # Allow remote connections
-echo " Find and change “allow_remote” from false to true."
+echo " Find and change 'allow_remote' from false to true."
 echo " Once you are done press Ctrl+X then Y to close and save the file"
 echo -e "${emp}   Make sure you read above before continuing${nc}"
 continue
@@ -3138,7 +3511,7 @@ echo " "
 echo " "
 echo -e "${sep}"
 echo -e "${msg}   Let's get right to it and download the package${nc}"
-echo -e "${msg}    (Will grab ffmpeg as well purely for ffprobe)${nc}"
+echo -e "${msg}    Will grab ffmpeg as well purely for ffprobe${nc}"
 echo -e "${sep}"
 echo " "
 
@@ -3243,7 +3616,7 @@ echo 'sabnzbd_enable="YES"' >> /etc/rc.conf
 echo " "
 echo -e "${sep}"
 echo -e "${msg} Before we are able to run SABnzbd, we need to modify a file${nc}"
-echo -e "${msg} Using nano, change the first line (/usr/bin/python)${nc}"
+echo -e "${msg} Using nano, change the first line '/usr/bin/python'${nc}"
 echo -e "${msg} to match the following:${nc}"
 echo -e "${cmd}    #!/usr/local/bin/python2.7${nc}"
 echo -e "${sep}"
@@ -3264,6 +3637,25 @@ echo " "
 echo -e "${sep}"
 echo -e "${msg} Done! Head to: ${url}yourjailip:8080${nc}"
 echo -e "${msg} to finish the setup!${nc}"
+echo -e "${sep}"
+echo " "
+
+}
+
+#------------------------------------------------------------------------------#
+### NZBHYDRA INSTALL
+
+install.nzbhydra ()
+{
+
+echo -e "${sep}"
+echo -e "${sep}     Welcome to the NZBHydra installer!${nc}"
+echo -e "${sep}"
+echo " "
+echo " "
+echo " "
+echo -e "${sep}"
+echo -e "${sep} Let's get started with some packages${nc}"
 echo -e "${sep}"
 echo " "
 
@@ -3648,9 +4040,9 @@ echo " "
 #------------------------------------------------------------------------------#
 ### NEXTCLOUD UPDATE
 
-update.pydio ()
+update.nextcloud ()
 {
-
+	echo " "
 }
 
 #------------------------------------------------------------------------------#
@@ -3658,7 +4050,7 @@ update.pydio ()
 
 update.pydio ()
 {
-
+	echo " "
 }
 
 #------------------------------------------------------------------------------#
@@ -3762,18 +4154,16 @@ read -r -p " Select version yourself? [y/N] " response
             echo -e "${msg} You can find release numbers here:${nc}"
             echo -e "${url} https://github.com/MediaBrowser/Emby/releases${nc}"
             echo " "
-            echo -e "${imp} NOTE: If selecting a beta or dev version,${nc}"
-            echo -e "${imp} leave off the '-beta'/'-dev' from version number!${nc}"
+            echo -e "${emp} NOTE: ${inf}If selecting a beta or dev version,${nc}"
+            echo -e "${inf} leave off the '-beta'/'-dev' from version number!${nc}"
             echo " "
             echo -e "${msg} Which version number do you want?${nc}"
             echo -e "${qry} Example version:${nc}"
-            echo -e "${url} 3.1.2${nc}"
+            echo -e "${url} 3.2.17.0${nc}"
             echo " "
-            echo "Version:"
-            read userselected_emby_update_ver
-            echo " "
-            echo " Downloading user selected version (${emby_def_update_ver})"
-            echo " "
+			printf "${emp} Version: ${nc}" ; read userselected_emby_update_ver
+			echo -e "${fin}    Version set to: ${msg}${userselected_emby_update_ver}${nc}"
+			echo " "
             echo -e "${sep}"
             echo -e "${msg} Grab the update for Emby from github${nc}"
             echo -e "${sep}"
@@ -4712,13 +5102,13 @@ case "$response" in
     *)
               # Otherwise exit...
               echo " "
-              echo -e "${alt} Stopping script..${nc}"
+              echo -e "${alt}Stopping script..${nc}"
               echo " "
-              echo -e "${sep}"
               exit
               ;;
 esac
 }
+
 echo -e "${sep}"
 echo -e "${msg}   Let's start with double checking some things${nc}"
 echo -e "${sep}"
@@ -4728,23 +5118,22 @@ echo -e "${msg} Is this script running ${alt}INSIDE${msg} of a jail?${nc}"
 
 confirm
 
-echo " "
-echo -e "${msg} Checking to see if you need to modify the script${nc}"
-echo -e "${msg} If ${emp}ANY${msg} of these ${emp}DON'T${msg} match YOUR setup, answer with ${emp}no${nc}."
-echo -e " "
-echo -e "      ${alt}#1: ${msg}Is this your jails IP? ${qry}$cloud_server_ip${nc}"
-echo -e "      ${alt}#2: ${msg}Is this the port you want to use? ${qry}$cloud_server_port${nc}"
-echo -e "      ${alt}#3: ${msg}Is this the ownCloud version you want to install? ${qry}$nextcloud_version${nc}"
-echo -e " "
-echo -e "${emp} If #1 or #2 are incorrect you will encounter issues!${nc}"
+#echo " "
+#echo -e "${msg} Checking to see if you need to modify the script${nc}"
+#echo -e "${msg} If ${emp}ANY${msg} of these ${emp}DON'T${msg} match YOUR setup, answer with ${emp}no${nc}."
+#echo -e " "
+#echo -e "      ${alt}#1: ${msg}Is this your jails IP? ${qry}$server_ip${nc}"
+#echo -e "      ${alt}#2: ${msg}Is this the port you want to use? ${qry}$server_port${nc}"
+#echo -e "      ${alt}#3: ${msg}Is this the NextCloud version you want to install? ${qry}$nextcloud_version${nc}"
+#echo -e " "
+#echo -e "${emp} If #1 or #2 are incorrect you will encounter issues!${nc}"
 
-confirm
+#confirm
 
 echo " "
-echo -e "${fin} Awesome, now we are ready to get on with it!${nc}"
+
 # Confirm with the user
-echo " "
-echo -e "${inf} Final confirmation before installing NextCloud.${nc}"
+echo -e "${inf} Final confirmation before installing nextcloud.${nc}"
 read -r -p "   Confirm Installation of NextCloud? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
@@ -4754,7 +5143,6 @@ case "$response" in
     *)
               # Otherwise exit...
               echo " "
-              echo -e "${sep}"
               return
               ;;
 esac
@@ -4791,6 +5179,26 @@ case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then continue
               install.emby
+               ;;
+    *)
+              # Otherwise exit...
+              echo " "
+              return
+              ;;
+esac
+}
+
+#------------------------------------------------------------------------------#
+### OMBI SERVER CONFIRM INSTALL
+
+confirm.install.ombi ()
+{
+# Confirm with the user
+read -r -p "   Confirm Installation of Ombi Media Requests? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+              # If yes, then continue
+              install.ombi
                ;;
     *)
               # Otherwise exit...
@@ -5731,7 +6139,7 @@ do
         echo -e "${fin}   3)${msg} Subsonic${nc}"
         echo -e "${fin}   4)${msg} Madsonic${nc}"
         echo " "
-        echo -e "${ca}   2)${ca} Ombi - Plex/Emby Requests (Currently Unavailable)${nc}"
+        echo -e "${fin}   5)${msg} Ombi - Plex/Emby Requests${nc}"
         echo " "
         echo -e "${ca}  a) About Media Streaming (Currently Unavailable)${nc}"
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
@@ -5758,6 +6166,9 @@ do
                 ;;
             '4')
                 madsonic.submenu
+                ;;
+			'5')
+                ombi.submenu
                 ;;
             #'a')
             #    about.streaming
@@ -5894,6 +6305,64 @@ do
                 ;;
             #'i')
             #    moreinfo.submenu.plex
+            #    ;;
+            'b') return
+                ;;
+            *)   echo -e "${alt}        Invalid choice, please try again${nc}"
+                echo " "
+                ;;
+        esac
+done
+}
+
+#------------------------------------------------------------------------------#
+### OMBI SERVER SUBMENU
+
+ombi.submenu ()
+{
+while [ "$choice" != "a,h,i,b,q" ]
+do
+        echo -e "${sep}"
+        echo -e "${fin} Ombi Options${nc}"
+        echo -e "${sep}"
+        echo -e "${qry} Choose one:${nc}"
+        echo " "
+        echo -e "${fin}   1)${msg} Install${nc}"
+        echo -e "${ca}   2)${ca} Update (Currently Unavailable)${nc}"
+        echo -e "${ca}   3)${ca} Backup (Currently Unavailable)${nc}"
+        echo " "
+        echo -e "${ca}  a) About Plex${nc}"
+        echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
+        echo -e "${ca}  h) Get Help${nc}"
+        echo " "
+        echo -e "${emp}  b) Back${nc}"
+
+        echo -e "${ssep}"
+        read -r -p "     Your choice: " choice
+        echo -e "${ssep}"
+        echo " "
+
+        case $choice in
+            '1') echo -e "${inf} Installing..${nc}"
+                echo " "
+                confirm.install.ombi
+                ;;
+            '2') echo -e "${inf} Running Update..${nc}"
+                echo " "
+                confirm.update.ombi
+                ;;
+            '3') echo -e "${inf} Backup..${nc}"
+                echo " "
+                backup.ombi
+                ;;
+            'a')
+                about.ombi
+                ;;
+            'h')
+                gethelp
+                ;;
+            #'i')
+            #    moreinfo.submenu.ombi
             #    ;;
             'b') return
                 ;;
@@ -7306,7 +7775,7 @@ mainmenu=""
 while [ "$choice" != "q,a,h,i,j" ]
 do
         echo -e "${sep}"
-        echo -e "${inf} AIO Script - Version: 1.0.30 (January 17, 2017) by Nozza"
+        echo -e "${inf} AIO Script - Version: 1.0.32 (May 19, 2017) by Nozza"
         echo -e "${sep}"
         echo -e "${emp} Main Menu"
         echo " "
@@ -7417,7 +7886,7 @@ done
 
 # FUTURE: Add "Radarr"
 # FUTURE: Add "Watcher" (Movies - CouchPotato Alternative)
-# FUTURE: Add "Ombi" (Emby/Plex Media Requests)
+
 
 # FUTURE: Add "HTPC Manager" (Combines many services in one interface)
 

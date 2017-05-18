@@ -1,5 +1,29 @@
 # Changelog
 
+### Version: 1.0.32 (May 19, 2017)
+* NextCloud
+    * Updated NextCloud installer
+	* No longer required to edit script before running it
++ Ombi
+    + Added Ombi (Media Request tool for Emby/Plex)
++ Watcher
+	+ Started on installer
++ Radarr
+	+ Started on installer
++ HTPC Manager
+	+ Started on installer
++ Organizr
+	+ Started on installer
++ Mylar
+	+ Started on installer
++ Lazy Librarian
+	+ Started on installer
++ NZBHydra
+	+ Started on installer
+* General
+    + Added a way to auto grab jails IP for future things
+	+ Debug stuff
+
 ### Version: 1.0.31 (April 23, 2017)
 * Emby
     * Updated default install/update version to 3.2.13

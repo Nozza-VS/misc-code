@@ -148,7 +148,7 @@ do
         echo " "
         echo -e "${fin}   Find an issue with the script or have a suggestion?${nc}"
         echo -e "${msg}   Drop a message using the above or head here:${nc}"
-        echo -e "${url}      https://github.com/Nostalgist92/misc-code/issues"
+        echo -e "${url}      https://github.com/Nozza-VS/misc-code/issues"
         echo " "
         echo -e "${emp}   Press Enter To Go Back To The Menu${nc}"
         echo -e "${msep}"
@@ -2671,7 +2671,7 @@ echo " "
 
 pkg install -y subsonic-standalone
 pkg install -y xtrans xproto xextproto javavmwrapper flac openjdk8 ffmpeg
-pkg install -y https://github.com/Nostalgist92/misc-code/blob/master/NAS4Free/Subsonic/lame.tbz
+pkg install -y https://github.com/Nozza-VS/misc-code/blob/master/NAS4Free/Streaming/Subsonic/lame.tbz
 
 echo " "
 echo -e "${sep}"
@@ -3006,8 +3006,8 @@ echo -e "${sep}"
 echo " "
 
 # cp headphones/init-scripts/init.freebsd /usr/local/etc/rc.d/headphones
-#Fetch Nostalgist92's startup script instead
-fetch --no-verify-peer -o /usr/local/etc/rc.d/headphones "https://raw.githubusercontent.com/Nostalgist92/misc-code/master/NAS4Free/HeadPhones/init-script"
+#Fetch Nozza-VS's startup script instead
+fetch --no-verify-peer -o /usr/local/etc/rc.d/headphones "https://raw.githubusercontent.com/Nozza-VS/misc-code/master/NAS4Free/Search Tools/Headphones/headphones-init-script"
 #Make startup script executable
 chmod 555 /usr/local/etc/rc.d/headphones
 chmod +x /usr/local/etc/rc.d/headphones
@@ -3608,7 +3608,7 @@ echo -e "${msg} Fetch startup script${nc}"
 echo -e "${sep}"
 echo " "
 
-fetch --no-verify-peer -o /usr/local/etc/rc.d/sabnzbd "https://raw.githubusercontent.com/Nostalgist92/misc-code/master/NAS4Free/SABnzbd/init-script"
+fetch --no-verify-peer -o /usr/local/etc/rc.d/sabnzbd "https://raw.githubusercontent.com/Nozza-VS/misc-code/master/NAS4Free/Download Tools/SABnzbd/init-script"
 chmod 755 /usr/local/etc/rc.d/sabnzbd
 chmod +x /usr/local/etc/rc.d/sabnzbd
 echo 'sabnzbd_enable="YES"' >> /etc/rc.conf

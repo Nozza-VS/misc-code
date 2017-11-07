@@ -13,7 +13,7 @@ fi
 
 cd $scriptPath
 gitdir="$(dirname "$dir")"
-git pull https://github.com/Nostalgist92/misc-code.git
+git fetch https://github.com/Nostalgist92/misc-code.git
 
 echo " Done with update, now re-run the 'mainmenu.sh'"
 echo "chmod +x $gitdir"

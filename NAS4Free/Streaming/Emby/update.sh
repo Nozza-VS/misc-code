@@ -1,7 +1,7 @@
 # Load config
 . $scriptPath/Streaming/Emby/emby.cfg
 
-emby_def_update_ver="3.2.26.0"
+emby_def_update_ver="3.2.36.0"
 
 #------------------------------------------------------------------------------#
 ### EMBY SERVER CONFIRM UPDATE (LATEST GIT METHOD)
@@ -143,7 +143,7 @@ read -r -p " Select version yourself? [y/N] " response
             echo " "
             echo -e "${msg} Which version number do you want?${nc}"
             echo -e "${qry} Example version:${nc}"
-            echo -e "${url} 3.2.26.0${nc}"
+            echo -e "${url} 3.2.36.0${nc}"
             echo " "
 			printf "${emp} Version: ${nc}" ; read userselected_emby_update_ver
 			echo -e "${fin}    Version set to: ${msg}${userselected_emby_update_ver}${nc}"
@@ -167,6 +167,13 @@ read -r -p " Select version yourself? [y/N] " response
             echo -e "${sep}"
             echo " "
 
+			#if [ -f "/tmp/emby-${userselected_emby_update_ver}.zip" ]
+			#then
+			#	echo "$userselected_emby_update_ver.zip found, extracting"
+			#    unzip -o "/tmp/emby-${userselected_emby_update_ver}.zip" -d /usr/local/lib/emby-server
+			#else
+			#	echo "$userselected_emby_update_ver.zip not found"
+			#fi
             unzip -o "/tmp/emby-${userselected_emby_update_ver}.zip" -d /usr/local/lib/emby-server
             ;;
         *)
@@ -193,6 +200,13 @@ read -r -p " Select version yourself? [y/N] " response
             echo -e "${sep}"
             echo " "
 
+			#if [ -f "/tmp/emby-${userselected_emby_update_ver}.zip" ]
+			#then
+			#	echo "$userselected_emby_update_ver.zip found, extracting"
+			#    unzip -o "/tmp/emby-${userselected_emby_update_ver}.zip" -d /usr/local/lib/emby-server
+			#else
+			#	echo "/tmp/emby-${userselected_emby_update_ver}.zip not found, trying 'emby-${emby_def_update_ver}.zip'"
+			#fi
             unzip -o "/tmp/emby-${emby_def_update_ver}.zip" -d /usr/local/lib/emby-server
             ;;
     esac
@@ -354,41 +368,6 @@ echo -e "${sep}"
 echo " "
 
 select.emby.update.version
-
-#echo " "
-#echo -e "${sep}"
-#echo -e "${msg} Download done, let's stop the server${nc}"
-#echo -e "${sep}"
-#echo " "
-
-#service emby-server stop
-
-#echo " "
-#echo -e "${sep}"
-#echo -e "${msg} Now to extract the download and replace old version${nc}"
-#echo -e "${sep}"
-#echo " "
-
-#unzip -o "/tmp/emby-${userselected_emby_update_ver}.zip" -d /usr/local/lib/emby-server
-#unzip -o "/tmp/emby-${emby_def_update_ver}.zip" -d /usr/local/lib/emby-server
-
-# Script default version
-#if [ -f "/tmp/emby-${userselected_emby_update_ver}.zip" ]
-#then
-#	echo "$userselected_emby_update_ver.zip found, extracting"
-#    unzip -o "/tmp/emby-${userselected_emby_update_ver}.zip" -d /usr/local/lib/emby-server
-#else
-#	echo "/tmp/emby-${userselected_emby_update_ver}.zip not found, trying 'emby-${emby_def_update_ver}.zip'"
-#fi
-#
-# User selected version
-#if [ -f "/tmp/emby-${userselected_emby_update_ver}.zip" ]
-#then
-#	echo "$userselected_emby_update_ver.zip found, extracting"
-#    unzip -o "/tmp/emby-${userselected_emby_update_ver}.zip" -d /usr/local/lib/emby-server
-#else
-#	echo "$userselected_emby_update_ver.zip not found"
-#fi
 
 echo " "
 echo -e "${sep}"

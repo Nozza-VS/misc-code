@@ -4,17 +4,25 @@
 # By Ashley Townsend (Nozza)    Copyright: Beerware License
 ################################################################################
 
-PKG_OK=$(pkg query %n git-lite|grep "git-lite")
 #Check to see if Git is installed
+PKG_OK=$(pkg info|grep -E "(\bgit\-lite-|\bgit-)")
 if [ "" == "$PKG_OK" ]; then
   echo "Git not installed, installing now."
   pkg install -y git-lite
+  else
+  	echo "Git found, proceeding with fetch"
 fi
 
+# Make sure we are in the right dir
 cd $scriptPath
 gitdir="$(dirname "$dir")"
+
+# Fetch any updates
 git fetch https://github.com/Nostalgist92/misc-code.git
 
-echo " Done with update, now re-run the 'mainmenu.sh'"
-echo "chmod +x $gitdir"
+# Ensure the main menu file is executable
+chmod +x $gitdir/NAS4Free/mainmenu.sh
+
+# Done!
+echo " Done with update, now re-run $gitdir/NAS4Free/'mainmenu.sh'"
 exit

@@ -2,7 +2,7 @@
 
 Script to aid in the installation/updating/backuping up of ownCloud, MySQL (with phpmyadmin and/or webmin), sonarr, couchpotato, headphones and some others
 
-[See the changelog here](https://github.com/Nostalgist92/misc-code/blob/master/NAS4Free/CHANGELOG.md)
+[See the changelog here](https://github.com/Nozza-VS/misc-code/blob/master/NAS4Free/CHANGELOG.md)
 
 ## Emby Scripts
 

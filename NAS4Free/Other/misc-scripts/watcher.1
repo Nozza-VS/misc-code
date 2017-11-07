@@ -1,0 +1,52 @@
+#!/bin/sh
+#
+# PROVIDE: watcher
+# REQUIRE: DAEMON
+# KEYWORD: shutdown
+
+# Add the following lines to /etc/rc.conf to enable watcher:
+# watcher_enable:   Set to NO by default. Set it to YES to enable it.
+# watcher_user:     The user account Watcher daemon runs as what
+#                       you want it to be.
+# watcher_dir:      Directory where Watcher lives.
+#                           Default: /usr/local/WatcherServer
+# watcher_datadir:  Directory where Watcher user data lives.
+#                           Default: $watcher_dir/data
+# watcher_conf:     Directory where Watcher user data lives.
+#                           Default: $watcher_datadir/settings.conf
+# watcher_pid:      Full path to PID file.
+#                           Default: $watcher_datadir/watcher.pid
+# watcher_flags:    Set additonal flags as needed.
+
+. /etc/rc.subr
+
+name="watcher"
+rcvar=${name}_enable
+
+load_rc_config ${name}
+
+: ${watcher_enable:="NO"}
+: ${watcher_user:="root"}
+: ${watcher_conf:="/data/Watcher/config.cfg"}
+: ${watcher_logs:="/data/Watcher/logs/"}
+: ${watcher_db:="/data/Watcher/watcher.sqlite"}
+: ${watcher_plugins:="/data/Watcher/plugins/"}
+: ${watcher_flags:=""}
+
+pidfile="/var/run/watcher.pid"
+command="/usr/local/bin/python2.7"
+command_args="/data/Watcher/watcher.py --daemon --pid ${pidfile}"
+#command_args="/data/Watcher/watcher.py --daemon --pid ${pidfile} --conf ${watcher_conf} --db ${watcher_db} --plugins ${watcher_plugins}"
+
+start_precmd="watcher_prestart"
+watcher_prestart() {
+        if [ ! -d ${pidfile%/*} ]; then
+                install -d -o ${watcher_user} -g ${watcher_group} ${pidfile%/*}
+        fi
+
+        if [ ! -d ${watcher_data_dir} ]; then
+                install -d -o ${watcher_user} -g ${watcher_group} ${watcher_data_dir}
+        fi
+}
+
+run_rc_command "$1"

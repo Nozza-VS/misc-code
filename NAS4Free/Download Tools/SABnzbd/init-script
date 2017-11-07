@@ -1,0 +1,47 @@
+#!/bin/sh
+#
+# PROVIDE: sabnzbd
+# REQUIRE: NETWORKING DAEMON
+# KEYWORD: shutdown
+#
+# Add the following lines to /etc/rc.conf.local or /etc/rc.conf
+# to enable this service:
+#
+#sabnzbd_enable="YES"
+#
+# It is recommended not to run SABnzbd as root. Add the following
+# lines to /etc/rc.conf.local or /etc/rc.conf to run the daemon
+# with the credentials of user 'john'
+# user 'john'
+
+. /etc/rc.subr
+
+name=sabnzbd
+rcvar=sabnzbd_enable
+
+sabnzbd_enable=${sabnzbd_enable-"NO"}
+sabnzbd_user=root
+sabnzbd_py=/usr/local/bin/python2.7
+sabnzbd_PATH="/usr/local/Sabnzbd/SABnzbd.py"
+sabnzbd_pid="/var/run/sabnzbd.pid"
+sabnzbd_conf="/usr/local/etc/sabnzbd.ini"
+sabnzbd_IP=""
+sabnzbd_PORT="8080"
+#sabnzbd_pass=""
+#sabnzbd_APIKEY=""
+
+start_cmd=${name}_start
+stop_cmd=${name}_stop
+
+sabnzbd_start() {
+    PATH=$PATH:/usr/local/bin:/usr/local/sbin; export PATH
+    su ${sabnzbd_user} -c "$sabnzbd_py $sabnzbd_PATH --daemon -d --pid $sabnzbd_pid -f $sabnzbd_conf" -s $sabnzbd_IP:$sabnzbd_PORT
+}
+
+sabnzbd_stop() {
+    sabnzbd_pid=`ps -U ${sabnzbd_user} | grep "python.*SABnzbd.py.*--daemon" | grep -v 'grep' | awk '{print $1}'`
+    if [ -n "${sabnzbd_pid}" ]; then kill ${sabnzbd_pid}; fi
+}
+
+load_rc_config ${name}
+run_rc_command "$1"

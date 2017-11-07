@@ -1,5 +1,9 @@
 # Changelog
 
+### Version: 1.1.01 (May 24, 2017)
+* General
+	* Split script in to smaller parts for easier management
+
 ### Version: 1.0.32 (May 19, 2017)
 * NextCloud
     * Updated NextCloud installer

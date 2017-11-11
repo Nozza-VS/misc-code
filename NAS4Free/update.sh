@@ -15,7 +15,7 @@ fi
 
 # Make sure we are in the right dir
 cd $scriptPath
-gitdir="$(dirname "$dir")"
+gitdir="$(dirname "$scriptPath")"
 
 # Fetch any updates
 git fetch https://github.com/Nostalgist92/misc-code.git

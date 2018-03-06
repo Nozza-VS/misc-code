@@ -30,8 +30,8 @@ case "$response" in
 
               update.emby.continue
 
-              make install clean
-              #make -DBATCH install clean
+              #make install clean
+              make -DBATCH install clean
 
               echo " "
               echo -e "${sep}"
@@ -76,6 +76,10 @@ case "$response" in
               echo -e "${msg} Finished with the recompiling!${nc}"
               echo -e "${sep}"
               echo " "
+
+			  # Prevent package manager from updating this
+			  #pkg lock ImageMagick
+			  #pkg lock ffmpeg
 
               ;;
     *)

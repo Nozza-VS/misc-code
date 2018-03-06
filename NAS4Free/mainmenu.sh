@@ -33,6 +33,7 @@ do
 	echo -e "${fin}   3)${url} Media Streaming Servers ${nc}(Emby | Plex | Subsonic etc.)"
 	echo -e "${fin}   4)${url} Sonarr ${nc}(TV & Anime) | ${url}CouchPotato ${nc}(Movies) | ${url}HeadPhones ${nc}(Music)"
 	echo -e "${fin}   5)${url} Download Tools ${nc}(NZBGet - Usenet | NZBHydra (Indexer) | Deluge - Torrents)${nc}"
+	echo -e "${fin}   6)${url} Security ${nc}(IP Camera Surveillance etc)${nc}"
 	echo " "
 	echo -e "${cmd}   o)${msg} OneButtonInstaller${nc}"
 	echo " "
@@ -54,6 +55,7 @@ do
             '3')	printf '\033\143'; . "$scriptPath/Streaming/menu.sh" ;;
             '4')	printf '\033\143'; . "$scriptPath/Search Tools/menu.sh" ;;
             '5')	printf '\033\143'; . "$scriptPath/Download Tools/menu.sh" ;;
+            '6')	printf '\033\143'; . "$scriptPath/Security/menu.sh" ;;
 
 			'o')	printf '\033\143'; . "$scriptPath/OBI/menu.sh" ;;
 

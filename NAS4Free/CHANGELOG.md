@@ -1,5 +1,14 @@
 # Changelog
 
+### Version: 1.1.02 (August 5, 2018)
+* General
+	* Reorganized some files
+* Emby
+    * Changed to GitHub BSD version downloads
+	+ Added version checking
+* Organizr
+	* Change dependency versions
+
 ### Version: 1.1.01 (May 24, 2017)
 * General
 	* Split script in to smaller parts for easier management

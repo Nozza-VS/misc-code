@@ -1,12 +1,12 @@
 #------------------------------------------------------------------------------#
-### Watcher SUBMENU
+### Sonarr SUBMENU
 
-watcher.submenu ()
+sonarr.submenu ()
 {
 while [ "$choice" != "a,h,i,b,q" ]
 do
         echo -e "${sep}"
-        echo -e "${fin} Watcher Options${nc}"
+        echo -e "${fin} Sonarr Options${nc}"
         echo -e "${sep}"
         echo -e "${qry} Choose one:${nc}"
         echo " "
@@ -14,7 +14,7 @@ do
         echo -e "${ca}   2)${ca} Update (Currently Unavailable)${nc}"
         echo -e "${ca}   3)${ca} Backup (Currently Unavailable)${nc}"
         echo " "
-        echo -e "${inf}  a) About Watcher${nc}"
+        echo -e "${inf}  a) About Sonarr${nc}"
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
         echo -e "${inf}  h) Get Help${nc}"
         echo " "
@@ -27,23 +27,23 @@ do
 
         case $choice in
             '1')	printf '\033\143'; echo -e "${inf} Installing..${nc}" ; echo " "
-                	. $scriptPath/"Search Tools"/Watcher/install.sh ;;
+                	. $scriptPath/"Media Management"/Series/Sonarr/install.sh ;;
             #'2')	printf '\033\143'; echo -e "${inf} Running Update..${nc}" ; echo " "
-            #    	. $scriptPath/"Search Tools"/Watcher/update.sh ;;
+            #    	. $scriptPath/"Media Management"/Series/Sonarr/update.sh ;;
             #'3') 	printf '\033\143'; echo -e "${inf} Backup..${nc}" ; echo " "
-            #    	. $scriptPath/"Search Tools"/Watcher/backup.sh ;;
-			
-            'a')	printf '\033\143'; . $scriptPath/"Search Tools"/Watcher/about.sh ;;
+            #    	. $scriptPath/"Media Management"/Series/Sonarr/backup.sh ;;
+
+            'a')	printf '\033\143'; . $scriptPath/"Media Management"/Series/Sonarr/about.sh ;;
             'h')	printf '\033\143'; (. $scriptPath/gethelp.sh);;
-            #'i')	printf '\033\143'; . $scriptPath/"Search Tools"/Watcher/moreinfo.sh ;;
-			
+            #'i')	printf '\033\143'; . $scriptPath/"Media Management"/Series/Sonarr/moreinfo.sh ;;
+
             'b') 	printf '\033\143'; return ;;
 			'm') 	. $scriptPath/mainmenu.sh ;;
-					
+
             *)		echo -e "${alt}        Invalid choice, please try again${nc}" ; echo " " ;;
-			
+
         esac
 done
 }
 
-watcher.submenu
+sonarr.submenu

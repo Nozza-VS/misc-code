@@ -1,12 +1,12 @@
 #------------------------------------------------------------------------------#
-### XDM SUBMENU
+### COUCHPOTATO SUBMENU
 
-xdm.submenu ()
+couchpotato.submenu ()
 {
 while [ "$choice" != "a,h,i,b,q" ]
 do
         echo -e "${sep}"
-        echo -e "${fin} XDM Options${nc}"
+        echo -e "${fin} CouchPotato Options${nc}"
         echo -e "${sep}"
         echo -e "${qry} Choose one:${nc}"
         echo " "
@@ -14,7 +14,7 @@ do
         echo -e "${ca}   2)${ca} Update (Currently Unavailable)${nc}"
         echo -e "${ca}   3)${ca} Backup (Currently Unavailable)${nc}"
         echo " "
-        echo -e "${inf}  a) About XDM${nc}"
+        echo -e "${inf}  a) About CouchPotato${nc}"
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
         echo -e "${inf}  h) Get Help${nc}"
         echo " "
@@ -27,23 +27,23 @@ do
 
         case $choice in
             '1')	printf '\033\143'; echo -e "${inf} Installing..${nc}" ; echo " "
-                	. $scriptPath/"Search Tools"/XDM/install.sh ;;
+                	. $scriptPath/"Media Management"/Movies/Couchpotato/install.sh ;;
             #'2')	printf '\033\143'; echo -e "${inf} Running Update..${nc}" ; echo " "
-            #    	. $scriptPath/"Search Tools"/XDM/update.sh ;;
+            #    	. $scriptPath/"Media Management"/Movies/Couchpotato/update.sh ;;
             #'3') 	printf '\033\143'; echo -e "${inf} Backup..${nc}" ; echo " "
-            #    	. $scriptPath/"Search Tools"/XDM/backup.sh ;;
-			
-            'a')	printf '\033\143'; . $scriptPath/"Search Tools"/XDM/about.sh ;;
+            #    	. $scriptPath/"Media Management"/Movies/Couchpotato/backup.sh ;;
+
+            'a')	printf '\033\143'; . $scriptPath/"Media Management"/Movies/Couchpotato/about.sh ;;
             'h')	printf '\033\143'; (. $scriptPath/gethelp.sh);;
-            #'i')	printf '\033\143'; . $scriptPath/"Search Tools"/XDM/moreinfo.sh ;;
-			
+            #'i')	printf '\033\143'; . $scriptPath/"Media Management"/Movies/Couchpotato/moreinfo.sh ;;
+
             'b') 	printf '\033\143'; return ;;
 			'm') 	. $scriptPath/mainmenu.sh ;;
-					
+
             *)		echo -e "${alt}        Invalid choice, please try again${nc}" ; echo " " ;;
-			
+
         esac
 done
 }
 
-xdm.submenu
+couchpotato.submenu

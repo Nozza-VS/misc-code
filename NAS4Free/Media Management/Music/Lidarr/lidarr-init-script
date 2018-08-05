@@ -1,0 +1,42 @@
+#!/bin/sh
+#
+# Author: Jarod Sams
+#
+
+# PROVIDE: lidarr
+# REQUIRE: LOGIN
+# KEYWORD: shutdown
+
+# Add the following lines to /etc/rc.conf to enable lidarr:
+# lidarr_enable="YES"
+
+. /etc/rc.subr
+
+name="lidarr"
+rcvar=lidarr_enable
+
+load_rc_config $name
+
+: ${lidarr_enable="NO"}
+: ${lidarr_user:="media"}
+# This next directory can be changed to whatever you want
+: ${lidarr__data_dir:="/var/db/lidarr"}
+
+pidfile="${lidarr__data_dir}/lidarr.pid"
+# You may need to adjust the mono location if your mono executable is somewhere else
+procname="/usr/local/bin/mono"
+command="/usr/sbin/daemon"
+# The directory laid out in the next line will need to be changed if your Lidarr directory is elsewhere
+command_args="-f ${procname} /usr/local/share/lidarr/Lidarr.exe --nobrowser --data=${lidarr__data_dir}"    
+start_precmd=lidarr_precmd
+
+lidarr_precmd()
+{
+	export XDG_CONFIG_HOME=${lidarr__data_dir}
+
+	if [ ! -d ${lidarr__data_dir} ]; then
+		install -d -o ${lidarr_user} ${lidarr__data_dir}
+	fi
+}
+
+run_rc_command "$1"

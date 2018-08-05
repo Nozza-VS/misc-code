@@ -1,12 +1,12 @@
 #------------------------------------------------------------------------------#
-### Radarr SUBMENU
+### Calibre SUBMENU
 
-radarr.submenu ()
+calibre.submenu ()
 {
 while [ "$choice" != "a,h,i,b,q" ]
 do
         echo -e "${sep}"
-        echo -e "${fin} Radarr Options${nc}"
+        echo -e "${fin} Calibre Options${nc}"
         echo -e "${sep}"
         echo -e "${qry} Choose one:${nc}"
         echo " "
@@ -14,7 +14,7 @@ do
         echo -e "${ca}   2)${ca} Update (Currently Unavailable)${nc}"
         echo -e "${ca}   3)${ca} Backup (Currently Unavailable)${nc}"
         echo " "
-        echo -e "${inf}  a) About Radarr${nc}"
+        echo -e "${inf}  a) About Calibre${nc}"
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
         echo -e "${inf}  h) Get Help${nc}"
         echo " "
@@ -27,23 +27,23 @@ do
 
         case $choice in
             '1')	printf '\033\143'; echo -e "${inf} Installing..${nc}" ; echo " "
-                	. $scriptPath/"Search Tools"/Radarr/install.sh ;;
+                		. $scriptPath/"Media Management"/Books/Calibre/install.sh ;;
             #'2')	printf '\033\143'; echo -e "${inf} Running Update..${nc}" ; echo " "
-            #    	. $scriptPath/"Search Tools"/Radarr/update.sh ;;
+            #    		. $scriptPath/"Media Management"/Books/Calibre/update.sh ;;
             #'3') 	printf '\033\143'; echo -e "${inf} Backup..${nc}" ; echo " "
-            #    	. $scriptPath/"Search Tools"/Radarr/backup.sh ;;
-			
-            'a')	printf '\033\143'; . $scriptPath/"Search Tools"/Radarr/about.sh ;;
+            #    		. $scriptPath/"Media Management"/Books/Calibre/backup.sh ;;
+
+            'a')	printf '\033\143'; . $scriptPath/"Media Management"/Books/Calibre/about.sh ;;
             'h')	printf '\033\143'; (. $scriptPath/gethelp.sh);;
-            #'i')	printf '\033\143'; . $scriptPath/"Search Tools"/Radarr/moreinfo.sh ;;
-			
+            #'i')	printf '\033\143'; . $scriptPath/"Media Management"/Books/Calibre/moreinfo.sh ;;
+
             'b') 	printf '\033\143'; return ;;
 			'm') 	. $scriptPath/mainmenu.sh ;;
-					
+
             *)		echo -e "${alt}        Invalid choice, please try again${nc}" ; echo " " ;;
-			
+
         esac
 done
 }
 
-radarr.submenu
+calibre.submenu

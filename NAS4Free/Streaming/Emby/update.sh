@@ -1,7 +1,22 @@
-# Load config
-. $scriptPath/Streaming/Emby/emby.cfg
+#!/bin/sh
+#------------------------------------------------------------------------------#
 
-emby_def_update_ver="3.2.36.0"
+echo " "
+echo -e "${sep}"
+echo -e "${msg}   Emby Server Updater${nc}"
+echo -e "${sep}"
+echo " "
+echo " Checking currently installed version.."
+echo " Checking latest version number on github.."
+
+#------------------------------------------------------------------------------#
+
+INSTALLED_VERSION=$(pkg version -x emby-server | sed -e 's/emby-server-//g' | sed 's/_.*//')
+LATEST_RELEASE=$(curl -L -s -H 'Accept: application/json' https://github.com/MediaBrowser/Emby.Releases/releases/latest)
+LATEST_VERSION=$(echo $LATEST_RELEASE | sed -e 's/.*"tag_name":"\([^"]*\)".*/\1/')
+RELEASE_URL="https://github.com/MediaBrowser/Emby.Releases/releases/download/${LATEST_VERSION}/emby-server-freebsd_${LATEST_VERSION}_amd64.txz"
+
+version_compare() { test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$1"; }
 
 #------------------------------------------------------------------------------#
 ### EMBY SERVER CONFIRM UPDATE (LATEST GIT METHOD)
@@ -9,9 +24,12 @@ emby_def_update_ver="3.2.36.0"
 confirm.update.emby ()
 {
 echo " "
-echo -e "${sep}"
-echo -e "${msg}   Emby Server Updater${nc}"
-echo -e "${sep}"
+echo " Installed: $INSTALLED_VERSION | Latest: $LATEST_VERSION."
+#if version_compare $INSTALLED_VERSION $LATEST_VERSION; then
+#     echo " No update available"
+#else
+#	echo " Update available!"
+#fi
 echo " "
 echo -e "${emp} CAUTION: Things can go wrong! I highly suggest${nc}"
 echo -e "${emp}          having a backup just in case!${nc}"
@@ -127,7 +145,7 @@ esac
 
 select.emby.update.version ()
 {
-echo -e "${msg} You can let the script install the default version (${qry}${emby_def_update_ver}${msg})${nc}"
+echo -e "${msg} You can let the script install the latest version (${qry}${LATEST_VERSION}${msg})${nc}"
 echo -e "${msg} Or you can select the version to install yourself.${nc}"
 echo -e "${emp} Only do so if you know what you're doing!${nc}"
 echo " "
@@ -136,14 +154,14 @@ read -r -p " Select version yourself? [y/N] " response
         [yY][eE][sS]|[yY])
             echo " "
             echo -e "${msg} You can find release numbers here:${nc}"
-            echo -e "${url} https://github.com/MediaBrowser/Emby/releases${nc}"
+            echo -e "${url} https://github.com/MediaBrowser/Emby.Releases/releases${nc}"
             echo " "
             echo -e "${emp} NOTE: ${inf}If selecting a beta or dev version,${nc}"
             echo -e "${inf} leave off the '-beta'/'-dev' from version number!${nc}"
             echo " "
             echo -e "${msg} Which version number do you want?${nc}"
             echo -e "${qry} Example version:${nc}"
-            echo -e "${url} 3.2.36.0${nc}"
+            echo -e "${url} 3.5.1.0${nc}"
             echo " "
 			printf "${emp} Version: ${nc}" ; read userselected_emby_update_ver
 			echo -e "${fin}    Version set to: ${msg}${userselected_emby_update_ver}${nc}"
@@ -152,7 +170,7 @@ read -r -p " Select version yourself? [y/N] " response
             echo -e "${msg} Grab the update for Emby from github${nc}"
             echo -e "${sep}"
             echo " "
-            fetch --no-verify-peer -o /tmp/emby-$userselected_emby_update_ver.zip https://github.com/MediaBrowser/Emby/releases/download/$userselected_emby_update_ver/Emby.Mono.zip
+            fetch --no-verify-peer -o /tmp/emby-$userselected_emby_update_ver.txz https://github.com/MediaBrowser/Emby.Releases/releases/download/$userselected_emby_update_ver/emby-server-freebsd_${userselected_emby_update_version}_amd64.txz
             echo " "
             echo -e "${sep}"
             echo -e "${msg} Download done, let's stop the server${nc}"
@@ -174,18 +192,19 @@ read -r -p " Select version yourself? [y/N] " response
 			#else
 			#	echo "$userselected_emby_update_ver.zip not found"
 			#fi
-            unzip -o "/tmp/emby-${userselected_emby_update_ver}.zip" -d /usr/local/lib/emby-server
+            #unzip -o "/tmp/emby-${userselected_emby_update_ver}.zip" -d /usr/local/lib/emby-server
+			pkg install -y /tmp/emby-${userselected_emby_update_ver}.txz 
             ;;
         *)
             echo " "
-            echo " Using default version as defined by script (${emby_def_update_ver})"
+            echo " Using latest version found on github (${LATEST_VERSION})"
             echo " "
             echo -e "${sep}"
             echo -e "${msg} Grab the update for Emby from github${nc}"
             echo -e "${sep}"
             echo " "
 
-            fetch --no-verify-peer -o /tmp/emby-${emby_def_update_ver}.zip https://github.com/MediaBrowser/Emby/releases/download/${emby_def_update_ver}/Emby.Mono.zip
+            fetch --no-verify-peer -o /tmp/emby-${LATEST_VERSION}.txz ${RELEASE_URL}
             echo " "
             echo -e "${sep}"
             echo -e "${msg} Download done, let's stop the server${nc}"
@@ -207,7 +226,8 @@ read -r -p " Select version yourself? [y/N] " response
 			#else
 			#	echo "/tmp/emby-${userselected_emby_update_ver}.zip not found, trying 'emby-${emby_def_update_ver}.zip'"
 			#fi
-            unzip -o "/tmp/emby-${emby_def_update_ver}.zip" -d /usr/local/lib/emby-server
+            #unzip -o "/tmp/emby-${LATEST_VERSION}.zip" -d /usr/local/lib/emby-server
+			pkg install -y /tmp/emby-${LATEST_VERSION}.txz 
             ;;
     esac
 }
@@ -304,12 +324,13 @@ esac
 
 remove.downloaded.files ()
 {
-read -r -p "   Remove downloaded .zip files? [y/N] " response
+read -r -p "   Remove downloaded files? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
               # If yes, then make a backup before proceeding
               echo -e "${inf} Deleting files${nc}"
               rm /tmp/emby-*.zip
+              rm /tmp/emby-*.txz
               ;;
     *)
               # Otherwise continue with backup...
@@ -350,6 +371,14 @@ echo -e "${msg} Package updates done${nc}"
 
 echo " "
 echo -e "${sep}"
+echo -e "${msg} What version would you like to update to?${nc}"
+echo -e "${sep}"
+echo " "
+
+select.emby.update.version
+
+echo " "
+echo -e "${sep}"
 echo -e "${inf} Recompile ffmpeg and ImageMagick${nc}"
 echo " "
 echo -e "${msg} This is 100% optional but doing so can improve your Emby Server${nc}"
@@ -360,14 +389,6 @@ echo -e "${sep}"
 echo " "
 
 recompile.from.ports
-
-echo " "
-echo -e "${sep}"
-echo -e "${msg} What version would you like to update to?${nc}"
-echo -e "${sep}"
-echo " "
-
-select.emby.update.version
 
 echo " "
 echo -e "${sep}"

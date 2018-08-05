@@ -16,7 +16,7 @@ echo -e "${sep}"
 echo " "
 
 pkg update && pkg upgrade
-pkg install -y apache24 php56 mod_php56 php56-extensions php56-pdo php56-pdo_sqlite php56-simplexml php56-zip php56-openssl git
+pkg install -y apache24 php70 mod_php70 php70-extensions php70-pdo php70-pdo_sqlite php70-simplexml php70-zip php70-openssl git
 
 echo " "
 echo -e "${sep}"

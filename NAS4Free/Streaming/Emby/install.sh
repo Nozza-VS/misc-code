@@ -1,3 +1,9 @@
+#!/bin/sh
+
+LATEST_RELEASE=$(curl -L -s -H 'Accept: application/json' https://github.com/MediaBrowser/Emby.Releases/releases/latest)
+LATEST_VERSION=$(echo $LATEST_RELEASE | sed -e 's/.*"tag_name":"\([^"]*\)".*/\1/')
+RELEASE_URL="https://github.com/MediaBrowser/Emby.Releases/releases/download/${LATEST_VERSION}/emby-server-freebsd_${LATEST_VERSION}_amd64.txz"
+
 #------------------------------------------------------------------------------#
 ### EMBY SERVER CONFIRM INSTALL
 
@@ -39,7 +45,10 @@ echo -e "${msg}   Let's start with installing Emby from packages${nc}"
 echo -e "${sep}"
 echo " "
 
-pkg install -y emby-server
+pkg install -y mono libass fontconfig freetype2 fribidi gnutls iconv opus samba48 sqlite3 libtheora libva libvorbis webp libx264 libzvbi
+
+fetch --no-verify-peer -o /tmp/emby-${LATEST_VERSION}.txz ${RELEASE_URL}
+pkg install -y /tmp/emby-${LATEST_VERSION}.txz 
 
 echo " "
 echo -e "${sep}"

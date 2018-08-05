@@ -1,12 +1,12 @@
 #------------------------------------------------------------------------------#
-### COUCHPOTATO SUBMENU
+### Sickbeard SUBMENU
 
-couchpotato.submenu ()
+sickbeard.submenu ()
 {
 while [ "$choice" != "a,h,i,b,q" ]
 do
         echo -e "${sep}"
-        echo -e "${fin} CouchPotato Options${nc}"
+        echo -e "${fin} Sickbeard Options${nc}"
         echo -e "${sep}"
         echo -e "${qry} Choose one:${nc}"
         echo " "
@@ -14,7 +14,7 @@ do
         echo -e "${ca}   2)${ca} Update (Currently Unavailable)${nc}"
         echo -e "${ca}   3)${ca} Backup (Currently Unavailable)${nc}"
         echo " "
-        echo -e "${inf}  a) About CouchPotato${nc}"
+        echo -e "${inf}  a) About Sickbeard${nc}"
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
         echo -e "${inf}  h) Get Help${nc}"
         echo " "
@@ -27,23 +27,23 @@ do
 
         case $choice in
             '1')	printf '\033\143'; echo -e "${inf} Installing..${nc}" ; echo " "
-                	. $scriptPath/"Search Tools"/Couchpotato/install.sh ;;
+                	. $scriptPath/"Media Management"/Sickbeard/install.sh ;;
             #'2')	printf '\033\143'; echo -e "${inf} Running Update..${nc}" ; echo " "
-            #    	. $scriptPath/"Search Tools"/Couchpotato/update.sh ;;
+            #    	. $scriptPath/"Media Management"/Sickbeard/update.sh ;;
             #'3') 	printf '\033\143'; echo -e "${inf} Backup..${nc}" ; echo " "
-            #    	. $scriptPath/"Search Tools"/Couchpotato/backup.sh ;;
-			
-            'a')	printf '\033\143'; . $scriptPath/"Search Tools"/Couchpotato/about.sh ;;
+            #    	. $scriptPath/"Media Management"/Sickbeard/backup.sh ;;
+
+            'a')	printf '\033\143'; . $scriptPath/"Media Management"/Sickbeard/about.sh ;;
             'h')	printf '\033\143'; (. $scriptPath/gethelp.sh);;
-            #'i')	printf '\033\143'; . $scriptPath/"Search Tools"/Couchpotato/moreinfo.sh ;;
-			
+            #'i')	printf '\033\143'; . $scriptPath/"Media Management"/Sickbeard/moreinfo.sh ;;
+
             'b') 	printf '\033\143'; return ;;
 			'm') 	. $scriptPath/mainmenu.sh ;;
-					
+
             *)		echo -e "${alt}        Invalid choice, please try again${nc}" ; echo " " ;;
-			
+
         esac
 done
 }
 
-couchpotato.submenu
+sickbeard.submenu

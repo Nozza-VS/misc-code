@@ -1,12 +1,12 @@
 #------------------------------------------------------------------------------#
-### Lazy Librarian SUBMENU
+### LIDARR SUBMENU
 
-lazylibrarian.submenu ()
+lidarr.submenu ()
 {
 while [ "$choice" != "a,h,i,b,q" ]
 do
         echo -e "${sep}"
-        echo -e "${fin} Lazy Librarian Options${nc}"
+        echo -e "${fin} Lidarr Options${nc}"
         echo -e "${sep}"
         echo -e "${qry} Choose one:${nc}"
         echo " "
@@ -14,7 +14,7 @@ do
         echo -e "${ca}   2)${ca} Update (Currently Unavailable)${nc}"
         echo -e "${ca}   3)${ca} Backup (Currently Unavailable)${nc}"
         echo " "
-        echo -e "${inf}  a) About Lazy Librarian${nc}"
+        echo -e "${inf}  a) About Lidarr${nc}"
         echo -e "${ca}  i) More Info / How-To's (Currently Unavailable)${nc}"
         echo -e "${inf}  h) Get Help${nc}"
         echo " "
@@ -27,23 +27,23 @@ do
 
         case $choice in
             '1')	printf '\033\143'; echo -e "${inf} Installing..${nc}" ; echo " "
-                	. $scriptPath/"Search Tools"/Lazylibrarian/install.sh ;;
+                	. $scriptPath/"Media Management"/Music/Lidarr/install.sh ;;
             #'2')	printf '\033\143'; echo -e "${inf} Running Update..${nc}" ; echo " "
-            #    	. $scriptPath/"Search Tools"/Lazylibrarian/update.sh ;;
+            #    	. $scriptPath/"Media Management"/Music/Lidarr/update.sh ;;
             #'3') 	printf '\033\143'; echo -e "${inf} Backup..${nc}" ; echo " "
-            #    	. $scriptPath/"Search Tools"/Lazylibrarian/backup.sh ;;
-			
-            'a')	printf '\033\143'; . $scriptPath/"Search Tools"/Lazylibrarian/about.sh ;;
+            #    	. $scriptPath/"Media Management"/Music/Lidarr/backup.sh ;;
+
+            'a')	printf '\033\143'; . $scriptPath/"Media Management"/Music/Lidarr/about.sh ;;
             'h')	printf '\033\143'; (. $scriptPath/gethelp.sh);;
-            #'i')	printf '\033\143'; . $scriptPath/"Search Tools"/Lazylibrarian/moreinfo.sh ;;
-			
+            #'i')	printf '\033\143'; . $scriptPath/"Media Management"/Music/Lidarr/moreinfo.sh ;;
+
             'b') 	printf '\033\143'; return ;;
 			'm') 	. $scriptPath/mainmenu.sh ;;
-					
+
             *)		echo -e "${alt}        Invalid choice, please try again${nc}" ; echo " " ;;
-			
+
         esac
 done
 }
 
-lazylibrarian.submenu
+lidarr.submenu
